@@ -1,6 +1,9 @@
 "use client";
 
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { Doc, Id } from "../../convex/_generated/dataModel";
+import Image from "next/image";
 import { Briefcase, CreditCard, KeyRound, MapPin, NotebookPen, Package, Shirt, Smartphone, Watch, type LucideIcon } from "lucide-react";
 
 interface ItemCardProps {
@@ -24,6 +27,10 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
   const isLost = item.type === "lost";
   const isOwnItem = currentUserId === item.userId;
   const ItemIcon = CATEGORY_ICONS[item.category] ?? Package;
+  const imageUrl = useQuery(
+    api.items.getImageUrl,
+    item.imageId ? { storageId: item.imageId } : "skip"
+  );
 
   const timeAgo = getTimeAgo(item._creationTime);
 
@@ -35,7 +42,20 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
     >
       {/* Image Area */}
       <div className="w-full h-[120px] bg-wvsu-light-blue flex items-center justify-center text-[40px] border-b border-wvsu-border relative">
-        <ItemIcon className="h-12 w-12 text-wvsu-blue" />
+        {imageUrl ? (
+          <>
+            <Image
+              src={imageUrl}
+              alt={item.title}
+              fill
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="absolute inset-0 object-cover"
+            />
+            <div className="absolute inset-0 bg-wvsu-blue/10" />
+          </>
+        ) : (
+          <ItemIcon className="h-12 w-12 text-wvsu-blue" />
+        )}
         <div
           className={`absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-extrabold uppercase font-mono tracking-wider ${
             isLost ? "bg-lost-red text-white" : "bg-found-green text-white"

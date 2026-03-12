@@ -39,7 +39,7 @@ export default function MessagesPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          {conversations.map((convo: { _id: Id<"conversations">; challengeStatus?: "pending" | "accepted" | "rejected"; item?: { title?: string; challenge?: string } | null; lastMessage?: { body: string; _creationTime: number } | null; otherUser?: { name?: string; college?: string } | null }) => (
+          {conversations.map((convo) => (
             <button
               key={convo._id}
               onClick={() => setActiveChatId(convo._id)}
@@ -91,7 +91,12 @@ export default function MessagesPage() {
                 )}
                 {convo.lastMessage && convo.challengeStatus !== "pending" && (
                   <div className="text-xs text-wvsu-muted truncate mt-0.5">
-                    {convo.lastMessage.body}
+                    {convo.lastMessagePreview ?? "No messages yet"}
+                  </div>
+                )}
+                {!convo.lastMessage && convo.challengeStatus !== "pending" && (
+                  <div className="text-xs text-wvsu-muted truncate mt-0.5">
+                    No messages yet
                   </div>
                 )}
               </div>

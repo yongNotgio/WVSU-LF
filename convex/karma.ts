@@ -88,6 +88,20 @@ export const confirmReturn = mutation({
       throw new Error("Verification must be accepted before confirming return.");
     }
 
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_conversationId", (q) => q.eq("conversationId", conversation._id))
+      .collect();
+    const hasMeetupProof = messages.some(
+      (message) =>
+        message.senderId === item.userId &&
+        !!message.imageId &&
+        !!message.isMeetupProof
+    );
+    if (!hasMeetupProof) {
+      throw new Error("The poster must upload a meetup photo before you can confirm item received.");
+    }
+
     // Poster (finder) = item.userId, Claimer (owner) = userId
     const poster = await ctx.db.get(item.userId);
     if (!poster) throw new Error("Poster not found");

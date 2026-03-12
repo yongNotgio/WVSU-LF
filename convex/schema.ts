@@ -54,7 +54,9 @@ export default defineSchema({
   messages: defineTable({
     conversationId: v.id("conversations"),
     senderId: v.id("users"),
-    body: v.string(),
+    body: v.optional(v.string()),
+    imageId: v.optional(v.id("_storage")),
+    isMeetupProof: v.optional(v.boolean()),
   }).index("by_conversationId", ["conversationId"]),
 
   colleges: defineTable({

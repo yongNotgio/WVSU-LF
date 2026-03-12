@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
-import { Check, CheckCircle2, Clock3, MessageSquare, SendHorizontal, ShieldCheck, X, XCircle } from "lucide-react";
+import Image from "next/image";
+import { Camera, Check, CheckCircle2, Clock3, ImagePlus, MessageSquare, SendHorizontal, ShieldCheck, X, XCircle } from "lucide-react";
 
 interface ChatOverlayProps {
   conversationId: Id<"conversations">;
@@ -26,11 +27,15 @@ export function ChatOverlay({
   const sendMessage = useMutation(api.chat.sendMessage);
   const confirmReturn = useMutation(api.karma.confirmReturn);
   const verifyClaim = useMutation(api.chat.verifyClaim);
+  const generateUploadUrl = useMutation(api.items.generateUploadUrl);
 
   const [body, setBody] = useState("");
   const [confirming, setConfirming] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
+  const meetupProofInputRef = useRef<HTMLInputElement>(null);
 
   const challengeStatus = convoDetails?.challengeStatus ?? "accepted";
   const isItemPoster = convoDetails?.isItemOwner;
@@ -39,7 +44,8 @@ export function ChatOverlay({
     convoDetails !== null &&
     isItemPoster === false &&
     convoDetails.item?.status === "open" &&
-    challengeStatus === "accepted";
+    challengeStatus === "accepted" &&
+    !!convoDetails.hasMeetupProof;
 
   useEffect(() => {
     if (bodyRef.current) {
@@ -52,6 +58,36 @@ export function ChatOverlay({
     if (!trimmed) return;
     setBody("");
     await sendMessage({ conversationId, body: trimmed });
+  };
+
+  const handleImageSelected = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    isMeetupProof: boolean
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const result = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      const { storageId } = await result.json();
+      const trimmed = body.trim();
+      setBody("");
+      await sendMessage({
+        conversationId,
+        body: trimmed || undefined,
+        imageId: storageId,
+        isMeetupProof,
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleVerify = async (accept: boolean) => {
@@ -157,7 +193,7 @@ export function ChatOverlay({
                 Verification passed
               </div>
             )}
-            {messages?.map((msg: { _id: string; senderId: string; body: string }) => {
+            {messages?.map((msg: { _id: string; senderId: string; body?: string; imageUrl?: string | null; isMeetupProof?: boolean }) => {
               const isMe = msg.senderId === currentUserId;
               return (
                 <div
@@ -168,6 +204,21 @@ export function ChatOverlay({
                       : "bg-white border border-wvsu-border text-wvsu-text self-start"
                   }`}
                 >
+                  {msg.isMeetupProof && (
+                    <div className="mb-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide opacity-80">
+                      <Camera className="h-3 w-3" />
+                      Meetup Proof
+                    </div>
+                  )}
+                  {msg.imageUrl && (
+                    <Image
+                      src={msg.imageUrl}
+                      alt="Chat attachment"
+                      width={240}
+                      height={160}
+                      className="mb-2 max-h-40 w-full rounded object-cover"
+                    />
+                  )}
                   {msg.body}
                 </div>
               );
@@ -190,6 +241,25 @@ export function ChatOverlay({
           )}
 
           {/* "Item Received" button - only the claimer confirms */}
+          {!isItemPoster && convoDetails?.item?.status === "open" && challengeStatus === "accepted" && !convoDetails?.hasMeetupProof && (
+            <div className="px-3 py-2 border-t border-wvsu-border bg-[#fff8e1] text-[11px] text-wvsu-muted">
+              Waiting for the poster to upload a meetup photo before you can confirm item received.
+            </div>
+          )}
+
+          {isItemPoster && convoDetails?.item?.status === "open" && challengeStatus === "accepted" && !convoDetails?.hasMeetupProof && (
+            <div className="px-3 py-2 border-t border-wvsu-border bg-[#fff8e1]">
+              <button
+                onClick={() => meetupProofInputRef.current?.click()}
+                disabled={uploading}
+                className="w-full bg-wvsu-gold text-wvsu-blue-deeper py-2 text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-1"
+              >
+                <Camera className="h-3.5 w-3.5" />
+                {uploading ? "Uploading..." : "Upload Meetup Proof"}
+              </button>
+            </div>
+          )}
+
           {showItemReceivedButton && (
             <div className="px-3 py-2 border-t border-wvsu-border bg-[#fff8e1]">
               <button
@@ -215,6 +285,29 @@ export function ChatOverlay({
           {convoDetails?.item?.status !== "resolved" && (
             <div className="flex border-t-2 border-wvsu-border">
               <input
+                ref={attachmentInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => handleImageSelected(event, false)}
+              />
+              <input
+                ref={meetupProofInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => handleImageSelected(event, true)}
+              />
+              <button
+                onClick={() => attachmentInputRef.current?.click()}
+                disabled={uploading}
+                className="border-r border-wvsu-border px-3 text-wvsu-blue hover:bg-wvsu-light-blue disabled:opacity-50"
+                type="button"
+                aria-label="Attach image"
+              >
+                <ImagePlus className="h-4 w-4" />
+              </button>
+              <input
                 type="text"
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
@@ -229,6 +322,7 @@ export function ChatOverlay({
               />
               <button
                 onClick={handleSend}
+                disabled={uploading}
                 className="bg-wvsu-blue text-white px-3.5 font-bold text-sm hover:bg-wvsu-blue-dark transition-colors"
               >
                 <SendHorizontal className="h-4 w-4" />

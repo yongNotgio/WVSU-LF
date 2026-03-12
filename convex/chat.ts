@@ -117,7 +117,9 @@ export const verifyClaim = mutation({
 export const sendMessage = mutation({
   args: {
     conversationId: v.id("conversations"),
-    body: v.string(),
+    body: v.optional(v.string()),
+    imageId: v.optional(v.id("_storage")),
+    isMeetupProof: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -134,10 +136,29 @@ export const sendMessage = mutation({
       throw new Error("Verification must be accepted before chatting.");
     }
 
+    const item = await ctx.db.get(conversation.itemId);
+    if (!item) throw new Error("Item not found");
+
+    const body = args.body?.trim();
+    if (!body && !args.imageId) {
+      throw new Error("Send a message or attach an image.");
+    }
+
+    if (args.isMeetupProof) {
+      if (item.userId !== userId) {
+        throw new Error("Only the poster can upload meetup proof.");
+      }
+      if (!args.imageId) {
+        throw new Error("Meetup proof requires an image.");
+      }
+    }
+
     return await ctx.db.insert("messages", {
       conversationId: args.conversationId,
       senderId: userId,
-      body: args.body,
+      body,
+      imageId: args.imageId,
+      isMeetupProof: args.isMeetupProof ?? false,
     });
   },
 });
@@ -163,7 +184,17 @@ export const listMessages = query({
         q.eq("conversationId", args.conversationId)
       )
       .order("asc")
-      .collect();
+      .collect()
+      .then((messages) =>
+        Promise.all(
+          messages.map(async (message) => ({
+            ...message,
+            imageUrl: message.imageId
+              ? await ctx.storage.getUrl(message.imageId)
+              : null,
+          }))
+        )
+      );
   },
 });
 
@@ -178,10 +209,22 @@ export const getConversationDetails = query({
     if (!conversation.participantIds.includes(userId)) return null;
 
     const item = await ctx.db.get(conversation.itemId);
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_conversationId", (q) => q.eq("conversationId", conversation._id))
+      .collect();
+    const hasMeetupProof = messages.some(
+      (message) =>
+        message.senderId === item?.userId &&
+        !!message.imageId &&
+        !!message.isMeetupProof
+    );
+
     return {
       ...conversation,
       item,
       isItemOwner: item?.userId === userId,
+      hasMeetupProof,
     };
   },
 });
@@ -221,6 +264,9 @@ export const getMyConversations = query({
           ...convo,
           item,
           lastMessage: messages,
+          lastMessagePreview: messages?.isMeetupProof
+            ? "Meetup proof photo"
+            : messages?.body || (messages?.imageId ? "Photo attachment" : ""),
           otherUser: otherUser
             ? { name: otherUser.name, college: otherUser.college }
             : null,
