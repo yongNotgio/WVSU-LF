@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --blue: #0038bc;
+    --blue-dark: #002a8e;
+    --blue-deeper: #001f6a;
+    --white: #ffffff;
+    --off-white: #f4f6fc;
+    --light-blue: #e8eef9;
+    --text: #0d1a3a;
+    --muted: #4a5a7a;
+    --border: #c4d0ed;
+    --gold: #f5c518;
+  }
+}
+
+body {
+  color: var(--text);
+  background: var(--off-white);
+  font-family: "Figtree", sans-serif;
+  min-height: 100vh;
+}
