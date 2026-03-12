@@ -13,6 +13,9 @@ export default defineSchema({
     strikes: v.optional(v.number()),
     shadowBannedUntil: v.optional(v.number()),
     isBanned: v.optional(v.boolean()),
+    avatarType: v.optional(v.union(v.literal("multiavatar"), v.literal("upload"))),
+    avatarId: v.optional(v.id("_storage")),
+    avatarSeed: v.optional(v.string()),
   })
     .index("by_college", ["college"])
     .index("by_karma", ["karma"]),
@@ -80,4 +83,10 @@ export default defineSchema({
   })
     .index("by_itemId", ["itemId"])
     .index("by_itemId_reporterId", ["itemId", "reporterId"]),
+
+  conversationReads: defineTable({
+    conversationId: v.id("conversations"),
+    userId: v.id("users"),
+    lastSeenAt: v.number(),
+  }).index("by_conversationId_userId", ["conversationId", "userId"]),
 });

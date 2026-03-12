@@ -243,11 +243,11 @@ export const getMyConversations = query({
       c.participantIds.includes(user._id)
     );
 
-    // Enrich with item info and last message
+    // Enrich with item info, last message, unread status, and avatar info
     const enriched = await Promise.all(
       myConversations.map(async (convo) => {
         const item = await ctx.db.get(convo.itemId);
-        const messages = await ctx.db
+        const lastMessage = await ctx.db
           .query("messages")
           .withIndex("by_conversationId", (q) =>
             q.eq("conversationId", convo._id)
@@ -260,20 +260,171 @@ export const getMyConversations = query({
         );
         const otherUser = otherUserId ? await ctx.db.get(otherUserId) : null;
 
+        let otherAvatarUrl: string | null = null;
+        if (otherUser?.avatarId) {
+          otherAvatarUrl = await ctx.storage.getUrl(otherUser.avatarId);
+        }
+
+        // Check unread status
+        const readRecord = await ctx.db
+          .query("conversationReads")
+          .withIndex("by_conversationId_userId", (q) =>
+            q.eq("conversationId", convo._id).eq("userId", user._id)
+          )
+          .unique();
+
+        const hasUnread =
+          !!lastMessage &&
+          lastMessage.senderId !== user._id &&
+          (!readRecord || lastMessage._creationTime > readRecord.lastSeenAt);
+
         return {
           ...convo,
           item,
-          lastMessage: messages,
-          lastMessagePreview: messages?.isMeetupProof
+          lastMessage,
+          lastMessagePreview: lastMessage?.isMeetupProof
             ? "Meetup proof photo"
-            : messages?.body || (messages?.imageId ? "Photo attachment" : ""),
+            : lastMessage?.body || (lastMessage?.imageId ? "Photo attachment" : ""),
+          hasUnread,
           otherUser: otherUser
-            ? { name: otherUser.name, college: otherUser.college }
+            ? {
+                name: otherUser.name,
+                college: otherUser.college,
+                avatarType: otherUser.avatarType,
+                avatarSeed: otherUser.avatarSeed,
+                avatarUrl: otherAvatarUrl,
+              }
             : null,
         };
       })
     );
 
+    // Sort by newest message first
+    enriched.sort((a, b) => {
+      const aTime = a.lastMessage?._creationTime ?? a._creationTime;
+      const bTime = b.lastMessage?._creationTime ?? b._creationTime;
+      return bTime - aTime;
+    });
+
     return enriched;
+  },
+});
+
+export const deleteConversation = mutation({
+  args: {
+    conversationId: v.id("conversations"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
+
+    const conversation = await ctx.db.get(args.conversationId);
+    if (!conversation) throw new Error("Conversation not found");
+    if (!conversation.participantIds.includes(userId)) {
+      throw new Error("Not a participant");
+    }
+
+    // Delete all messages (and their stored images)
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_conversationId", (q) =>
+        q.eq("conversationId", args.conversationId)
+      )
+      .collect();
+    for (const msg of messages) {
+      if (msg.imageId) {
+        await ctx.storage.delete(msg.imageId);
+      }
+      await ctx.db.delete(msg._id);
+    }
+
+    // Delete read records
+    const reads = await ctx.db
+      .query("conversationReads")
+      .withIndex("by_conversationId_userId", (q) =>
+        q.eq("conversationId", args.conversationId)
+      )
+      .collect();
+    for (const read of reads) {
+      await ctx.db.delete(read._id);
+    }
+
+    // Delete the conversation
+    await ctx.db.delete(args.conversationId);
+  },
+});
+
+export const markConversationRead = mutation({
+  args: {
+    conversationId: v.id("conversations"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
+
+    const conversation = await ctx.db.get(args.conversationId);
+    if (!conversation) throw new Error("Conversation not found");
+    if (!conversation.participantIds.includes(userId)) {
+      throw new Error("Not a participant");
+    }
+
+    const existing = await ctx.db
+      .query("conversationReads")
+      .withIndex("by_conversationId_userId", (q) =>
+        q.eq("conversationId", args.conversationId).eq("userId", userId)
+      )
+      .unique();
+
+    if (existing) {
+      await ctx.db.patch(existing._id, { lastSeenAt: Date.now() });
+    } else {
+      await ctx.db.insert("conversationReads", {
+        conversationId: args.conversationId,
+        userId,
+        lastSeenAt: Date.now(),
+      });
+    }
+  },
+});
+
+export const getUnreadCount = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return 0;
+
+    const user = await ctx.db.get(userId);
+    if (!user) return 0;
+
+    const allConversations = await ctx.db.query("conversations").collect();
+    const myConversations = allConversations.filter((c) =>
+      c.participantIds.includes(user._id)
+    );
+
+    let unreadCount = 0;
+    for (const convo of myConversations) {
+      const lastMessage = await ctx.db
+        .query("messages")
+        .withIndex("by_conversationId", (q) =>
+          q.eq("conversationId", convo._id)
+        )
+        .order("desc")
+        .first();
+
+      if (!lastMessage || lastMessage.senderId === user._id) continue;
+
+      const readRecord = await ctx.db
+        .query("conversationReads")
+        .withIndex("by_conversationId_userId", (q) =>
+          q.eq("conversationId", convo._id).eq("userId", user._id)
+        )
+        .unique();
+
+      if (!readRecord || lastMessage._creationTime > readRecord.lastSeenAt) {
+        unreadCount++;
+      }
+    }
+
+    return unreadCount;
   },
 });

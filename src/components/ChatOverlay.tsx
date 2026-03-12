@@ -28,6 +28,7 @@ export function ChatOverlay({
   const confirmReturn = useMutation(api.karma.confirmReturn);
   const verifyClaim = useMutation(api.chat.verifyClaim);
   const generateUploadUrl = useMutation(api.items.generateUploadUrl);
+  const markRead = useMutation(api.chat.markConversationRead);
 
   const [body, setBody] = useState("");
   const [confirming, setConfirming] = useState(false);
@@ -52,6 +53,11 @@ export function ChatOverlay({
       bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Mark conversation as read when opened and when new messages arrive
+  useEffect(() => {
+    markRead({ conversationId });
+  }, [markRead, conversationId, messages?.length]);
 
   const handleSend = async () => {
     const trimmed = body.trim();

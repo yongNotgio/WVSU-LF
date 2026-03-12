@@ -6,6 +6,10 @@ const nextConfig = {
 				protocol: "https",
 				hostname: "**.convex.cloud",
 			},
+			{
+				protocol: "https",
+				hostname: "api.multiavatar.com",
+			},
 		],
 	},
 };

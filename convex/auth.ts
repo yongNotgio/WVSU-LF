@@ -73,13 +73,47 @@ export const updateProfile = mutation({
   },
 });
 
+export const updateAvatar = mutation({
+  args: {
+    mode: v.union(v.literal("multiavatar"), v.literal("upload")),
+    avatarSeed: v.optional(v.string()),
+    avatarId: v.optional(v.id("_storage")),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
+
+    if (args.mode === "multiavatar") {
+      if (!args.avatarSeed) throw new Error("Seed required");
+      await ctx.db.patch(userId, {
+        avatarType: "multiavatar" as const,
+        avatarSeed: args.avatarSeed,
+      });
+    } else {
+      if (!args.avatarId) throw new Error("Avatar image required");
+      await ctx.db.patch(userId, {
+        avatarType: "upload" as const,
+        avatarId: args.avatarId,
+      });
+    }
+  },
+});
+
 export const currentUser = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) return null;
 
-    return await ctx.db.get(userId);
+    const user = await ctx.db.get(userId);
+    if (!user) return null;
+
+    let avatarUrl: string | null = null;
+    if (user.avatarId) {
+      avatarUrl = await ctx.storage.getUrl(user.avatarId);
+    }
+
+    return { ...user, avatarUrl };
   },
 });
 
@@ -107,6 +141,11 @@ export const getUserStats = query({
       rank = collegeUsers.filter((u) => (u.karma ?? 0) > (user.karma ?? 0)).length + 1;
     }
 
+    let avatarUrl: string | null = null;
+    if (user.avatarId) {
+      avatarUrl = await ctx.storage.getUrl(user.avatarId);
+    }
+
     return {
       _id: user._id,
       name: user.name,
@@ -115,6 +154,9 @@ export const getUserStats = query({
       karma: user.karma,
       rank,
       activePosts: activePosts.length,
+      avatarType: user.avatarType,
+      avatarSeed: user.avatarSeed,
+      avatarUrl,
     };
   },
 });
