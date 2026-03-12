@@ -19,7 +19,7 @@ export const createItem = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    return await ctx.db.insert("items", {
+    const itemId = await ctx.db.insert("items", {
       type: args.type,
       title: args.title,
       description: args.description,
@@ -30,6 +30,13 @@ export const createItem = mutation({
       userId: user._id,
       imageId: args.imageId,
     });
+
+    // +5 karma for listing a "Found" item (rewards the act of reporting)
+    if (args.type === "found") {
+      await ctx.db.patch(user._id, { karma: (user.karma ?? 0) + 5 });
+    }
+
+    return itemId;
   },
 });
 

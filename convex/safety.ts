@@ -57,3 +57,21 @@ export const autoArchiveOldPosts = internalMutation({
     }
   },
 });
+
+export const adminBanUser = mutation({
+  args: {
+    targetUserId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
+
+    const target = await ctx.db.get(args.targetUserId);
+    if (!target) throw new Error("User not found");
+
+    await ctx.db.patch(args.targetUserId, {
+      karma: (target.karma ?? 0) - 500,
+      isBanned: true,
+    });
+  },
+});

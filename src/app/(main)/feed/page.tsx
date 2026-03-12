@@ -21,6 +21,10 @@ export default function FeedPage() {
     otherUserName: string;
     challenge?: string;
   } | null>(null);
+  const [claimingItem, setClaimingItem] = useState<Doc<"items"> | null>(null);
+  const [challengeAnswer, setChallengeAnswer] = useState("");
+  const [claimError, setClaimError] = useState("");
+  const [submittingClaim, setSubmittingClaim] = useState(false);
 
   const stats = useQuery(api.auth.getUserStats);
   const items = useQuery(api.items.getItems, {
@@ -29,19 +33,35 @@ export default function FeedPage() {
   });
   const getOrCreateConversation = useMutation(api.chat.getOrCreateConversation);
 
-  const handleContact = async (itemId: string) => {
-    const conversationId = await getOrCreateConversation({
-      itemId: itemId as Id<"items">,
-    });
+  const handleContact = (itemId: string) => {
+    const item = items?.find((i: Doc<"items">) => i._id === itemId);
+    if (item) {
+      setClaimingItem(item);
+      setChallengeAnswer("");
+      setClaimError("");
+    }
+  };
 
-    // Fetch item info for chat
-    const item = items?.find((i: { _id: string; challenge: string }) => i._id === itemId);
-
-    setChatState({
-      conversationId,
-      otherUserName: "User",
-      challenge: item?.challenge,
-    });
+  const handleSubmitClaim = async () => {
+    if (!claimingItem || !challengeAnswer.trim()) return;
+    setSubmittingClaim(true);
+    setClaimError("");
+    try {
+      const conversationId = await getOrCreateConversation({
+        itemId: claimingItem._id,
+        challengeAnswer: challengeAnswer.trim(),
+      });
+      setClaimingItem(null);
+      setChatState({
+        conversationId,
+        otherUserName: "User",
+        challenge: claimingItem.challenge,
+      });
+    } catch (e) {
+      setClaimError(e instanceof Error ? e.message : "Failed to submit claim.");
+    } finally {
+      setSubmittingClaim(false);
+    }
   };
 
   return (
@@ -135,6 +155,64 @@ export default function FeedPage() {
       {/* Post Form Modal */}
       {showPostForm && (
         <PostItemForm onClose={() => setShowPostForm(false)} />
+      )}
+
+      {/* Claim Verification Modal */}
+      {claimingItem && (
+        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-wvsu-blue w-full max-w-sm shadow-[6px_6px_0_var(--blue)]">
+            <div className="bg-wvsu-blue px-4 py-3 flex items-center justify-between">
+              <div className="font-display text-lg text-white">Verify Ownership</div>
+              <button
+                onClick={() => setClaimingItem(null)}
+                className="text-white/70 hover:text-white text-xl font-bold leading-none"
+                aria-label="Close"
+              >
+                &times;
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="text-xs text-wvsu-muted font-mono">
+                Re: <span className="font-bold text-wvsu-text">{claimingItem.title}</span>
+              </div>
+              <div className="bg-[#fff8e1] border border-wvsu-gold p-3">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-wvsu-muted font-mono mb-1">
+                  &#128274; Verification Challenge
+                </div>
+                <div className="text-sm text-wvsu-text font-semibold">
+                  {claimingItem.challenge}
+                </div>
+              </div>
+              {claimError && (
+                <div className="bg-lost-red/10 border border-lost-red text-lost-red text-xs px-3 py-2">
+                  {claimError}
+                </div>
+              )}
+              <div>
+                <label className="block text-[10px] font-bold tracking-[0.12em] uppercase text-wvsu-muted font-mono mb-1">
+                  Your Answer
+                </label>
+                <input
+                  type="text"
+                  value={challengeAnswer}
+                  onChange={(e) => setChallengeAnswer(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSubmitClaim();
+                  }}
+                  placeholder="Prove you're the owner / have the item..."
+                  className="w-full border-2 border-wvsu-border px-3 py-2 text-sm outline-none focus:border-wvsu-blue transition-colors"
+                />
+              </div>
+              <button
+                onClick={handleSubmitClaim}
+                disabled={!challengeAnswer.trim() || submittingClaim}
+                className="w-full bg-wvsu-blue text-white py-2.5 text-sm font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors disabled:opacity-50"
+              >
+                {submittingClaim ? "Submitting..." : "Submit Claim"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Chat Overlay */}

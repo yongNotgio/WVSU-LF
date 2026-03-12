@@ -10,6 +10,9 @@ export default defineSchema({
     name: v.optional(v.string()),
     college: v.optional(v.string()),
     karma: v.optional(v.number()),
+    strikes: v.optional(v.number()),
+    shadowBannedUntil: v.optional(v.number()),
+    isBanned: v.optional(v.boolean()),
   })
     .index("by_college", ["college"])
     .index("by_karma", ["karma"]),
@@ -38,6 +41,14 @@ export default defineSchema({
   conversations: defineTable({
     itemId: v.id("items"),
     participantIds: v.array(v.id("users")),
+    challengeAnswer: v.optional(v.string()),
+    challengeStatus: v.optional(
+      v.union(
+        v.literal("pending"),
+        v.literal("accepted"),
+        v.literal("rejected")
+      )
+    ),
   }).index("by_itemId", ["itemId"]),
 
   messages: defineTable({
@@ -52,6 +63,13 @@ export default defineSchema({
   })
     .index("by_name", ["name"])
     .index("by_totalKarma", ["totalKarma"]),
+
+  claims: defineTable({
+    itemId: v.id("items"),
+    claimerId: v.id("users"),
+  })
+    .index("by_claimerId", ["claimerId"])
+    .index("by_itemId_claimerId", ["itemId", "claimerId"]),
 
   reports: defineTable({
     itemId: v.id("items"),

@@ -57,37 +57,49 @@ export const confirmReturn = mutation({
 
     const item = await ctx.db.get(conversation.itemId);
     if (!item) throw new Error("Item not found");
-    if (item.userId !== userId) throw new Error("Only the item owner can confirm return");
     if (item.status !== "open") throw new Error("Item is already resolved");
 
-    let finderId: typeof item.userId | null = null;
-    for (const participantId of conversation.participantIds) {
-      if (participantId !== item.userId) {
-        finderId = participantId;
-        break;
-      }
-    }
-    if (!finderId) {
-      throw new Error("No finder is attached to this conversation");
+    // The CLAIMER (owner) clicks "Item Received," not the poster
+    if (item.userId === userId) {
+      throw new Error("Only the claimer can confirm item received.");
     }
 
-    const finder = await ctx.db.get(finderId);
-    if (!finder) throw new Error("Finder not found");
+    const claimStatus = conversation.challengeStatus ?? "accepted";
+    if (claimStatus !== "accepted") {
+      throw new Error("Verification must be accepted before confirming return.");
+    }
 
-    const owner = await ctx.db.get(userId);
-    if (!owner) throw new Error("User not found");
+    // Poster (finder) = item.userId, Claimer (owner) = userId
+    const poster = await ctx.db.get(item.userId);
+    if (!poster) throw new Error("Poster not found");
 
-    await ctx.db.patch(finderId, { karma: (finder.karma ?? 0) + 50 });
-    await ctx.db.patch(userId, { karma: (owner.karma ?? 0) + 10 });
+    const claimer = await ctx.db.get(userId);
+    if (!claimer) throw new Error("User not found");
 
-    if (finder.college) {
+    // Poster (Finder) +50, Claimer (Owner) +5 "Gratitude Bonus"
+    await ctx.db.patch(item.userId, { karma: (poster.karma ?? 0) + 50 });
+    await ctx.db.patch(userId, { karma: (claimer.karma ?? 0) + 5 });
+
+    // College karma: poster's college +50, claimer's college +5
+    if (poster.college) {
       const college = await ctx.db
         .query("colleges")
-        .withIndex("by_name", (q) => q.eq("name", finder.college!))
+        .withIndex("by_name", (q) => q.eq("name", poster.college!))
         .unique();
       if (college) {
         await ctx.db.patch(college._id, {
           totalKarma: college.totalKarma + 50,
+        });
+      }
+    }
+    if (claimer.college) {
+      const college = await ctx.db
+        .query("colleges")
+        .withIndex("by_name", (q) => q.eq("name", claimer.college!))
+        .unique();
+      if (college) {
+        await ctx.db.patch(college._id, {
+          totalKarma: college.totalKarma + 5,
         });
       }
     }

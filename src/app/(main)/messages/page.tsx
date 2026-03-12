@@ -37,7 +37,7 @@ export default function MessagesPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          {conversations.map((convo: { _id: Id<"conversations">; item?: { title?: string; challenge?: string } | null; lastMessage?: { body: string; _creationTime: number } | null; otherUser?: { name?: string; college?: string } | null }) => (
+          {conversations.map((convo: { _id: Id<"conversations">; challengeStatus?: "pending" | "accepted" | "rejected"; item?: { title?: string; challenge?: string } | null; lastMessage?: { body: string; _creationTime: number } | null; otherUser?: { name?: string; college?: string } | null }) => (
             <button
               key={convo._id}
               onClick={() => setActiveChatId(convo._id)}
@@ -59,8 +59,18 @@ export default function MessagesPage() {
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm font-semibold text-wvsu-text truncate">
+                  <div className="text-sm font-semibold text-wvsu-text truncate flex items-center gap-1.5">
                     {convo.otherUser?.name ?? "Unknown User"}
+                    {convo.challengeStatus === "pending" && (
+                      <span className="text-[9px] bg-wvsu-gold/20 text-wvsu-gold border border-wvsu-gold px-1.5 py-0.5 font-mono uppercase shrink-0">
+                        Pending
+                      </span>
+                    )}
+                    {convo.challengeStatus === "rejected" && (
+                      <span className="text-[9px] bg-lost-red/10 text-lost-red border border-lost-red px-1.5 py-0.5 font-mono uppercase shrink-0">
+                        Rejected
+                      </span>
+                    )}
                   </div>
                   {convo.lastMessage && (
                     <div className="text-[10px] text-wvsu-muted font-mono shrink-0">
@@ -71,7 +81,12 @@ export default function MessagesPage() {
                 <div className="text-[11px] text-wvsu-muted font-mono mt-0.5">
                   Re: {convo.item?.title ?? "Unknown item"}
                 </div>
-                {convo.lastMessage && (
+                {convo.challengeStatus === "pending" && (
+                  <div className="text-[11px] text-wvsu-gold mt-0.5 font-semibold">
+                    ⏳ Awaiting verification review
+                  </div>
+                )}
+                {convo.lastMessage && convo.challengeStatus !== "pending" && (
                   <div className="text-xs text-wvsu-muted truncate mt-0.5">
                     {convo.lastMessage.body}
                   </div>
