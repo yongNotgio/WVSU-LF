@@ -6,7 +6,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../convex/_generated/api";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, RefreshCw, Star, Upload } from "lucide-react";
+import { LogOut, Star, Upload } from "lucide-react";
 import { UserAvatar } from "./UserAvatar";
 
 export function Navbar() {
@@ -34,11 +34,6 @@ export function Navbar() {
     router.push("/sign-in");
   };
 
-  const handleRandomize = async () => {
-    const seed = Math.random().toString(36).substring(2, 10);
-    await updateAvatar({ mode: "multiavatar", avatarSeed: seed });
-  };
-
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -53,7 +48,7 @@ export function Navbar() {
         body: file,
       });
       const { storageId } = await result.json();
-      await updateAvatar({ mode: "upload", avatarId: storageId });
+      await updateAvatar({ avatarId: storageId });
     } finally {
       setUploading(false);
     }
@@ -110,7 +105,6 @@ export function Navbar() {
             <UserAvatar
               name={stats?.name}
               avatarType={stats?.avatarType}
-              avatarSeed={stats?.avatarSeed}
               avatarUrl={stats?.avatarUrl}
               size={28}
             />
@@ -129,7 +123,6 @@ export function Navbar() {
                     <UserAvatar
                       name={stats?.name}
                       avatarType={stats?.avatarType}
-                      avatarSeed={stats?.avatarSeed}
                       avatarUrl={stats?.avatarUrl}
                       size={48}
                     />
@@ -149,13 +142,6 @@ export function Navbar() {
                   <div className="text-[9px] font-bold tracking-[0.12em] uppercase text-wvsu-muted font-mono px-2 pt-1">
                     Avatar
                   </div>
-                  <button
-                    onClick={handleRandomize}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-wvsu-text hover:bg-wvsu-light-blue transition-colors text-left"
-                  >
-                    <RefreshCw className="h-3.5 w-3.5 text-wvsu-blue" />
-                    Randomize Avatar
-                  </button>
                   <button
                     onClick={() => avatarInputRef.current?.click()}
                     disabled={uploading}

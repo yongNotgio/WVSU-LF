@@ -5,7 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import Image from "next/image";
-import { Camera, Check, CheckCircle2, Clock3, ImagePlus, MessageSquare, SendHorizontal, ShieldCheck, X, XCircle } from "lucide-react";
+import { Camera, Check, CheckCircle2, Clock3, Expand, ImagePlus, MessageSquare, Minimize2, SendHorizontal, ShieldCheck, X, XCircle } from "lucide-react";
 
 interface ChatOverlayProps {
   conversationId: Id<"conversations">;
@@ -34,6 +34,7 @@ export function ChatOverlay({
   const [confirming, setConfirming] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
   const meetupProofInputRef = useRef<HTMLInputElement>(null);
@@ -107,20 +108,37 @@ export function ChatOverlay({
   };
 
   return (
-    <div className="fixed bottom-6 right-6 w-[320px] bg-white border-2 border-wvsu-blue z-[100] shadow-[6px_6px_0_var(--blue)]">
+    <div
+      className={`fixed bg-white border-2 border-wvsu-blue z-[100] shadow-[6px_6px_0_var(--blue)] transition-all ${
+        isMaximized
+          ? "inset-4 md:inset-6"
+          : "bottom-6 right-6 w-[320px] max-w-[calc(100vw-3rem)]"
+      }`}
+    >
       {/* Header */}
       <div className="bg-wvsu-blue px-3.5 py-2.5 flex items-center justify-between">
         <div className="text-xs font-bold text-white uppercase font-mono truncate flex items-center gap-1.5">
           <MessageSquare className="h-3.5 w-3.5 shrink-0" />
           {otherUserName}
         </div>
-        <button
-          onClick={onClose}
-          className="text-white/70 hover:text-white text-lg font-bold leading-none"
-          aria-label="Close chat"
-        >
-          <X className="h-4 w-4" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setIsMaximized((current) => !current)}
+            className="text-white/70 hover:text-white p-1"
+            aria-label={isMaximized ? "Minimize chat" : "Maximize chat"}
+            type="button"
+          >
+            {isMaximized ? <Minimize2 className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
+          </button>
+          <button
+            onClick={onClose}
+            className="text-white/70 hover:text-white text-lg font-bold leading-none p-1"
+            aria-label="Close chat"
+            type="button"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       {/* Pending: Item poster sees the challenge answer and accept/reject */}
@@ -191,7 +209,9 @@ export function ChatOverlay({
           {/* Messages */}
           <div
             ref={bodyRef}
-            className="p-3 h-40 overflow-y-auto bg-wvsu-off-white flex flex-col gap-2"
+            className={`p-3 overflow-y-auto bg-wvsu-off-white flex flex-col gap-2 ${
+              isMaximized ? "h-[calc(100vh-14rem)] md:h-[calc(100vh-12rem)]" : "h-40"
+            }`}
           >
             {challenge && (
               <div className="bg-[#fff8e1] border border-wvsu-gold px-2.5 py-2 text-[11px] text-center self-center max-w-[90%] inline-flex items-center gap-1 justify-center">

@@ -70,7 +70,6 @@ export default function MessagesPage() {
                 <UserAvatar
                   name={convo.otherUser?.name}
                   avatarType={convo.otherUser?.avatarType}
-                  avatarSeed={convo.otherUser?.avatarSeed}
                   avatarUrl={convo.otherUser?.avatarUrl}
                   size={40}
                 />

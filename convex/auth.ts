@@ -75,27 +75,19 @@ export const updateProfile = mutation({
 
 export const updateAvatar = mutation({
   args: {
-    mode: v.union(v.literal("multiavatar"), v.literal("upload")),
-    avatarSeed: v.optional(v.string()),
     avatarId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthenticated");
 
-    if (args.mode === "multiavatar") {
-      if (!args.avatarSeed) throw new Error("Seed required");
-      await ctx.db.patch(userId, {
-        avatarType: "multiavatar" as const,
-        avatarSeed: args.avatarSeed,
-      });
-    } else {
-      if (!args.avatarId) throw new Error("Avatar image required");
-      await ctx.db.patch(userId, {
-        avatarType: "upload" as const,
-        avatarId: args.avatarId,
-      });
-    }
+    if (!args.avatarId) throw new Error("Avatar image required");
+
+    await ctx.db.patch(userId, {
+      avatarType: "upload" as const,
+      avatarId: args.avatarId,
+      avatarSeed: undefined,
+    });
   },
 });
 

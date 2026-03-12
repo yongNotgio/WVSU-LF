@@ -52,7 +52,6 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
             <UserAvatar
               name={stats?.name}
               avatarType={stats?.avatarType}
-              avatarSeed={stats?.avatarSeed}
               avatarUrl={stats?.avatarUrl}
               size={40}
             />

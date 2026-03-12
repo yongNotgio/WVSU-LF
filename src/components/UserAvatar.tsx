@@ -6,7 +6,6 @@ import Image from "next/image";
 interface UserAvatarProps {
   name?: string;
   avatarType?: string;
-  avatarSeed?: string;
   avatarUrl?: string | null;
   size?: number;
   className?: string;
@@ -15,7 +14,6 @@ interface UserAvatarProps {
 export function UserAvatar({
   name,
   avatarType,
-  avatarSeed,
   avatarUrl,
   size = 40,
   className = "",
@@ -31,22 +29,6 @@ export function UserAvatar({
         width={size}
         height={size}
         className={`object-cover ${className}`}
-        onError={() => setImgError(true)}
-      />
-    );
-  }
-
-  // Multiavatar via API (default)
-  if (!imgError) {
-    const seed = encodeURIComponent(avatarSeed || name || "default");
-    return (
-      <Image
-        src={`https://api.multiavatar.com/${seed}.svg`}
-        alt={`${name ?? "User"}'s avatar`}
-        width={size}
-        height={size}
-        className={className}
-        unoptimized
         onError={() => setImgError(true)}
       />
     );
