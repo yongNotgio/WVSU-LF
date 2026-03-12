@@ -128,29 +128,32 @@ export const confirmReturn = mutation({
 export const getGlobalLeaderboard = query({
   args: {},
   handler: async (ctx) => {
-    const colleges = await ctx.db
-      .query("colleges")
-      .withIndex("by_totalKarma")
-      .collect();
-
-    const byName = new Map(
-      colleges.map((college) => [college.name, college])
-    );
+    const users = await ctx.db.query("users").collect();
+    const collegeTotals = new Map<string, number>();
 
     for (const name of DEFAULT_COLLEGES) {
-      if (!byName.has(name)) {
-        byName.set(name, {
-          _id: `virtual-${name}` as typeof colleges[number]["_id"],
-          _creationTime: 0,
-          name,
-          totalKarma: 0,
-        });
-      }
+      collegeTotals.set(name, 0);
     }
 
-    return Array.from(byName.values()).sort(
-      (left, right) => right.totalKarma - left.totalKarma || left.name.localeCompare(right.name)
-    );
+    for (const user of users) {
+      if (!user.college) continue;
+      collegeTotals.set(
+        user.college,
+        (collegeTotals.get(user.college) ?? 0) + (user.karma ?? 0)
+      );
+    }
+
+    return Array.from(collegeTotals.entries())
+      .map(([name, totalKarma]) => ({
+        _id: `virtual-${name}` as const,
+        _creationTime: 0,
+        name,
+        totalKarma,
+      }))
+      .sort(
+        (left, right) =>
+          right.totalKarma - left.totalKarma || left.name.localeCompare(right.name)
+      );
   },
 });
 
