@@ -84,6 +84,25 @@ export const listMessages = query({
   },
 });
 
+export const getConversationDetails = query({
+  args: { conversationId: v.id("conversations") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+
+    const conversation = await ctx.db.get(args.conversationId);
+    if (!conversation) return null;
+    if (!conversation.participantIds.includes(userId)) return null;
+
+    const item = await ctx.db.get(conversation.itemId);
+    return {
+      ...conversation,
+      item,
+      isItemOwner: item?.userId === userId,
+    };
+  },
+});
+
 export const getMyConversations = query({
   args: {},
   handler: async (ctx) => {

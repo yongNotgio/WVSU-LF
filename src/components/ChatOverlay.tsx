@@ -21,9 +21,12 @@ export function ChatOverlay({
   onClose,
 }: ChatOverlayProps) {
   const messages = useQuery(api.chat.listMessages, { conversationId });
+  const convoDetails = useQuery(api.chat.getConversationDetails, { conversationId });
   const sendMessage = useMutation(api.chat.sendMessage);
+  const confirmReturn = useMutation(api.karma.confirmReturn);
 
   const [body, setBody] = useState("");
+  const [confirming, setConfirming] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -86,6 +89,36 @@ export function ChatOverlay({
           </div>
         )}
       </div>
+
+      {/* Resolved status */}
+      {convoDetails?.item?.status === "resolved" && (
+        <div className="px-3 py-1.5 bg-found-green/10 border-t border-wvsu-border text-center">
+          <span className="text-[11px] font-bold text-found-green font-mono uppercase">
+            ✅ Item Returned — Karma Awarded
+          </span>
+        </div>
+      )}
+
+      {/* Confirm Return button (visible to item owner only) */}
+      {convoDetails?.isItemOwner && convoDetails?.item?.status === "open" && (
+        <div className="px-3 py-2 border-t border-wvsu-border bg-[#fff8e1]">
+          <button
+            onClick={async () => {
+              if (!confirm("Confirm that the item has been returned? This will award karma to the finder.")) return;
+              setConfirming(true);
+              try {
+                await confirmReturn({ conversationId });
+              } finally {
+                setConfirming(false);
+              }
+            }}
+            disabled={confirming}
+            className="w-full bg-found-green text-white py-2 text-xs font-bold uppercase tracking-wider hover:bg-found-green/90 transition-colors disabled:opacity-50"
+          >
+            {confirming ? "Confirming..." : "✅ Confirm Return & Award Karma"}
+          </button>
+        </div>
+      )}
 
       {/* Input */}
       <div className="flex border-t-2 border-wvsu-border">

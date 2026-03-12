@@ -43,6 +43,51 @@ export const awardKarmaPoints = mutation({
   },
 });
 
+export const confirmReturn = mutation({
+  args: { conversationId: v.id("conversations") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
+
+    const conversation = await ctx.db.get(args.conversationId);
+    if (!conversation) throw new Error("Conversation not found");
+    if (!conversation.participantIds.includes(userId)) {
+      throw new Error("Not a participant");
+    }
+
+    const item = await ctx.db.get(conversation.itemId);
+    if (!item) throw new Error("Item not found");
+    if (item.userId !== userId) throw new Error("Only the item owner can confirm return");
+    if (item.status !== "open") throw new Error("Item is already resolved");
+
+    const finderId = conversation.participantIds.find((id) => id !== userId);
+    if (!finderId) throw new Error("Finder not found");
+
+    const finder = await ctx.db.get(finderId);
+    if (!finder) throw new Error("Finder not found");
+
+    const owner = await ctx.db.get(userId);
+    if (!owner) throw new Error("User not found");
+
+    await ctx.db.patch(finderId, { karma: (finder.karma ?? 0) + 50 });
+    await ctx.db.patch(userId, { karma: (owner.karma ?? 0) + 10 });
+
+    if (finder.college) {
+      const college = await ctx.db
+        .query("colleges")
+        .withIndex("by_name", (q) => q.eq("name", finder.college!))
+        .unique();
+      if (college) {
+        await ctx.db.patch(college._id, {
+          totalKarma: college.totalKarma + 50,
+        });
+      }
+    }
+
+    await ctx.db.patch(item._id, { status: "resolved" });
+  },
+});
+
 export const getGlobalLeaderboard = query({
   args: {},
   handler: async (ctx) => {
