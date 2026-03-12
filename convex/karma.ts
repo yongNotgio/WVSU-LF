@@ -2,6 +2,8 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
+const DEFAULT_COLLEGES = ["CICT", "CON", "CAS", "CED", "CBAA", "COE", "COM"];
+
 export const awardKarmaPoints = mutation({
   args: {
     itemId: v.id("items"),
@@ -34,6 +36,11 @@ export const awardKarmaPoints = mutation({
       if (college) {
         await ctx.db.patch(college._id, {
           totalKarma: college.totalKarma + 50,
+        });
+      } else {
+        await ctx.db.insert("colleges", {
+          name: finder.college,
+          totalKarma: 50,
         });
       }
     }
@@ -90,6 +97,11 @@ export const confirmReturn = mutation({
         await ctx.db.patch(college._id, {
           totalKarma: college.totalKarma + 50,
         });
+      } else {
+        await ctx.db.insert("colleges", {
+          name: poster.college,
+          totalKarma: 50,
+        });
       }
     }
     if (claimer.college) {
@@ -100,6 +112,11 @@ export const confirmReturn = mutation({
       if (college) {
         await ctx.db.patch(college._id, {
           totalKarma: college.totalKarma + 5,
+        });
+      } else {
+        await ctx.db.insert("colleges", {
+          name: claimer.college,
+          totalKarma: 5,
         });
       }
     }
@@ -114,9 +131,26 @@ export const getGlobalLeaderboard = query({
     const colleges = await ctx.db
       .query("colleges")
       .withIndex("by_totalKarma")
-      .order("desc")
       .collect();
-    return colleges;
+
+    const byName = new Map(
+      colleges.map((college) => [college.name, college])
+    );
+
+    for (const name of DEFAULT_COLLEGES) {
+      if (!byName.has(name)) {
+        byName.set(name, {
+          _id: `virtual-${name}` as typeof colleges[number]["_id"],
+          _creationTime: 0,
+          name,
+          totalKarma: 0,
+        });
+      }
+    }
+
+    return Array.from(byName.values()).sort(
+      (left, right) => right.totalKarma - left.totalKarma || left.name.localeCompare(right.name)
+    );
   },
 });
 

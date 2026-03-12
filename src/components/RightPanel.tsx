@@ -3,6 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
+import { ShieldCheck, Star, Trophy } from "lucide-react";
 
 const RANK_STYLES: Record<number, string> = {
   1: "bg-wvsu-gold text-wvsu-blue-deeper",
@@ -20,8 +21,9 @@ export function RightPanel() {
     <aside className="bg-white border-l-2 border-wvsu-border sticky top-14 h-[calc(100vh-56px)] overflow-y-auto hidden lg:block">
       {/* College Rankings */}
       <div className="p-4">
-        <div className="font-display text-[17px] text-wvsu-text mb-3">
-          🏆 College Rankings
+        <div className="font-display text-[17px] text-wvsu-text mb-3 flex items-center gap-2">
+          <Trophy className="h-4 w-4 text-wvsu-blue" />
+          College Rankings
         </div>
         <div className="space-y-0">
           {colleges?.map((college: { _id: string; name: string; totalKarma: number }, i: number) => {
@@ -69,8 +71,9 @@ export function RightPanel() {
 
       {/* Campus Heroes */}
       <div className="p-4 border-t-2 border-wvsu-border">
-        <div className="font-display text-[17px] text-wvsu-text mb-3">
-          🦸 Campus Heroes
+        <div className="font-display text-[17px] text-wvsu-text mb-3 flex items-center gap-2">
+          <ShieldCheck className="h-4 w-4 text-wvsu-blue" />
+          Campus Heroes
         </div>
         <div className="space-y-0">
           {topFinders?.map((finder: { _id: Id<"users">; name?: string; college?: string; karma?: number }) => {
@@ -96,15 +99,16 @@ export function RightPanel() {
                     {finder.college}
                   </div>
                 </div>
-                <div className="text-[13px] font-extrabold text-wvsu-blue font-mono shrink-0">
-                  ★ {finder.karma}
+                <div className="text-[13px] font-extrabold text-wvsu-blue font-mono shrink-0 flex items-center gap-1">
+                  <Star className="h-3.5 w-3.5 fill-current" />
+                  {finder.karma}
                 </div>
               </div>
             );
           })}
           {topFinders?.length === 0 && (
             <div className="text-xs text-wvsu-muted py-4 text-center">
-              No heroes yet — be the first!
+              No heroes yet. Be the first.
             </div>
           )}
           {!topFinders && (

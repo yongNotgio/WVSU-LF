@@ -4,6 +4,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Star } from "lucide-react";
 
 export function Navbar() {
   const stats = useQuery(api.auth.getUserStats);
@@ -48,7 +49,8 @@ export function Navbar() {
       {/* Karma Badge */}
       <div className="flex items-center gap-2 bg-wvsu-blue-deeper border border-white/15 px-3 py-1.5 text-[13px] font-bold text-wvsu-gold font-mono">
         <div className="w-[7px] h-[7px] bg-wvsu-gold rounded-full animate-pulse" />
-        ★ {stats?.karma ?? 0} KARMA
+        <Star className="h-3.5 w-3.5 fill-current" />
+        {stats?.karma ?? 0} KARMA
       </div>
     </nav>
   );

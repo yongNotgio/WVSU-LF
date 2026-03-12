@@ -3,6 +3,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id, Doc } from "../../../../convex/_generated/dataModel";
+import { FileText, MapPin, Pin } from "lucide-react";
 
 const STATUS_STYLES: Record<string, string> = {
   open: "bg-found-green/10 text-found-green border-found-green",
@@ -23,8 +24,9 @@ export default function MyPostsPage() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <div className="font-display text-2xl text-wvsu-text mb-5">
-        📌 My Posts
+      <div className="font-display text-2xl text-wvsu-text mb-5 flex items-center gap-2">
+        <Pin className="h-6 w-6 text-wvsu-blue" />
+        My Posts
       </div>
 
       {items === undefined ? (
@@ -33,7 +35,7 @@ export default function MyPostsPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-4xl mb-3">📝</div>
+          <FileText className="h-10 w-10 mx-auto mb-3 text-wvsu-muted" />
           <div className="text-sm font-semibold text-wvsu-text mb-1">
             No posts yet
           </div>
@@ -78,7 +80,10 @@ export default function MyPostsPage() {
                     {item.category}
                   </span>
                   <span className="text-[10px] font-semibold px-2 py-0.5 bg-wvsu-light-blue text-wvsu-blue font-mono">
-                    📍 {item.locationZone}
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {item.locationZone}
+                    </span>
                   </span>
                 </div>
               </div>

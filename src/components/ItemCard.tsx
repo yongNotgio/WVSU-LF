@@ -1,6 +1,7 @@
 "use client";
 
 import { Doc, Id } from "../../convex/_generated/dataModel";
+import { Briefcase, CreditCard, KeyRound, MapPin, NotebookPen, Package, Shirt, Smartphone, Watch, type LucideIcon } from "lucide-react";
 
 interface ItemCardProps {
   item: Doc<"items">;
@@ -8,21 +9,21 @@ interface ItemCardProps {
   onContact: (itemId: string) => void;
 }
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  ELECTRONICS: "📱",
-  BAGS: "🎒",
-  KEYS: "🔑",
-  STATIONERY: "📒",
-  ACCESSORIES: "⌚",
-  "ID/DOCUMENTS": "🪪",
-  CLOTHING: "👕",
-  OTHER: "📦",
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  ELECTRONICS: Smartphone,
+  BAGS: Briefcase,
+  KEYS: KeyRound,
+  STATIONERY: NotebookPen,
+  ACCESSORIES: Watch,
+  "ID/DOCUMENTS": CreditCard,
+  CLOTHING: Shirt,
+  OTHER: Package,
 };
 
 export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
   const isLost = item.type === "lost";
   const isOwnItem = currentUserId === item.userId;
-  const emoji = CATEGORY_EMOJI[item.category] ?? "📦";
+  const ItemIcon = CATEGORY_ICONS[item.category] ?? Package;
 
   const timeAgo = getTimeAgo(item._creationTime);
 
@@ -34,7 +35,7 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
     >
       {/* Image Area */}
       <div className="w-full h-[120px] bg-wvsu-light-blue flex items-center justify-center text-[40px] border-b border-wvsu-border relative">
-        {emoji}
+        <ItemIcon className="h-12 w-12 text-wvsu-blue" />
         <div
           className={`absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-extrabold uppercase font-mono tracking-wider ${
             isLost ? "bg-lost-red text-white" : "bg-found-green text-white"
@@ -57,7 +58,10 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
             {item.category}
           </span>
           <span className="text-[10px] font-semibold px-2 py-0.5 bg-wvsu-light-blue text-wvsu-blue font-mono tracking-wide">
-            📍 {item.locationZone}
+            <span className="inline-flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              {item.locationZone}
+            </span>
           </span>
         </div>
       </div>

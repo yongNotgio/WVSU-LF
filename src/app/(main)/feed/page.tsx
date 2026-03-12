@@ -9,6 +9,7 @@ import { ItemCard } from "../../../components/ItemCard";
 import { PostItemForm } from "../../../components/PostItemForm";
 import { ChatOverlay } from "../../../components/ChatOverlay";
 import { Id, Doc } from "../../../../convex/_generated/dataModel";
+import { Package, ShieldCheck, X } from "lucide-react";
 
 export default function FeedPage() {
   const [selectedZone, setSelectedZone] = useState("All Zones");
@@ -127,7 +128,7 @@ export default function FeedPage() {
           </div>
         ) : items.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-4xl mb-3">📦</div>
+            <Package className="h-10 w-10 mx-auto mb-3 text-wvsu-muted" />
             <div className="text-sm font-semibold text-wvsu-text mb-1">
               No items found
             </div>
@@ -168,7 +169,7 @@ export default function FeedPage() {
                 className="text-white/70 hover:text-white text-xl font-bold leading-none"
                 aria-label="Close"
               >
-                &times;
+                <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-5 space-y-4">
@@ -176,8 +177,9 @@ export default function FeedPage() {
                 Re: <span className="font-bold text-wvsu-text">{claimingItem.title}</span>
               </div>
               <div className="bg-[#fff8e1] border border-wvsu-gold p-3">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-wvsu-muted font-mono mb-1">
-                  &#128274; Verification Challenge
+                <div className="text-[10px] font-bold uppercase tracking-wider text-wvsu-muted font-mono mb-1 flex items-center gap-1">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Verification Challenge
                 </div>
                 <div className="text-sm text-wvsu-text font-semibold">
                   {claimingItem.challenge}

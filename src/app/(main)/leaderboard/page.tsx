@@ -3,6 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { ShieldCheck, Star, Trophy } from "lucide-react";
 
 const RANK_STYLES: Record<number, string> = {
   1: "bg-wvsu-gold text-wvsu-blue-deeper",
@@ -20,8 +21,9 @@ export default function LeaderboardPage() {
     <div className="max-w-3xl mx-auto p-6">
       {/* College Rankings */}
       <div className="mb-10">
-        <div className="font-display text-2xl text-wvsu-text mb-5">
-          🏆 College Rankings
+        <div className="font-display text-2xl text-wvsu-text mb-5 flex items-center gap-2">
+          <Trophy className="h-6 w-6 text-wvsu-blue" />
+          College Rankings
         </div>
         <div className="bg-white border-2 border-wvsu-border">
           {colleges === undefined ? (
@@ -58,8 +60,9 @@ export default function LeaderboardPage() {
                       />
                     </div>
                   </div>
-                  <div className="text-sm font-extrabold font-mono text-wvsu-blue shrink-0">
-                    ★ {college.totalKarma}
+                  <div className="text-sm font-extrabold font-mono text-wvsu-blue shrink-0 flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-current" />
+                    {college.totalKarma}
                   </div>
                 </div>
               );
@@ -70,8 +73,9 @@ export default function LeaderboardPage() {
 
       {/* Campus Heroes */}
       <div id="heroes">
-        <div className="font-display text-2xl text-wvsu-text mb-5">
-          🦸 Campus Heroes
+        <div className="font-display text-2xl text-wvsu-text mb-5 flex items-center gap-2">
+          <ShieldCheck className="h-6 w-6 text-wvsu-blue" />
+          Campus Heroes
         </div>
         <div className="bg-white border-2 border-wvsu-border">
           {topFinders === undefined ? (
@@ -80,7 +84,7 @@ export default function LeaderboardPage() {
             </div>
           ) : topFinders.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-4xl mb-3">🦸</div>
+              <ShieldCheck className="h-10 w-10 mx-auto mb-3 text-wvsu-muted" />
               <div className="text-sm font-semibold text-wvsu-text mb-1">
                 No heroes yet
               </div>
@@ -115,8 +119,9 @@ export default function LeaderboardPage() {
                       {finder.college}
                     </div>
                   </div>
-                  <div className="text-sm font-extrabold text-wvsu-blue font-mono shrink-0">
-                    ★ {finder.karma}
+                  <div className="text-sm font-extrabold text-wvsu-blue font-mono shrink-0 flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-current" />
+                    {finder.karma}
                   </div>
                 </div>
               );

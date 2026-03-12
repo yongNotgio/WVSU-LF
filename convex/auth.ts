@@ -3,6 +3,8 @@ import { Password } from "@convex-dev/auth/providers/Password";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
+const DEFAULT_COLLEGES = ["CICT", "CON", "CAS", "CED", "CBAA", "COE", "COM"];
+
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [Password],
 });
@@ -48,6 +50,14 @@ export const updateProfile = mutation({
       email: user.email ?? "",
       karma: user.karma ?? 0,
     });
+
+    const existingCollege = await ctx.db
+      .query("colleges")
+      .withIndex("by_name", (q) => q.eq("name", args.college))
+      .unique();
+    if (!existingCollege && DEFAULT_COLLEGES.includes(args.college)) {
+      await ctx.db.insert("colleges", { name: args.college, totalKarma: 0 });
+    }
   },
 });
 

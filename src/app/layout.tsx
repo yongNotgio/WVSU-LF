@@ -3,7 +3,7 @@ import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 
 export const metadata: Metadata = {
-  title: "WVSULF — Lost & Found",
+  title: "WVSULF - Lost & Found",
   description:
     "A peer-to-peer lost-and-found platform for West Visayas State University.",
 };

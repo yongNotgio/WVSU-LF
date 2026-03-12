@@ -1,13 +1,15 @@
 "use client";
 
+import { CreditCard, KeyRound, Package, Shirt, Smartphone, Watch } from "lucide-react";
+
 export function ActivityTicker() {
   const items = [
-    { text: "📱 iPhone found at Library", highlight: "iPhone" },
-    { text: "🎒 Backpack reported lost near CICT Bldg", highlight: "CICT Bldg" },
-    { text: "🔑 Keys returned — +50 Karma to finder!", highlight: "+50 Karma" },
-    { text: "🪪 ID found at Main Gate", highlight: "Main Gate" },
-    { text: "👕 Jacket lost at Gymnasium", highlight: "Gymnasium" },
-    { text: "⌚ Watch returned — +50 Karma to finder!", highlight: "+50 Karma" },
+    { Icon: Smartphone, text: "iPhone found at Library", highlight: "iPhone" },
+    { Icon: Package, text: "Backpack reported lost near CICT Bldg", highlight: "CICT Bldg" },
+    { Icon: KeyRound, text: "Keys returned - +50 Karma to finder!", highlight: "+50 Karma" },
+    { Icon: CreditCard, text: "ID found at Main Gate", highlight: "Main Gate" },
+    { Icon: Shirt, text: "Jacket lost at Gymnasium", highlight: "Gymnasium" },
+    { Icon: Watch, text: "Watch returned - +50 Karma to finder!", highlight: "+50 Karma" },
   ];
 
   return (
@@ -17,8 +19,9 @@ export function ActivityTicker() {
         {[...items, ...items].map((item, i) => (
           <span
             key={i}
-            className="inline-block mr-12 text-[11px] text-white/75 font-mono"
+            className="inline-flex items-center gap-2 mr-12 text-[11px] text-white/75 font-mono"
           >
+            <item.Icon className="h-3.5 w-3.5 shrink-0" />
             {item.text.split(item.highlight).map((part, j, arr) => (
               <span key={j}>
                 {part}

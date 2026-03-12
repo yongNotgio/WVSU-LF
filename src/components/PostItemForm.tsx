@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { ShieldCheck, X } from "lucide-react";
 
 const CATEGORIES = [
   "ELECTRONICS",
@@ -90,7 +91,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
             className="text-white/70 hover:text-white text-xl font-bold leading-none"
             aria-label="Close"
           >
-            ×
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -194,7 +195,10 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
           {/* Challenge */}
           <div>
             <label className="block text-[10px] font-bold tracking-[0.12em] uppercase text-wvsu-muted font-mono mb-1">
-              🔒 Verification Challenge
+              <span className="inline-flex items-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Verification Challenge
+              </span>
             </label>
             <input
               type="text"

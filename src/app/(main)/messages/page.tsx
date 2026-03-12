@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { ChatOverlay } from "../../../components/ChatOverlay";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { Clock3, MessageSquare } from "lucide-react";
 
 export default function MessagesPage() {
   const conversations = useQuery(api.chat.getMyConversations);
@@ -17,8 +18,9 @@ export default function MessagesPage() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <div className="font-display text-2xl text-wvsu-text mb-5">
-        💬 Messages
+      <div className="font-display text-2xl text-wvsu-text mb-5 flex items-center gap-2">
+        <MessageSquare className="h-6 w-6 text-wvsu-blue" />
+        Messages
       </div>
 
       {conversations === undefined ? (
@@ -27,7 +29,7 @@ export default function MessagesPage() {
         </div>
       ) : conversations.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-4xl mb-3">💬</div>
+          <MessageSquare className="h-10 w-10 mx-auto mb-3 text-wvsu-muted" />
           <div className="text-sm font-semibold text-wvsu-text mb-1">
             No conversations yet
           </div>
@@ -82,8 +84,9 @@ export default function MessagesPage() {
                   Re: {convo.item?.title ?? "Unknown item"}
                 </div>
                 {convo.challengeStatus === "pending" && (
-                  <div className="text-[11px] text-wvsu-gold mt-0.5 font-semibold">
-                    ⏳ Awaiting verification review
+                  <div className="text-[11px] text-wvsu-gold mt-0.5 font-semibold flex items-center gap-1">
+                    <Clock3 className="h-3 w-3" />
+                    Awaiting verification review
                   </div>
                 )}
                 {convo.lastMessage && convo.challengeStatus !== "pending" && (

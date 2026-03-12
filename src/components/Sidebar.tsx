@@ -4,6 +4,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LayoutList, MapPin, MessageSquare, Pin, ShieldCheck, Trophy } from "lucide-react";
 
 const ZONES = [
   "All Zones",
@@ -25,11 +26,11 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
   const pathname = usePathname();
 
   const navItems = [
-    { icon: "📋", label: "Feed", href: "/feed", badge: null },
-    { icon: "📌", label: "My Posts", href: "/my-posts", badge: null },
-    { icon: "💬", label: "Messages", href: "/messages", badge: null },
-    { icon: "🏆", label: "Leaderboard", href: "/leaderboard", badge: null },
-    { icon: "🦸", label: "Campus Heroes", href: "/leaderboard#heroes", badge: null },
+    { Icon: LayoutList, label: "Feed", href: "/feed", badge: null },
+    { Icon: Pin, label: "My Posts", href: "/my-posts", badge: null },
+    { Icon: MessageSquare, label: "Messages", href: "/messages", badge: null },
+    { Icon: Trophy, label: "Leaderboard", href: "/leaderboard", badge: null },
+    { Icon: ShieldCheck, label: "Campus Heroes", href: "/leaderboard#heroes", badge: null },
   ];
 
   const initials = stats?.name
@@ -66,7 +67,7 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
             </div>
             <div className="flex-1 bg-white/10 border border-white/15 p-1.5 text-center">
               <span className="block text-base font-extrabold text-wvsu-gold font-mono">
-                #{stats?.rank ?? "–"}
+                #{stats?.rank ?? "--"}
               </span>
               <span className="text-[9px] text-white/50 uppercase tracking-wider">
                 Rank
@@ -99,7 +100,7 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
                 : "text-wvsu-muted border-transparent hover:bg-wvsu-light-blue hover:text-wvsu-blue hover:border-l-wvsu-blue"
             }`}
           >
-            <span className="w-5 text-center text-sm">{item.icon}</span>
+            <item.Icon className="h-4 w-4 shrink-0" />
             {item.label}
             {item.badge && (
               <span className="ml-auto bg-wvsu-blue text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full font-mono">
@@ -128,7 +129,8 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
                 : "text-wvsu-muted border-transparent hover:bg-wvsu-light-blue hover:text-wvsu-blue hover:border-l-wvsu-blue"
             }`}
           >
-            📍 {zone}
+            <MapPin className="h-4 w-4 shrink-0" />
+            {zone}
           </button>
         ))}
       </div>
