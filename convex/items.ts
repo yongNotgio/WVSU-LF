@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -12,15 +13,10 @@ export const createItem = mutation({
     imageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthenticated");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     return await ctx.db.insert("items", {
@@ -70,15 +66,10 @@ export const getItems = query({
 export const getMyItems = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return [];
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
+    const user = await ctx.db.get(userId);
     if (!user) return [];
 
     return await ctx.db
@@ -99,15 +90,10 @@ export const getItem = query({
 export const resolveItem = mutation({
   args: { itemId: v.id("items") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthenticated");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     const item = await ctx.db.get(args.itemId);

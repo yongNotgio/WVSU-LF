@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -7,15 +8,10 @@ export const reportPost = mutation({
     reason: v.string(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthenticated");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
     // Prevent duplicate reports

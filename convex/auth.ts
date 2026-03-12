@@ -1,4 +1,4 @@
-import { convexAuth } from "@convex-dev/auth/server";
+import { convexAuth, getAuthUserId } from "@convex-dev/auth/server";
 import { Password } from "@convex-dev/auth/providers/Password";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
@@ -10,25 +10,23 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
 export const storeUser = mutation({
   args: {},
   handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthenticated");
 
-    const existing = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
+    const existing = await ctx.db.get(userId);
+    if (!existing) throw new Error("User not found");
 
-    if (existing) return existing._id;
-
-    return await ctx.db.insert("users", {
-      email: identity.email ?? "",
-      name: identity.name ?? "",
-      college: "",
-      karma: 0,
-      tokenIdentifier: identity.tokenIdentifier,
+    await ctx.db.patch(userId, {
+      email: existing.email ?? identity.email ?? "",
+      name: existing.name ?? identity.name ?? "",
+      college: existing.college ?? "",
+      karma: existing.karma ?? 0,
     });
+
+    return userId;
   },
 });
 
@@ -38,20 +36,17 @@ export const updateProfile = mutation({
     college: v.string(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthenticated");
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthenticated");
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
+    const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    await ctx.db.patch(user._id, {
+    await ctx.db.patch(userId, {
       name: args.name,
       college: args.college,
+      email: user.email ?? "",
+      karma: user.karma ?? 0,
     });
   },
 });
@@ -59,30 +54,20 @@ export const updateProfile = mutation({
 export const currentUser = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return null;
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
 
-    return await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
+    return await ctx.db.get(userId);
   },
 });
 
 export const getUserStats = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return null;
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
+    const user = await ctx.db.get(userId);
     if (!user) return null;
 
     const activePosts = await ctx.db

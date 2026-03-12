@@ -10,9 +10,7 @@ export default defineSchema({
     name: v.optional(v.string()),
     college: v.optional(v.string()),
     karma: v.optional(v.number()),
-    tokenIdentifier: v.optional(v.string()),
   })
-    .index("by_tokenIdentifier", ["tokenIdentifier"])
     .index("by_college", ["college"])
     .index("by_karma", ["karma"]),
 

@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -7,15 +8,10 @@ export const awardKarmaPoints = mutation({
     finderId: v.id("users"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthenticated");
+    const ownerId = await getAuthUserId(ctx);
+    if (!ownerId) throw new Error("Unauthenticated");
 
-    const owner = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
+    const owner = await ctx.db.get(ownerId);
     if (!owner) throw new Error("User not found");
 
     const item = await ctx.db.get(args.itemId);
