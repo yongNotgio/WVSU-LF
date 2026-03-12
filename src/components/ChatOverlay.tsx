@@ -33,6 +33,12 @@ export function ChatOverlay({
 
   const challengeStatus = convoDetails?.challengeStatus ?? "accepted";
   const isItemPoster = convoDetails?.isItemOwner;
+  const showItemReceivedButton =
+    convoDetails !== undefined &&
+    convoDetails !== null &&
+    isItemPoster === false &&
+    convoDetails.item?.status === "open" &&
+    challengeStatus === "accepted";
 
   useEffect(() => {
     if (bodyRef.current) {
@@ -177,7 +183,7 @@ export function ChatOverlay({
           )}
 
           {/* "Item Received" button — only the CLAIMER (not the poster) confirms */}
-          {!isItemPoster && convoDetails?.item?.status === "open" && (
+          {showItemReceivedButton && (
             <div className="px-3 py-2 border-t border-wvsu-border bg-[#fff8e1]">
               <button
                 onClick={async () => {

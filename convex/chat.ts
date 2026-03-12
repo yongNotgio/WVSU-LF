@@ -5,7 +5,7 @@ import { v } from "convex/values";
 export const getOrCreateConversation = mutation({
   args: {
     itemId: v.id("items"),
-    challengeAnswer: v.string(),
+    challengeAnswer: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -47,7 +47,12 @@ export const getOrCreateConversation = mutation({
     );
     if (existing) return existing._id;
 
-    // Rate limit: 3 different items in 1 hour → -50 karma + 24h shadow-ban
+    const challengeAnswer = args.challengeAnswer?.trim();
+    if (!challengeAnswer) {
+      throw new Error("Please answer the verification challenge before submitting a claim.");
+    }
+
+    // Serial Claimer: 5 different items in 1 hour → -100 karma + 24h shadow-ban
     const oneHourAgo = Date.now() - 60 * 60 * 1000;
     const recentClaims = await ctx.db
       .query("claims")
@@ -80,7 +85,7 @@ export const getOrCreateConversation = mutation({
     return await ctx.db.insert("conversations", {
       itemId: args.itemId,
       participantIds: [item.userId, userId],
-      challengeAnswer: args.challengeAnswer,
+      challengeAnswer,
       challengeStatus: "pending",
     });
   },
