@@ -60,8 +60,16 @@ export const confirmReturn = mutation({
     if (item.userId !== userId) throw new Error("Only the item owner can confirm return");
     if (item.status !== "open") throw new Error("Item is already resolved");
 
-    const finderId = conversation.participantIds.find((id) => id !== userId);
-    if (!finderId) throw new Error("Finder not found");
+    let finderId: typeof item.userId | null = null;
+    for (const participantId of conversation.participantIds) {
+      if (participantId !== item.userId) {
+        finderId = participantId;
+        break;
+      }
+    }
+    if (!finderId) {
+      throw new Error("No finder is attached to this conversation");
+    }
 
     const finder = await ctx.db.get(finderId);
     if (!finder) throw new Error("Finder not found");

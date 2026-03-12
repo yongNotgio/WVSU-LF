@@ -1,9 +1,10 @@
 "use client";
 
-import { Doc } from "../../convex/_generated/dataModel";
+import { Doc, Id } from "../../convex/_generated/dataModel";
 
 interface ItemCardProps {
   item: Doc<"items">;
+  currentUserId?: Id<"users">;
   onContact: (itemId: string) => void;
 }
 
@@ -18,8 +19,9 @@ const CATEGORY_EMOJI: Record<string, string> = {
   OTHER: "📦",
 };
 
-export function ItemCard({ item, onContact }: ItemCardProps) {
+export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
   const isLost = item.type === "lost";
+  const isOwnItem = currentUserId === item.userId;
   const emoji = CATEGORY_EMOJI[item.category] ?? "📦";
 
   const timeAgo = getTimeAgo(item._creationTime);
@@ -63,15 +65,21 @@ export function ItemCard({ item, onContact }: ItemCardProps) {
       {/* Footer */}
       <div className="flex items-center justify-between px-3 py-2 border-t border-wvsu-border bg-wvsu-off-white">
         <span className="text-[10px] text-wvsu-muted font-mono">{timeAgo}</span>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onContact(item._id);
-          }}
-          className="text-[11px] font-bold text-wvsu-blue border-[1.5px] border-wvsu-blue px-2.5 py-1 uppercase tracking-wide hover:bg-wvsu-blue hover:text-white transition-all"
-        >
-          Contact {isLost ? "Owner" : "Finder"}
-        </button>
+        {isOwnItem ? (
+          <span className="text-[10px] font-bold uppercase tracking-wide text-wvsu-muted font-mono">
+            Your post
+          </span>
+        ) : (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onContact(item._id);
+            }}
+            className="text-[11px] font-bold text-wvsu-blue border-[1.5px] border-wvsu-blue px-2.5 py-1 uppercase tracking-wide hover:bg-wvsu-blue hover:text-white transition-all"
+          >
+            Contact {isLost ? "Owner" : "Finder"}
+          </button>
+        )}
       </div>
     </div>
   );

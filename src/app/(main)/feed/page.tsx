@@ -121,6 +121,7 @@ export default function FeedPage() {
               <ItemCard
                 key={item._id}
                 item={item}
+                currentUserId={stats?._id}
                 onContact={handleContact}
               />
             ))}

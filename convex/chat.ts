@@ -8,11 +8,11 @@ export const getOrCreateConversation = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthenticated");
 
-    const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
-
     const item = await ctx.db.get(args.itemId);
     if (!item) throw new Error("Item not found");
+    if (item.userId === userId) {
+      throw new Error("You cannot start a chat on your own item");
+    }
 
     // Check for existing conversation between this user and the item
     const conversations = await ctx.db
@@ -21,14 +21,14 @@ export const getOrCreateConversation = mutation({
       .collect();
 
     const existing = conversations.find((c) =>
-      c.participantIds.includes(user._id)
+      c.participantIds.includes(userId)
     );
     if (existing) return existing._id;
 
     // Create new conversation between item owner and current user
     return await ctx.db.insert("conversations", {
       itemId: args.itemId,
-      participantIds: [item.userId, user._id],
+      participantIds: [item.userId, userId],
     });
   },
 });
