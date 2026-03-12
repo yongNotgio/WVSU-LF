@@ -3,7 +3,19 @@ import { Password } from "@convex-dev/auth/providers/Password";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-const DEFAULT_COLLEGES = ["CICT", "CON", "CAS", "CED", "CBAA", "COE", "COM"];
+const DEFAULT_COLLEGES = [
+  "CAS",
+  "CBM",
+  "COC",
+  "COD",
+  "COE",
+  "CICT",
+  "COM",
+  "CON",
+  "PESCAR",
+  "COL",
+  "ILS",
+];
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [Password],

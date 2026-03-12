@@ -2,7 +2,19 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-const DEFAULT_COLLEGES = ["CICT", "CON", "CAS", "CED", "CBAA", "COE", "COM"];
+const DEFAULT_COLLEGES = [
+  "CAS",
+  "CBM",
+  "COC",
+  "COD",
+  "COE",
+  "CICT",
+  "COM",
+  "CON",
+  "PESCAR",
+  "COL",
+  "ILS",
+];
 
 export const awardKarmaPoints = mutation({
   args: {

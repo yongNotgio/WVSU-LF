@@ -6,13 +6,17 @@ import { api } from "../../../convex/_generated/api";
 import { useRouter } from "next/navigation";
 
 const COLLEGES = [
-  { code: "CICT", name: "College of Information and Communications Technology" },
-  { code: "CON", name: "College of Nursing" },
   { code: "CAS", name: "College of Arts and Sciences" },
-  { code: "CED", name: "College of Education" },
-  { code: "CBAA", name: "College of Business Administration and Accountancy" },
-  { code: "COE", name: "College of Engineering" },
+  { code: "CBM", name: "College of Business and Management" },
+  { code: "COC", name: "College of Communication" },
+  { code: "COD", name: "College of Dentistry" },
+  { code: "COE", name: "College of Education" },
+  { code: "CICT", name: "College of Information and Communications Technology" },
   { code: "COM", name: "College of Medicine" },
+  { code: "CON", name: "College of Nursing" },
+  { code: "PESCAR", name: "College of PESCAR" },
+  { code: "COL", name: "College of Law" },
+  { code: "ILS", name: "Integrated Laboratory School" },
 ];
 
 export default function OnboardingPage() {
