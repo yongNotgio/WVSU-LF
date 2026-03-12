@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { ChatOverlay } from "../../../components/ChatOverlay";
+import { ConfirmModal } from "../../../components/ConfirmModal";
 import { UserAvatar } from "../../../components/UserAvatar";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { Clock3, MessageSquare, Trash2 } from "lucide-react";
@@ -12,17 +13,29 @@ export default function MessagesPage() {
   const conversations = useQuery(api.chat.getMyConversations);
   const stats = useQuery(api.auth.getUserStats);
   const deleteConversation = useMutation(api.chat.deleteConversation);
+  const [conversationToDelete, setConversationToDelete] = useState<Id<"conversations"> | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [activeChatId, setActiveChatId] = useState<Id<"conversations"> | null>(
     null
   );
 
   const activeConvo = conversations?.find((c: { _id: Id<"conversations"> }) => c._id === activeChatId);
 
-  const handleDelete = async (e: React.MouseEvent, convoId: Id<"conversations">) => {
+  const handleDeleteClick = (e: React.MouseEvent, convoId: Id<"conversations">) => {
     e.stopPropagation();
-    if (!confirm("Delete this conversation? All messages will be permanently removed.")) return;
-    if (activeChatId === convoId) setActiveChatId(null);
-    await deleteConversation({ conversationId: convoId });
+    setConversationToDelete(convoId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!conversationToDelete) return;
+    setDeleting(true);
+    try {
+      if (activeChatId === conversationToDelete) setActiveChatId(null);
+      await deleteConversation({ conversationId: conversationToDelete });
+      setConversationToDelete(null);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -97,9 +110,10 @@ export default function MessagesPage() {
                       </div>
                     )}
                     <button
-                      onClick={(e) => handleDelete(e, convo._id)}
+                      onClick={(e) => handleDeleteClick(e, convo._id)}
                       className="text-wvsu-muted hover:text-lost-red opacity-0 group-hover:opacity-100 transition-all p-0.5"
                       aria-label="Delete conversation"
+                      type="button"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -140,6 +154,19 @@ export default function MessagesPage() {
           onClose={() => setActiveChatId(null)}
         />
       )}
+
+      <ConfirmModal
+        open={conversationToDelete !== null}
+        title="Delete conversation?"
+        description="This will permanently remove the conversation and all of its messages for both participants."
+        confirmLabel="Delete"
+        tone="danger"
+        loading={deleting}
+        onConfirm={handleConfirmDelete}
+        onClose={() => {
+          if (!deleting) setConversationToDelete(null);
+        }}
+      />
     </div>
   );
 }

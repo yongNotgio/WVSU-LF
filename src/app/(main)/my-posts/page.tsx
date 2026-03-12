@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { ConfirmModal } from "../../../components/ConfirmModal";
 import { Id, Doc } from "../../../../convex/_generated/dataModel";
 import { FileText, MapPin, Pin } from "lucide-react";
 
@@ -15,10 +17,17 @@ const STATUS_STYLES: Record<string, string> = {
 export default function MyPostsPage() {
   const items = useQuery(api.items.getMyItems);
   const resolveItem = useMutation(api.items.resolveItem);
+  const [itemToResolve, setItemToResolve] = useState<Id<"items"> | null>(null);
+  const [resolving, setResolving] = useState(false);
 
-  const handleResolve = async (itemId: Id<"items">) => {
-    if (confirm("Mark this item as resolved?")) {
-      await resolveItem({ itemId });
+  const handleConfirmResolve = async () => {
+    if (!itemToResolve) return;
+    setResolving(true);
+    try {
+      await resolveItem({ itemId: itemToResolve });
+      setItemToResolve(null);
+    } finally {
+      setResolving(false);
     }
   };
 
@@ -89,8 +98,9 @@ export default function MyPostsPage() {
               </div>
               {item.status === "open" && (
                 <button
-                  onClick={() => handleResolve(item._id)}
+                  onClick={() => setItemToResolve(item._id)}
                   className="text-[11px] font-bold text-found-green border-[1.5px] border-found-green px-3 py-1.5 uppercase tracking-wide hover:bg-found-green hover:text-white transition-all shrink-0"
+                  type="button"
                 >
                   Resolve
                 </button>
@@ -99,6 +109,18 @@ export default function MyPostsPage() {
           ))}
         </div>
       )}
+
+      <ConfirmModal
+        open={itemToResolve !== null}
+        title="Mark item as resolved?"
+        description="Use this after the item has been returned or the case has been closed. This action updates the post status immediately."
+        confirmLabel="Resolve Item"
+        loading={resolving}
+        onConfirm={handleConfirmResolve}
+        onClose={() => {
+          if (!resolving) setItemToResolve(null);
+        }}
+      />
     </div>
   );
 }

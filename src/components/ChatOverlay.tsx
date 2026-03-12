@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
+import { ConfirmModal } from "./ConfirmModal";
 import Image from "next/image";
 import { Camera, Check, CheckCircle2, Clock3, Expand, ImagePlus, MessageSquare, Minimize2, SendHorizontal, ShieldCheck, X, XCircle } from "lucide-react";
 
@@ -35,6 +36,8 @@ export function ChatOverlay({
   const [verifying, setVerifying] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
+  const [showMismatchModal, setShowMismatchModal] = useState(false);
+  const [showConfirmReceiveModal, setShowConfirmReceiveModal] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
   const meetupProofInputRef = useRef<HTMLInputElement>(null);
@@ -98,12 +101,24 @@ export function ChatOverlay({
   };
 
   const handleVerify = async (accept: boolean) => {
-    if (!accept && !confirm("Mark this as a mismatch? The user will be blocked from this item.")) return;
     setVerifying(true);
     try {
       await verifyClaim({ conversationId, accept });
+      if (!accept) {
+        setShowMismatchModal(false);
+      }
     } finally {
       setVerifying(false);
+    }
+  };
+
+  const handleConfirmReceived = async () => {
+    setConfirming(true);
+    try {
+      await confirmReturn({ conversationId });
+      setShowConfirmReceiveModal(false);
+    } finally {
+      setConfirming(false);
     }
   };
 
@@ -159,14 +174,16 @@ export function ChatOverlay({
               onClick={() => handleVerify(true)}
               disabled={verifying}
               className="flex-1 bg-found-green text-white py-2 text-xs font-bold uppercase tracking-wider hover:bg-found-green/90 disabled:opacity-50 inline-flex items-center justify-center gap-1"
+              type="button"
             >
               <Check className="h-3.5 w-3.5" />
               Accept
             </button>
             <button
-              onClick={() => handleVerify(false)}
+              onClick={() => setShowMismatchModal(true)}
               disabled={verifying}
               className="flex-1 bg-lost-red text-white py-2 text-xs font-bold uppercase tracking-wider hover:bg-lost-red/90 disabled:opacity-50 inline-flex items-center justify-center gap-1"
+              type="button"
             >
               <XCircle className="h-3.5 w-3.5" />
               Mismatch
@@ -289,17 +306,10 @@ export function ChatOverlay({
           {showItemReceivedButton && (
             <div className="px-3 py-2 border-t border-wvsu-border bg-[#fff8e1]">
               <button
-                onClick={async () => {
-                  if (!confirm("Confirm you have received the item? Karma will be awarded.")) return;
-                  setConfirming(true);
-                  try {
-                    await confirmReturn({ conversationId });
-                  } finally {
-                    setConfirming(false);
-                  }
-                }}
+                onClick={() => setShowConfirmReceiveModal(true)}
                 disabled={confirming}
                 className="w-full bg-found-green text-white py-2 text-xs font-bold uppercase tracking-wider hover:bg-found-green/90 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-1"
+                type="button"
               >
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 {confirming ? "Confirming..." : "Item Received"}
@@ -350,6 +360,7 @@ export function ChatOverlay({
                 onClick={handleSend}
                 disabled={uploading}
                 className="bg-wvsu-blue text-white px-3.5 font-bold text-sm hover:bg-wvsu-blue-dark transition-colors"
+                type="button"
               >
                 <SendHorizontal className="h-4 w-4" />
               </button>
@@ -357,6 +368,31 @@ export function ChatOverlay({
           )}
         </>
       )}
+
+      <ConfirmModal
+        open={showMismatchModal}
+        title="Reject this claim as a mismatch?"
+        description="The claimer will be blocked from this item after you mark the verification as a mismatch."
+        confirmLabel="Mark Mismatch"
+        tone="danger"
+        loading={verifying}
+        onConfirm={() => handleVerify(false)}
+        onClose={() => {
+          if (!verifying) setShowMismatchModal(false);
+        }}
+      />
+
+      <ConfirmModal
+        open={showConfirmReceiveModal}
+        title="Confirm item received?"
+        description="This will mark the item as returned and award karma to the participants involved."
+        confirmLabel="Confirm Receipt"
+        loading={confirming}
+        onConfirm={handleConfirmReceived}
+        onClose={() => {
+          if (!confirming) setShowConfirmReceiveModal(false);
+        }}
+      />
     </div>
   );
 }
