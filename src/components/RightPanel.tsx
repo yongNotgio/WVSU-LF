@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "convex/react";
+import { useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { ShieldCheck, Star, Trophy } from "lucide-react";
@@ -13,6 +14,7 @@ const RANK_STYLES: Record<number, string> = {
 
 export function RightPanel() {
   const colleges = useQuery(api.karma.getGlobalLeaderboard);
+  const [showAllColleges, setShowAllColleges] = useState(false);
   const topFinders = useQuery(api.karma.getTopFinders);
 
   const maxKarma = colleges?.[0]?.totalKarma || 1;
@@ -26,41 +28,53 @@ export function RightPanel() {
           College Rankings
         </div>
         <div className="space-y-0">
-          {colleges?.map((college: { _id: string; name: string; totalKarma: number }, i: number) => {
-            const rank = i + 1;
-            const barWidth =
-              maxKarma > 0
-                ? Math.round((college.totalKarma / maxKarma) * 100)
-                : 0;
-            return (
-              <div
-                key={college._id}
-                className="flex items-center gap-2.5 py-2 border-b border-wvsu-border"
-              >
+          {colleges?.slice(0, showAllColleges ? colleges.length : 5).map(
+            (college: { _id: string; name: string; totalKarma: number }, i: number) => {
+              const rank = i + 1;
+              const barWidth =
+                maxKarma > 0
+                  ? Math.round((college.totalKarma / maxKarma) * 100)
+                  : 0;
+              return (
                 <div
-                  className={`w-6 h-6 flex items-center justify-center text-[11px] font-extrabold font-mono shrink-0 ${
-                    RANK_STYLES[rank] ?? "bg-wvsu-light-blue text-wvsu-blue"
-                  }`}
+                  key={college._id}
+                  className="flex items-center gap-2.5 py-2 border-b border-wvsu-border"
                 >
-                  {rank}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-semibold text-wvsu-text">
-                    {college.name}
+                  <div
+                    className={`w-6 h-6 flex items-center justify-center text-[11px] font-extrabold font-mono shrink-0 ${
+                      RANK_STYLES[rank] ?? "bg-wvsu-light-blue text-wvsu-blue"
+                    }`}
+                  >
+                    {rank}
                   </div>
-                  <div className="h-1 bg-wvsu-light-blue mt-0.5">
-                    <div
-                      className="h-1 bg-wvsu-blue transition-all"
-                      style={{ width: `${barWidth}%` }}
-                    />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[13px] font-semibold text-wvsu-text">
+                      {college.name}
+                    </div>
+                    <div className="h-1 bg-wvsu-light-blue mt-0.5">
+                      <div
+                        className="h-1 bg-wvsu-blue transition-all"
+                        style={{ width: `${barWidth}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="text-xs font-bold font-mono text-wvsu-blue shrink-0">
+                    {college.totalKarma}
                   </div>
                 </div>
-                <div className="text-xs font-bold font-mono text-wvsu-blue shrink-0">
-                  {college.totalKarma}
-                </div>
-              </div>
-            );
-          })}
+              );
+            }
+          )}
+          {colleges && colleges.length > 5 && (
+            <div className="py-2 text-center">
+              <button
+                onClick={() => setShowAllColleges((s) => !s)}
+                className="text-sm font-semibold text-wvsu-blue hover:underline"
+              >
+                {showAllColleges ? "Show less" : `See more (${colleges.length - 5} more)`}
+              </button>
+            </div>
+          )}
           {!colleges && (
             <div className="text-xs text-wvsu-muted py-4 text-center">
               Loading...

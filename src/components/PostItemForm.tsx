@@ -232,7 +232,9 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
             disabled={submitting}
             className="w-full bg-wvsu-blue text-white py-3 text-sm font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors disabled:opacity-50"
           >
-            {submitting ? "Posting..." : `Post ${type === "lost" ? "Lost" : "Found"} Item`}
+            {submitting
+              ? "Posting..."
+              : `Post ${type === "lost" ? "Lost" : "Found"} Item`}
           </button>
         </form>
       </div>
