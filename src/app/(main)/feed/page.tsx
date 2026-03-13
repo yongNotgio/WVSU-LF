@@ -78,13 +78,7 @@ export default function FeedPage() {
             Lost & Found Feed
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowPostForm(true)}
-              className="bg-wvsu-blue text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors"
-            >
-              + Post Item
-            </button>
-            <div className="w-40">
+            <div className="w-30">
               <select
                 value={selectedZone}
                 onChange={(e) => setSelectedZone(e.target.value)}
@@ -98,6 +92,12 @@ export default function FeedPage() {
                 ))}
               </select>
             </div>
+            <button
+              onClick={() => setShowPostForm(true)}
+              className="bg-wvsu-blue text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors"
+            >
+              + Post Item
+            </button>
           </div>
         </div>
 

@@ -115,7 +115,7 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
 
           {/* Slightly pull the Donate button up to meet the image */}
           <div className="-mt-12">
-            <a href="https://www.buymeacoffee.com/" target="_blank" rel="noreferrer" className="inline-block w-full text-center px-3 py-3 bg-wvsu-gold text-wvsu-blue font-bold rounded-md hover:opacity-90 transition">
+            <a href="" target="_blank" rel="noreferrer" className="inline-block w-full text-center px-3 py-3 bg-wvsu-gold text-wvsu-blue font-bold rounded-md hover:opacity-90 transition">
               Donate
             </a>
           </div>
