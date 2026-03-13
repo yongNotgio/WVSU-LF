@@ -44,112 +44,82 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
   ];
 
   return (
-    <aside className="bg-white border-r-2 border-wvsu-border sticky top-14 h-[calc(100vh-56px)] overflow-y-auto hidden lg:flex lg:flex-col">
-      {/* Profile Card */}
-      <div className="p-4">
-        <div className="bg-wvsu-blue p-3.5">
-          <div className="w-10 h-10 rounded-sm overflow-hidden mb-2">
-            <UserAvatar
-              name={stats?.name}
-              avatarType={stats?.avatarType}
-              avatarUrl={stats?.avatarUrl}
-              size={40}
-            />
+    <aside className="bg-white border-r-2 border-wvsu-border sticky top-14 h-[calc(100vh-56px)] hidden lg:flex lg:flex-col">
+      {/* Profile Card (compact) */}
+      <div className="p-3">
+        <div className="rounded-lg overflow-hidden bg-wvsu-blue p-3 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-md overflow-hidden ring-2 ring-white/20 flex-shrink-0">
+              <UserAvatar
+                name={stats?.name}
+                avatarType={stats?.avatarType}
+                avatarUrl={stats?.avatarUrl}
+                size={40}
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold text-white truncate" title={stats?.name ?? undefined}>
+                {stats?.name || "Loading..."}
+              </div>
+              <div className="mt-0">
+                <span className="text-xs text-white/85 font-mono truncate">
+                  {stats?.college || "No college set"}
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="text-sm font-bold text-white">
-            {stats?.name || "Loading..."}
-          </div>
-          <div className="text-[11px] text-white/60 font-mono mt-0.5">
-            {stats?.college || "No college set"}
-          </div>
-          <div className="flex gap-2 mt-2.5">
-            <div className="flex-1 bg-white/10 border border-white/15 p-1.5 text-center">
-              <span className="block text-base font-extrabold text-wvsu-gold font-mono">
+
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <div className="bg-white/8 rounded-md p-1.5 text-center">
+              <div className="text-sm font-extrabold text-wvsu-gold font-mono leading-none">
                 {stats?.karma ?? 0}
-              </span>
-              <span className="text-[9px] text-white/50 uppercase tracking-wider">
+              </div>
+              <div className="text-[8px] text-white/50 uppercase tracking-wider">
                 Karma
-              </span>
+              </div>
             </div>
-            <div className="flex-1 bg-white/10 border border-white/15 p-1.5 text-center">
-              <span className="block text-base font-extrabold text-wvsu-gold font-mono">
+            <div className="bg-white/8 rounded-md p-1.5 text-center">
+              <div className="text-sm font-extrabold text-wvsu-gold font-mono leading-none">
                 #{stats?.rank ?? "--"}
-              </span>
-              <span className="text-[9px] text-white/50 uppercase tracking-wider">
+              </div>
+              <div className="text-[8px] text-white/50 uppercase tracking-wider">
                 Rank
-              </span>
+              </div>
             </div>
-            <div className="flex-1 bg-white/10 border border-white/15 p-1.5 text-center">
-              <span className="block text-base font-extrabold text-wvsu-gold font-mono">
+            <div className="bg-white/8 rounded-md p-1.5 text-center">
+              <div className="text-sm font-extrabold text-wvsu-gold font-mono leading-none">
                 {stats?.activePosts ?? 0}
-              </span>
-              <span className="text-[9px] text-white/50 uppercase tracking-wider">
+              </div>
+              <div className="text-[8px] text-white/50 uppercase tracking-wider">
                 Active
-              </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="px-5 pb-6 border-b border-wvsu-border mb-5">
-        <div className="text-[10px] font-bold tracking-[0.12em] uppercase text-wvsu-muted font-mono mb-2.5">
-          Navigation
-        </div>
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex items-center gap-2.5 px-5 py-2 text-[13.5px] font-semibold border-l-[3px] transition-all ${
-              pathname?.startsWith(item.href.split("#")[0])
-                ? "bg-wvsu-light-blue text-wvsu-blue border-l-wvsu-blue"
-                : "text-wvsu-muted border-transparent hover:bg-wvsu-light-blue hover:text-wvsu-blue hover:border-l-wvsu-blue"
-            }`}
-          >
-            <item.Icon className="h-4 w-4 shrink-0" />
-            {item.label}
-            {item.badge && (
-              <span className="ml-auto bg-wvsu-blue text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full font-mono">
-                {item.badge}
-              </span>
-            )}
-          </Link>
-        ))}
-      </div>
+      {/* Buy the devs a coffee (moved below profile) */}
+      <div className="px-4 mb-4">
+        <div className="rounded-lg p-3 border border-wvsu-border bg-gradient-to-br from-white to-white/95 text-center">
+          <div>
+            <div className="text-base font-bold text-wvsu-text">
+              Buy the devs a coffee
+            </div>
+            <div className="text-sm text-wvsu-muted mt-0">
+              Support the project — small donations keep us caffeinated ☕
+            </div>
+          </div>
 
-      {/* Zone Filter */}
-      <div className="px-4">
-        <div className="text-[10px] font-bold tracking-[0.12em] uppercase text-wvsu-muted font-mono mb-2.5">
-          Filter by Zone
-        </div>
-        {ZONES.map((zone) => (
-          <button
-            key={zone}
-            onClick={() =>
-              onZoneChange(zone === "All Zones" ? "" : zone)
-            }
-            className={`flex items-center gap-2.5 w-full text-left px-2 py-2 text-[13.5px] font-semibold border-l-[3px] transition-all ${
-              (zone === "All Zones" && !selectedZone) ||
-              zone === selectedZone
-                ? "bg-wvsu-light-blue text-wvsu-blue border-l-wvsu-blue"
-                : "text-wvsu-muted border-transparent hover:bg-wvsu-light-blue hover:text-wvsu-blue hover:border-l-wvsu-blue"
-            }`}
-          >
-            <MapPin className="h-4 w-4 shrink-0" />
-            {zone}
-          </button>
-        ))}
-      </div>
+          {/* Large image (w-48/h-48) with tightened spacing so it sits flush with the Donate button */}
+          <img src="/devcoffee.png" alt="Buy devs a coffee" className="w-48 h-48 mx-auto object-cover rounded-md shadow-sm mt-2 -mb-3" />
 
-      {/* Logout */}
-      <div className="px-4 mt-auto pt-4 pb-4 border-t border-wvsu-border">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2.5 w-full text-left px-2 py-2 text-[13.5px] font-semibold text-lost-red border-l-[3px] border-transparent hover:bg-lost-red/5 hover:border-l-lost-red transition-all"
-        >
-          <LogOut className="h-4 w-4 shrink-0" />
-          Log Out
-        </button>
+          {/* Pull the Donate button up to overlap the image slightly */}
+          <div className="-mt-3">
+            <a href="https://www.buymeacoffee.com/" target="_blank" rel="noreferrer" className="inline-block w-full text-center px-3 py-3 bg-wvsu-gold text-wvsu-blue font-bold rounded-md hover:opacity-90 transition">
+              Donate
+            </a>
+          </div>
+        </div>
       </div>
     </aside>
   );

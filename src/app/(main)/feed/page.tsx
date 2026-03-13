@@ -73,16 +73,32 @@ export default function FeedPage() {
       {/* Main Content */}
       <div className="p-6 min-h-[calc(100vh-56px)]">
         {/* Header */}
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-5 gap-3">
           <div className="font-display text-2xl text-wvsu-text">
             Lost & Found Feed
           </div>
-          <button
-            onClick={() => setShowPostForm(true)}
-            className="bg-wvsu-blue text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors"
-          >
-            + Post Item
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowPostForm(true)}
+              className="bg-wvsu-blue text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors"
+            >
+              + Post Item
+            </button>
+            <div className="w-40">
+              <select
+                value={selectedZone}
+                onChange={(e) => setSelectedZone(e.target.value)}
+                className="w-full text-sm font-semibold px-2 py-2 border border-wvsu-border rounded"
+              >
+                <option value="All Zones">All Zones</option>
+                {["Library", "CICT Bldg", "CON Bldg", "CAS Bldg", "Canteen Area", "Main Gate"].map((zone) => (
+                  <option key={zone} value={zone}>
+                    {zone}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Type Filter Tabs */}
