@@ -61,7 +61,7 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
               <div className="text-sm font-semibold text-white truncate" title={stats?.name ?? undefined}>
                 {stats?.name || "Loading..."}
               </div>
-              <div className="mt-0">
+              <div className="-mt-1">
                 <span className="text-xs text-white/85 font-mono truncate">
                   {stats?.college || "No college set"}
                 </span>
@@ -100,8 +100,8 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
 
       {/* Buy the devs a coffee (moved below profile) */}
       <div className="px-4 mb-4">
-        <div className="rounded-lg p-3 border border-wvsu-border bg-gradient-to-br from-white to-white/95 text-center">
-          <div>
+        <div className="rounded-lg p-2 border border-wvsu-border bg-gradient-to-br from-white to-white/95 text-center">
+          <div className="-mb-6">
             <div className="text-base font-bold text-wvsu-text">
               Buy the devs a coffee
             </div>
@@ -110,11 +110,11 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
             </div>
           </div>
 
-          {/* Large image (w-48/h-48) with tightened spacing so it sits flush with the Donate button */}
-          <img src="/devcoffee.png" alt="Buy devs a coffee" className="w-48 h-48 mx-auto object-cover rounded-md shadow-sm mt-2 -mb-3" />
+          {/* Large image with minimal top spacing so it sits closer to the Donate button */}
+          <img src="/devcoffee.png" alt="Buy devs a coffee" className="w-48 h-48 mx-auto object-cover rounded-md shadow-sm mt-0 -mb-5" />
 
-          {/* Pull the Donate button up to overlap the image slightly */}
-          <div className="-mt-3">
+          {/* Slightly pull the Donate button up to meet the image */}
+          <div className="-mt-12">
             <a href="https://www.buymeacoffee.com/" target="_blank" rel="noreferrer" className="inline-block w-full text-center px-3 py-3 bg-wvsu-gold text-wvsu-blue font-bold rounded-md hover:opacity-90 transition">
               Donate
             </a>
