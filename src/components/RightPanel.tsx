@@ -4,7 +4,7 @@ import { useQuery } from "convex/react";
 import { useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
-import { ShieldCheck, Star, Trophy } from "lucide-react";
+import { Building2, UserRound, Zap } from "lucide-react";
 
 const RANK_STYLES: Record<number, string> = {
   1: "background:#FFF3BF;color:#92400E;border:1px solid #FFE066;",
@@ -23,7 +23,7 @@ export function RightPanel() {
       {/* College Rankings */}
       <div className="bg-white border border-[#E9ECEF] rounded-[10px] shadow p-2 animate-[up_0.4s_var(--ease2)_both]">
         <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-2 mb-2 border-b border-[#E9ECEF]">
-          🏛️ College Rankings
+          <Building2 size={14} className="text-[#495057]" /> College Rankings
           <span className="ml-auto text-[.6rem] font-bold px-2 py-0.5 rounded bg-[#FFF3BF] text-[#92400E] border border-[#E9ECEF]">
             This Week
           </span>
@@ -88,7 +88,7 @@ export function RightPanel() {
       {/* Campus Heroes */}
       <div className="bg-white border border-[#E9ECEF] rounded-[10px] shadow p-2 animate-[up_0.4s_var(--ease2)_both]">
         <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-2 mb-2 border-b border-[#E9ECEF]">
-          🦸 Student Heroes
+          <UserRound size={14} className="text-[#495057]" /> Student Heroes
           <span className="ml-auto text-[.6rem] font-bold px-2 py-0.5 rounded bg-[#FFE3E3] text-[#C92A2A] border border-[#E9ECEF]">
             Top 5
           </span>
@@ -121,8 +121,8 @@ export function RightPanel() {
                       {finder.college}
                     </div>
                   </div>
-                  <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.7rem] font-bold text-[#D97706] shrink-0 bg-[#FFF3BF] px-2 py-0.5 rounded border border-[#FFE066]">
-                    ⚡ {finder.karma}
+                  <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.7rem] font-bold text-[#D97706] shrink-0 bg-[#FFF3BF] px-2 py-0.5 rounded border border-[#FFE066] inline-flex items-center gap-1">
+                    <Zap size={12} /> {finder.karma}
                   </div>
                 </div>
               );
