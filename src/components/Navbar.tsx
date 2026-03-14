@@ -55,123 +55,40 @@ export function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 h-14 flex items-center justify-between px-6 bg-wvsu-blue border-b-[3px] border-wvsu-blue-deeper">
-      {/* Brand */}
-      <Link href="/feed" className="flex items-center gap-2.5">
-        <div className="w-[30px] h-[30px] bg-white border-2 border-wvsu-gold flex items-center justify-center font-display text-sm text-wvsu-blue font-black tracking-tighter">
-          W
-        </div>
-        <div className="font-display text-lg text-white tracking-wide">
-          WVS<span className="text-wvsu-gold">ULF</span>
-        </div>
-      </Link>
-
-      {/* Nav Links */}
-      <div className="flex items-center gap-0.5">
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`relative px-3.5 py-1.5 text-[13px] font-semibold uppercase tracking-wider border-b-2 transition-all ${
-              pathname?.startsWith(link.href)
-                ? "text-white border-b-wvsu-gold"
-                : "text-white/75 border-transparent hover:text-white hover:border-wvsu-gold"
-            }`}
-          >
-            {link.label}
-            {link.label === "Messages" && !!unreadCount && unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-lost-red text-white text-[9px] font-bold min-w-[16px] h-4 flex items-center justify-center rounded-full font-mono">
-                {unreadCount}
-              </span>
-            )}
-          </Link>
-        ))}
-      </div>
-
-      {/* Karma Badge + User Menu */}
-      <div className="flex items-center gap-2.5">
-        <div className="flex items-center gap-2 bg-wvsu-blue-deeper border border-white/15 px-3 py-1.5 text-[13px] font-bold text-wvsu-gold font-mono">
-          <div className="w-[7px] h-[7px] bg-wvsu-gold rounded-full animate-pulse" />
-          <Star className="h-3.5 w-3.5 fill-current" />
-          {stats?.karma ?? 0} KARMA
-        </div>
-
-        {/* Avatar / User Menu */}
-        <div className="relative">
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="w-8 h-8 rounded-sm overflow-hidden border-2 border-white/30 hover:border-wvsu-gold transition-colors"
-          >
-            <UserAvatar
-              name={stats?.name}
-              avatarType={stats?.avatarType}
-              avatarUrl={stats?.avatarUrl}
-              size={28}
-            />
+    <nav className="sticky top-0 z-50 bg-white border-b border-[#E9ECEF] shadow-sm">
+      <div className="max-w-[1280px] mx-auto px-7 h-[62px] flex items-center justify-between gap-4">
+        {/* Brand */}
+        <Link href="/feed" className="logo flex items-center gap-2.5 no-underline shrink-0">
+          <div className="logo-mark w-9 h-9 rounded-[10px] bg-[#5BC4F5] flex items-center justify-center text-[17px] transition-transform duration-300" >🔗</div>
+          <span className="logo-name font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[1.15rem]">
+            <span className="text-[#1A9FD4]">WVSU</span><span className="text-black">LF</span>
+          </span>
+        </Link>
+        {/* Nav Links */}
+        <ul className="nav-links flex gap-0.5 list-none">
+          {navLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-[.84rem] font-semibold transition-all duration-200 no-underline ${pathname?.startsWith(link.href)
+                  ? 'bg-[#EBF7FD] text-[#1A9FD4] font-bold' : 'text-[#868E96] hover:bg-[#F8F9FA] hover:text-[#212529]'}`}
+              >
+                {link.label}
+                {link.label === "Messages" && !!unreadCount && unreadCount > 0 && (
+                  <span className="nav-badge bg-[#FF6B6B] text-white text-[.58rem] px-1.5 py-0.5 rounded-full font-bold ml-1">{unreadCount}</span>
+                )}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        {/* Right */}
+        <div className="nav-right flex items-center gap-2 shrink-0">
+          <button className="icon-btn w-9 h-9 rounded-[10px] bg-[#F8F9FA] border border-[#E9ECEF] flex items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#EBF7FD] hover:border-[#5BC4F5]">
+            🔔<span className="notif-dot absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF6B6B] rounded-full border-[1.5px] border-white animate-pulse"></span>
           </button>
-
-          {menuOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setMenuOpen(false)}
-              />
-              <div className="absolute right-0 top-full mt-2 w-60 bg-white border-2 border-wvsu-border shadow-[4px_4px_0_var(--blue)] z-50">
-                {/* User info */}
-                <div className="p-3 border-b border-wvsu-border flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-sm overflow-hidden shrink-0">
-                    <UserAvatar
-                      name={stats?.name}
-                      avatarType={stats?.avatarType}
-                      avatarUrl={stats?.avatarUrl}
-                      size={48}
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-sm font-bold text-wvsu-text truncate">
-                      {stats?.name ?? "User"}
-                    </div>
-                    <div className="text-[11px] text-wvsu-muted font-mono">
-                      {stats?.college || "No college"}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Avatar options */}
-                <div className="p-2 border-b border-wvsu-border space-y-1">
-                  <div className="text-[9px] font-bold tracking-[0.12em] uppercase text-wvsu-muted font-mono px-2 pt-1">
-                    Avatar
-                  </div>
-                  <button
-                    onClick={() => avatarInputRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-wvsu-text hover:bg-wvsu-light-blue transition-colors disabled:opacity-50 text-left"
-                  >
-                    <Upload className="h-3.5 w-3.5 text-wvsu-blue" />
-                    {uploading ? "Uploading..." : "Upload Photo"}
-                  </button>
-                  <input
-                    ref={avatarInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleAvatarUpload}
-                  />
-                </div>
-
-                {/* Logout */}
-                <div className="p-2">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-lost-red hover:bg-lost-red/5 transition-colors text-left"
-                  >
-                    <LogOut className="h-3.5 w-3.5" />
-                    Log Out
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
+          <div className="nav-av w-9 h-9 rounded-[10px] bg-[#EBF7FD] border border-[#5bc4f54d] flex items-center justify-center font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#1A9FD4] cursor-pointer transition-all duration-200 hover:bg-[#5BC4F5] hover:text-white">
+            {stats?.name?.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2) || 'JD'}
+          </div>
         </div>
       </div>
     </nav>

@@ -35,91 +35,41 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
     router.push("/sign-in");
   };
 
-  const navItems = [
-    { Icon: LayoutList, label: "Feed", href: "/feed", badge: null },
-    { Icon: Pin, label: "My Posts", href: "/my-posts", badge: null },
-    { Icon: MessageSquare, label: "Messages", href: "/messages", badge: unreadCount && unreadCount > 0 ? String(unreadCount) : null },
-    { Icon: Trophy, label: "Leaderboard", href: "/leaderboard", badge: null },
-    { Icon: ShieldCheck, label: "Campus Heroes", href: "/leaderboard#heroes", badge: null },
-  ];
-
   return (
-    <aside className="bg-white border-r-2 border-wvsu-border sticky top-14 h-[calc(100vh-56px)] hidden lg:flex lg:flex-col">
-      {/* Profile Card (compact) */}
-      <div className="p-3">
-        <div className="rounded-lg overflow-hidden bg-wvsu-blue p-3 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md overflow-hidden ring-2 ring-white/20 flex-shrink-0">
-              <UserAvatar
-                name={stats?.name}
-                avatarType={stats?.avatarType}
-                avatarUrl={stats?.avatarUrl}
-                size={40}
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-semibold text-white truncate" title={stats?.name ?? undefined}>
-                {stats?.name || "Loading..."}
-              </div>
-              <div className="-mt-1">
-                <span className="text-xs text-white/85 font-mono truncate">
-                  {stats?.college || "No college set"}
-                </span>
-              </div>
-            </div>
+    <aside className="flex flex-col gap-4 p-0 overflow-visible">
+      {/* Profile Card */}
+      <div className="relative rounded-[10px] shadow-md border border-[#E9ECEF] mt-2 bg-transparent">
+        <div className="flex justify-center -mt-8 mb-2 z-10 relative">
+          <div className="w-[56px] h-[56px] rounded-full bg-[#EBF7FD] border-4 border-white shadow-lg flex items-center justify-center font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-2xl text-[#1A9FD4]">
+            {stats?.name?.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2) || 'JD'}
           </div>
-
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <div className="bg-white/8 rounded-md p-1.5 text-center">
-              <div className="text-sm font-extrabold text-wvsu-gold font-mono leading-none">
-                {stats?.karma ?? 0}
-              </div>
-              <div className="text-[8px] text-white/50 uppercase tracking-wider">
-                Karma
-              </div>
+        </div>
+        <div className="px-3 pb-3 pt-2">
+          <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.95rem] font-extrabold text-[#212529] text-center">{stats?.name || "Juan Dela Cruz"}</div>
+          <div className="text-[.7rem] text-[#868E96] font-medium text-center mt-1">{stats?.college || "College of Engineering · 3rd Year"}</div>
+          <div className="h-px bg-[#E9ECEF] my-3.5" />
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-[#F8F9FA] border border-[#E9ECEF] rounded-[10px] py-2 px-1.5 flex flex-col items-center cursor-default transition-all">
+              <div className="text-[.95rem] font-extrabold text-[#D97706] leading-none">🏅 #{stats?.rank ?? 4}</div>
+              <div className="text-[.61rem] text-[#868E96] font-semibold mt-1 text-center">IT Rank</div>
             </div>
-            <div className="bg-white/8 rounded-md p-1.5 text-center">
-              <div className="text-sm font-extrabold text-wvsu-gold font-mono leading-none">
-                #{stats?.rank ?? "--"}
-              </div>
-              <div className="text-[8px] text-white/50 uppercase tracking-wider">
-                Rank
-              </div>
+            <div className="bg-[#F8F9FA] border border-[#E9ECEF] rounded-[10px] py-2 px-1.5 flex flex-col items-center cursor-default transition-all">
+              <div className="text-[.95rem] font-extrabold text-[#1A9FD4] leading-none">{stats?.karma ?? 340}</div>
+              <div className="text-[.61rem] text-[#868E96] font-semibold mt-1 text-center">Karma pts</div>
             </div>
-            <div className="bg-white/8 rounded-md p-1.5 text-center">
-              <div className="text-sm font-extrabold text-wvsu-gold font-mono leading-none">
-                {stats?.activePosts ?? 0}
-              </div>
-              <div className="text-[8px] text-white/50 uppercase tracking-wider">
-                Active
-              </div>
+            <div className="bg-[#F8F9FA] border border-[#E9ECEF] rounded-[10px] py-2 px-1.5 flex flex-col items-center cursor-default transition-all">
+              <div className="text-[.95rem] font-extrabold text-[#212529] leading-none">{stats?.activePosts ?? 5}</div>
+              <div className="text-[.61rem] text-[#868E96] font-semibold mt-1 text-center">Active Posts</div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Buy the devs a coffee (moved below profile) */}
-      <div className="px-4 mb-4">
-        <div className="rounded-lg p-2 border border-wvsu-border bg-gradient-to-br from-white to-white/95 text-center">
-          <div className="-mb-6">
-            <div className="text-base font-bold text-wvsu-text">
-              Buy the devs a coffee
-            </div>
-            <div className="text-sm text-wvsu-muted mt-0">
-              Support the project — small donations keep us caffeinated ☕
-            </div>
-          </div>
-
-          {/* Large image with minimal top spacing so it sits closer to the Donate button */}
-          <img src="/devcoffee.png" alt="Buy devs a coffee" className="w-48 h-48 mx-auto object-cover rounded-md shadow-sm mt-0 -mb-5" />
-
-          {/* Slightly pull the Donate button up to meet the image */}
-          <div className="-mt-12">
-            <a href="" target="_blank" rel="noreferrer" className="inline-block w-full text-center px-3 py-3 bg-wvsu-gold text-wvsu-blue font-bold rounded-md hover:opacity-90 transition">
-              Donate
-            </a>
-          </div>
-        </div>
+      {/* Donate Card */}
+      <div className="rounded-[14px] shadow-md border border-[#E9ECEF] p-4 text-center cursor-pointer transition-all duration-200 relative overflow-hidden bg-transparent">
+        <span className="text-[26px] mb-2 block">☕</span>
+        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.87rem] font-extrabold text-[#212529] mb-1">Buy the Devs a Coffee</div>
+        <div className="text-[.71rem] text-[#868E96] font-medium leading-tight mb-3">WVSULF is free. Help keep the servers running with a small donation!</div>
+        <button className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#5BC4F5] text-[#212529] rounded-[9px] font-['Outfit',sans-serif] text-[.8rem] font-bold shadow-md transition-all">☕ Donate Now</button>
       </div>
     </aside>
   );
