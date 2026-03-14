@@ -5,7 +5,6 @@ import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import { Navbar } from "../../components/Navbar";
-import { ActivityTicker } from "../../components/ActivityTicker";
 
 export default function MainLayout({
   children,
@@ -54,8 +53,7 @@ export default function MainLayout({
   return (
     <div className="min-h-screen bg-wvsu-off-white">
       <Navbar />
-      <ActivityTicker />
-      <main className="pt-14">{children}</main>
+      <main className="pt-8">{children}</main>
     </div>
   );
 }

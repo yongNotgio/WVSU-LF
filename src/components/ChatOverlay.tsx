@@ -124,16 +124,16 @@ export function ChatOverlay({
 
   return (
     <div
-      className={`fixed bg-white border-2 border-wvsu-blue z-[100] shadow-[6px_6px_0_var(--blue)] transition-all ${
+      className={`fixed bg-white border-2 border-[#1A9FD4] z-[100] rounded-[18px] shadow-[0_8px_32px_0_rgba(26,159,212,0.15)] transition-all ${
         isMaximized
           ? "inset-4 md:inset-6"
-          : "bottom-6 right-6 w-[320px] max-w-[calc(100vw-3rem)]"
+          : "bottom-6 right-6 w-[340px] max-w-[calc(100vw-3rem)]"
       }`}
     >
       {/* Header */}
-      <div className="bg-wvsu-blue px-3.5 py-2.5 flex items-center justify-between">
-        <div className="text-xs font-bold text-white uppercase font-mono truncate flex items-center gap-1.5">
-          <MessageSquare className="h-3.5 w-3.5 shrink-0" />
+      <div className="bg-[#1A9FD4] px-4 py-3 flex items-center justify-between rounded-t-[16px]">
+        <div className="text-xs font-bold text-white uppercase font-sans truncate flex items-center gap-2">
+          <MessageSquare className="h-4 w-4 shrink-0" />
           {otherUserName}
         </div>
         <div className="flex items-center gap-1">
@@ -241,10 +241,10 @@ export function ChatOverlay({
               return (
                 <div
                   key={msg._id}
-                  className={`max-w-[75%] px-2.5 py-2 text-xs ${
+                  className={`max-w-[75%] px-3 py-2 text-xs rounded-[10px] ${
                     isMe
-                      ? "bg-wvsu-blue text-white self-end"
-                      : "bg-white border border-wvsu-border text-wvsu-text self-start"
+                      ? "bg-[#1A9FD4] text-white self-end"
+                      : "bg-white border border-[#B6E0FE] text-[#212529] self-start"
                   }`}
                 >
                   {msg.isMeetupProof && (
@@ -295,7 +295,7 @@ export function ChatOverlay({
               <button
                 onClick={() => meetupProofInputRef.current?.click()}
                 disabled={uploading}
-                className="w-full bg-wvsu-gold text-wvsu-blue-deeper py-2 text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-1"
+                className="w-full bg-[#5BC4F5] text-[#212529] py-2 text-xs font-bold uppercase tracking-wider hover:bg-[#1A9FD4] hover:text-white transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-1"
               >
                 <Camera className="h-3.5 w-3.5" />
                 {uploading ? "Uploading..." : "Upload Meetup Proof"}
@@ -308,7 +308,7 @@ export function ChatOverlay({
               <button
                 onClick={() => setShowConfirmReceiveModal(true)}
                 disabled={confirming}
-                className="w-full bg-found-green text-white py-2 text-xs font-bold uppercase tracking-wider hover:bg-found-green/90 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-1"
+                className="w-full bg-[#5BC4F5] text-[#212529] py-2 text-xs font-bold uppercase tracking-wider hover:bg-[#1A9FD4] hover:text-white transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-1"
                 type="button"
               >
                 <CheckCircle2 className="h-3.5 w-3.5" />
@@ -337,7 +337,7 @@ export function ChatOverlay({
               <button
                 onClick={() => attachmentInputRef.current?.click()}
                 disabled={uploading}
-                className="border-r border-wvsu-border px-3 text-wvsu-blue hover:bg-wvsu-light-blue disabled:opacity-50"
+                className="border-r border-[#B6E0FE] px-3 text-[#1A9FD4] hover:bg-[#E8F7FF] disabled:opacity-50"
                 type="button"
                 aria-label="Attach image"
               >
@@ -359,7 +359,7 @@ export function ChatOverlay({
               <button
                 onClick={handleSend}
                 disabled={uploading}
-                className="bg-wvsu-blue text-white px-3.5 font-bold text-sm hover:bg-wvsu-blue-dark transition-colors"
+                className="bg-[#1A9FD4] text-white px-4 font-bold text-sm hover:bg-[#5BC4F5] hover:text-[#212529] transition-colors rounded-r-[8px]"
                 type="button"
               >
                 <SendHorizontal className="h-4 w-4" />

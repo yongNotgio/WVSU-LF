@@ -47,7 +47,7 @@ export function UserAvatar({
   return (
     <div
       style={{ width: size, height: size }}
-      className={`bg-wvsu-gold flex items-center justify-center text-wvsu-blue font-black font-display ${className}`}
+      className={`bg-[#5BC4F5] flex items-center justify-center rounded-[10px] text-[#1A9FD4] font-extrabold font-['Plus_Jakarta_Sans',sans-serif] ${className}`}
     >
       <span style={{ fontSize: size * 0.35 }}>{initials}</span>
     </div>

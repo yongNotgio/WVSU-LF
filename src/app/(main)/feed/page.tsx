@@ -71,11 +71,11 @@ export default function FeedPage() {
       <Sidebar selectedZone={selectedZone} onZoneChange={setSelectedZone} />
 
       {/* Main Content */}
-      <div className="p-6 min-h-[calc(100vh-56px)]">
+      <div className="p-2 min-h-[calc(100vh-56px)]">
         {/* Header */}
         <div className="flex items-center justify-between mb-5 gap-3">
-          <div className="font-display text-2xl text-wvsu-text">
-            Lost & Found Feed
+          <div className="font-display text-2xl font-extrabold">
+            <span className="text-black">LOST & FOUND</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-30">
@@ -94,7 +94,7 @@ export default function FeedPage() {
             </div>
             <button
               onClick={() => setShowPostForm(true)}
-              className="bg-wvsu-blue text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors"
+              className="bg-[#1A9FD4] text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-[#5BC4F5] hover:text-[#212529] transition-colors shadow-md border border-[#1A9FD4]"
             >
               + Post Item
             </button>
@@ -107,8 +107,8 @@ export default function FeedPage() {
             onClick={() => setTypeFilter(undefined)}
             className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border-2 transition-all ${
               !typeFilter
-                ? "bg-wvsu-blue text-white border-wvsu-blue"
-                : "bg-white text-wvsu-muted border-wvsu-border hover:border-wvsu-blue hover:text-wvsu-blue"
+                ? "bg-[#1A9FD4] text-white border-[#1A9FD4] shadow-md"
+                : "bg-white text-[#868E96] border-[#B6E0FE] hover:border-[#1A9FD4] hover:text-[#1A9FD4]"
             }`}
           >
             All
@@ -117,8 +117,8 @@ export default function FeedPage() {
             onClick={() => setTypeFilter("lost")}
             className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border-2 transition-all ${
               typeFilter === "lost"
-                ? "bg-lost-red text-white border-lost-red"
-                : "bg-white text-wvsu-muted border-wvsu-border hover:border-lost-red hover:text-lost-red"
+                ? "bg-[#FF6B6B] text-white border-[#FF6B6B] shadow-md"
+                : "bg-white text-[#868E96] border-[#B6E0FE] hover:border-[#FF6B6B] hover:text-[#FF6B6B]"
             }`}
           >
             Lost
@@ -127,8 +127,8 @@ export default function FeedPage() {
             onClick={() => setTypeFilter("found")}
             className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border-2 transition-all ${
               typeFilter === "found"
-                ? "bg-found-green text-white border-found-green"
-                : "bg-white text-wvsu-muted border-wvsu-border hover:border-found-green hover:text-found-green"
+                ? "bg-[#51CF66] text-white border-[#51CF66] shadow-md"
+                : "bg-white text-[#868E96] border-[#B6E0FE] hover:border-[#51CF66] hover:text-[#51CF66]"
             }`}
           >
             Found

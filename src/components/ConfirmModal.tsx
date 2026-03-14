@@ -33,15 +33,15 @@ export function ConfirmModal({
       : "bg-wvsu-blue text-white hover:bg-wvsu-blue-dark";
 
   return (
-    <div className="fixed inset-0 z-[140] flex items-center justify-center bg-wvsu-blue-deeper/35 px-4">
+    <div className="fixed inset-0 z-[140] flex items-center justify-center bg-[#1A9FD4]/20 px-4">
       <div
         className="absolute inset-0"
         onClick={loading ? undefined : onClose}
         aria-hidden="true"
       />
-      <div className="relative w-full max-w-md border-2 border-wvsu-blue bg-white shadow-[6px_6px_0_var(--blue)]">
-        <div className="flex items-center justify-between bg-wvsu-blue px-4 py-3">
-          <div className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white font-mono">
+      <div className="relative w-full max-w-md border-2 border-[#1A9FD4] bg-white rounded-[16px] shadow-[0_8px_32px_0_rgba(26,159,212,0.15)]">
+        <div className="flex items-center justify-between bg-[#1A9FD4] px-4 py-3 rounded-t-[14px]">
+          <div className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white font-sans">
             <AlertTriangle className="h-4 w-4" />
             Confirm Action
           </div>
@@ -57,7 +57,7 @@ export function ConfirmModal({
         </div>
 
         <div className="space-y-3 p-5">
-          <div className="font-display text-xl text-wvsu-text">{title}</div>
+          <div className="font-sans text-xl text-[#212529] font-bold">{title}</div>
           <div className="text-sm leading-6 text-wvsu-muted">{description}</div>
         </div>
 

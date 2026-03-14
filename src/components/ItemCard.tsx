@@ -31,17 +31,12 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
     api.items.getImageUrl,
     item.imageId ? { storageId: item.imageId } : "skip"
   );
-
   const timeAgo = getTimeAgo(item._creationTime);
 
   return (
-    <div
-      className={`bg-white border-2 border-wvsu-border cursor-pointer hover:border-wvsu-blue hover:-translate-y-0.5 transition-all ${
-        isLost ? "border-t-4 border-t-lost-red" : "border-t-4 border-t-found-green"
-      }`}
-    >
+    <div className="icard bg-white border border-[#E9ECEF] rounded-[14px] shadow-md flex flex-col overflow-hidden cursor-pointer transition-all animate-[up_0.35s_var(--ease2)_both]">
       {/* Image Area */}
-      <div className="w-full h-[120px] bg-wvsu-light-blue flex items-center justify-center text-[40px] border-b border-wvsu-border relative">
+      <div className={`ic-thumb w-full h-[180px] flex items-center justify-center text-[38px] border-b border-[#E9ECEF] flex-shrink-0 transition-transform overflow-hidden relative ${isLost ? 'bg-[#FFE3E3]' : 'bg-[#D3F9D8]'}`}> 
         {imageUrl ? (
           <>
             <Image
@@ -51,55 +46,39 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
               sizes="(max-width: 640px) 100vw, 50vw"
               className="absolute inset-0 object-cover"
             />
-            <div className="absolute inset-0 bg-wvsu-blue/10" />
+            <div className={`absolute inset-0 ${isLost ? 'bg-[#FFE3E3]/20' : 'bg-[#D3F9D8]/20'}`} />
           </>
         ) : (
-          <ItemIcon className="h-12 w-12 text-wvsu-blue" />
+          <ItemIcon className={`h-12 w-12 ${isLost ? 'text-[#C92A2A]' : 'text-[#1C7C34]'}`} />
         )}
-        <div
-          className={`absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-extrabold uppercase font-mono tracking-wider ${
-            isLost ? "bg-lost-red text-white" : "bg-found-green text-white"
-          }`}
-        >
-          {item.type}
-        </div>
       </div>
-
       {/* Body */}
-      <div className="p-3">
-        <div className="text-sm font-bold text-wvsu-text font-display mb-1">
-          {item.title}
+      <div className="ic-main flex-1 px-3 pt-3 pb-2 flex flex-col min-w-0">
+        <div className="ic-top flex items-center gap-1.5 mb-2">
+          <span className={`tag ${isLost ? 'tag-lost' : 'tag-found'} font-['Plus_Jakarta_Sans',sans-serif] text-[.62rem] font-bold uppercase px-2 py-0.5 rounded bg-[${isLost ? '#FFE3E3' : '#D3F9D8'}] text-[${isLost ? '#C92A2A' : '#1C7C34'}]`}>{isLost ? 'Lost' : 'Found'}</span>
+          <span className="tag-cat text-[.67rem] font-medium text-[#868E96]">{item.category}</span>
+          {/* Status dot: open = active, resolved = done, expired/flagged = pend */}
+          <span className={`sdot ml-auto w-[7px] h-[7px] rounded-full flex-shrink-0 ${item.status === 'open' ? 'bg-[#51CF66] shadow-[0_0_0_3px_rgba(81,207,102,.2)]' : item.status === 'resolved' ? 'bg-[#ADB5BD]' : 'bg-[#FCC419] shadow-[0_0_0_3px_rgba(252,196,25,.2)]'}`}></span>
         </div>
-        <div className="text-xs text-wvsu-muted leading-snug mb-2.5 line-clamp-2">
-          {item.description}
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          <span className="text-[10px] font-semibold px-2 py-0.5 bg-wvsu-light-blue text-wvsu-blue font-mono tracking-wide">
-            {item.category}
-          </span>
-          <span className="text-[10px] font-semibold px-2 py-0.5 bg-wvsu-light-blue text-wvsu-blue font-mono tracking-wide">
-            <span className="inline-flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {item.locationZone}
-            </span>
-          </span>
+        <div className="ic-title font-['Plus_Jakarta_Sans',sans-serif] text-[.88rem] font-bold text-[#212529] leading-[1.3] mb-1.5">{item.title}</div>
+        <div className="ic-desc text-[.73rem] text-[#868E96] leading-snug mb-2 flex-1 line-clamp-2">{item.description}</div>
+        <div className="ic-chips flex gap-1 flex-wrap mb-2.5">
+          <span className="chip inline-flex items-center gap-1 bg-[#F8F9FA] border border-[#E9ECEF] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#868E96]">{item.category}</span>
+          <span className="chip inline-flex items-center gap-1 bg-[#F8F9FA] border border-[#E9ECEF] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#868E96]"><MapPin className="h-3 w-3" />{item.locationZone}</span>
         </div>
       </div>
-
       {/* Footer */}
-      <div className="flex items-center justify-between px-3 py-2 border-t border-wvsu-border bg-wvsu-off-white">
-        <span className="text-[10px] text-wvsu-muted font-mono">{timeAgo}</span>
+      <div className="ic-foot flex items-center justify-between gap-1.5 pt-2 border-t border-[#E9ECEF] mt-auto bg-[#F8F9FA]">
+        <span className="ptime text-[.62rem] text-[#ADB5BD]">{timeAgo}</span>
         {isOwnItem ? (
-          <span className="text-[10px] font-bold uppercase tracking-wide text-wvsu-muted font-mono">
-            Your post
-          </span>
+          <span className="done-tag px-2.5 py-1 flex-shrink-0 bg-[#F8F9FA] border border-[#E9ECEF] rounded text-[#ADB5BD] font-['Outfit',sans-serif] text-[.7rem] font-semibold">Your post</span>
         ) : (
           <button
             onClick={(e) => {
               e.stopPropagation();
               onContact(item._id);
             }}
-            className="text-[11px] font-bold text-wvsu-blue border-[1.5px] border-wvsu-blue px-2.5 py-1 uppercase tracking-wide hover:bg-wvsu-blue hover:text-white transition-all"
+            className="claim-btn px-3 py-1.5 bg-[#5BC4F5] text-[#212529] border-none rounded font-['Outfit',sans-serif] text-[.73rem] font-bold cursor-pointer whitespace-nowrap flex-shrink-0 shadow-md transition-all hover:scale-105 hover:shadow-lg"
           >
             Contact {isLost ? "Owner" : "Finder"}
           </button>
