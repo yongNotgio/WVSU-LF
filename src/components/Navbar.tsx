@@ -6,7 +6,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../convex/_generated/api";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, Star, Upload } from "lucide-react";
+import { Bell, Link2, LogOut, Upload } from "lucide-react";
 import { UserAvatar } from "./UserAvatar";
 
 export function Navbar() {
@@ -85,7 +85,9 @@ export function Navbar() {
       <div className="max-w-[1280px] mx-auto px-7 h-[62px] flex items-center justify-between gap-4">
         {/* Brand */}
         <Link href="/feed" className="logo flex items-center gap-2.5 no-underline shrink-0">
-          <div className="logo-mark w-9 h-9 rounded-[10px] bg-[#5BC4F5] flex items-center justify-center text-[17px] transition-transform duration-300" >🔗</div>
+          <div className="logo-mark w-9 h-9 rounded-[10px] bg-[#5BC4F5] flex items-center justify-center text-[#0D4F66] transition-transform duration-300">
+            <Link2 size={17} />
+          </div>
           <span className="logo-name font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[1.15rem]">
             <span className="text-[#1A9FD4]">WVSU</span><span className="text-black">LF</span>
           </span>
@@ -110,13 +112,14 @@ export function Navbar() {
         {/* Right */}
         <div className="nav-right flex items-center gap-2 shrink-0">
           <button className="icon-btn w-9 h-9 rounded-[10px] bg-[#F8F9FA] border border-[#E9ECEF] flex items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#EBF7FD] hover:border-[#5BC4F5]">
-            🔔<span className="notif-dot absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF6B6B] rounded-full border-[1.5px] border-white animate-pulse"></span>
+            <Bell size={15} className="text-[#495057]" />
+            <span className="notif-dot absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF6B6B] rounded-full border-[1.5px] border-white animate-pulse"></span>
           </button>
           <div ref={menuRef} className="relative">
             <button
               type="button"
               onClick={() => setMenuOpen((prev) => !prev)}
-              className="nav-av w-9 h-9 rounded-[10px] bg-[#EBF7FD] border border-[#5bc4f54d] flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-[#5BC4F5]"
+              className="nav-av w-9 h-9 rounded-[10px] bg-white border border-[#5bc4f54d] overflow-hidden flex items-center justify-center cursor-pointer transition-all duration-200 hover:border-[#5BC4F5]"
               aria-label="Open profile menu"
               aria-haspopup="menu"
               aria-expanded={menuOpen}
@@ -125,8 +128,8 @@ export function Navbar() {
                 name={stats?.name}
                 avatarType={stats?.avatarType}
                 avatarUrl={stats?.avatarUrl}
-                size={32}
-                className="rounded-[8px]"
+                size={36}
+                className="w-full h-full rounded-[10px]"
               />
             </button>
 
