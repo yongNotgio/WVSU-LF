@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../convex/_generated/api";
@@ -20,6 +20,7 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
   const navLinks = [
@@ -30,6 +31,7 @@ export function Navbar() {
   ];
 
   const handleLogout = async () => {
+    setMenuOpen(false);
     await signOut();
     router.push("/sign-in");
   };
@@ -49,10 +51,34 @@ export function Navbar() {
       });
       const { storageId } = await result.json();
       await updateAvatar({ avatarId: storageId });
+      setMenuOpen(false);
     } finally {
       setUploading(false);
     }
   };
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-[#E9ECEF] shadow-sm">
@@ -86,8 +112,74 @@ export function Navbar() {
           <button className="icon-btn w-9 h-9 rounded-[10px] bg-[#F8F9FA] border border-[#E9ECEF] flex items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#EBF7FD] hover:border-[#5BC4F5]">
             🔔<span className="notif-dot absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF6B6B] rounded-full border-[1.5px] border-white animate-pulse"></span>
           </button>
-          <div className="nav-av w-9 h-9 rounded-[10px] bg-[#EBF7FD] border border-[#5bc4f54d] flex items-center justify-center font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#1A9FD4] cursor-pointer transition-all duration-200 hover:bg-[#5BC4F5] hover:text-white">
-            {stats?.name?.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2) || 'JD'}
+          <div ref={menuRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              className="nav-av w-9 h-9 rounded-[10px] bg-[#EBF7FD] border border-[#5bc4f54d] flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-[#5BC4F5]"
+              aria-label="Open profile menu"
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+            >
+              <UserAvatar
+                name={stats?.name}
+                avatarType={stats?.avatarType}
+                avatarUrl={stats?.avatarUrl}
+                size={32}
+                className="rounded-[8px]"
+              />
+            </button>
+
+            {menuOpen && (
+              <div
+                className="absolute right-0 mt-2 w-52 rounded-[12px] border border-[#E9ECEF] bg-white shadow-lg p-1.5 z-50"
+                role="menu"
+                aria-label="Profile actions"
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    router.push("/onboarding");
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-[8px] text-[.82rem] font-semibold text-[#212529] hover:bg-[#F8F9FA]"
+                  role="menuitem"
+                >
+                  Customize profile
+                </button>
+                <button
+                  type="button"
+                  disabled={uploading}
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="w-full text-left px-3 py-2 rounded-[8px] text-[.82rem] font-semibold text-[#212529] hover:bg-[#F8F9FA] disabled:opacity-60"
+                  role="menuitem"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Upload size={14} />
+                    {uploading ? "Uploading avatar..." : "Upload avatar"}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full text-left px-3 py-2 rounded-[8px] text-[.82rem] font-semibold text-[#D9480F] hover:bg-[#FFF4E6]"
+                  role="menuitem"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <LogOut size={14} />
+                    Log out
+                  </span>
+                </button>
+              </div>
+            )}
+
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarUpload}
+            />
           </div>
         </div>
       </div>
