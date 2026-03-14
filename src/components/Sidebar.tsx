@@ -40,8 +40,14 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
       {/* Profile Card */}
       <div className="relative rounded-[10px] shadow-md border border-[#E9ECEF] mt-2 bg-transparent">
         <div className="flex justify-center -mt-8 mb-2 z-10 relative">
-          <div className="w-[56px] h-[56px] rounded-full bg-[#EBF7FD] border-4 border-white shadow-lg flex items-center justify-center font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-2xl text-[#1A9FD4]">
-            {stats?.name?.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2) || 'JD'}
+          <div className="w-[56px] h-[56px] rounded-full overflow-hidden bg-white border-4 border-white shadow-lg flex items-center justify-center">
+            <UserAvatar
+              name={stats?.name}
+              avatarType={stats?.avatarType}
+              avatarUrl={stats?.avatarUrl}
+              size={56}
+              className="w-full h-full rounded-full"
+            />
           </div>
         </div>
         <div className="px-3 pb-3 pt-2">
