@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { ShieldCheck, X } from "lucide-react";
+import { Camera, Frown, LockKeyhole, PartyPopper, ShieldCheck, X } from "lucide-react";
 
 const CATEGORIES = [
   "ELECTRONICS",
@@ -121,7 +121,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
                   : "bg-[#F8F9FA] border-[#E9ECEF] text-[#868E96] hover:text-[#212529]"
               }`}
             >
-              😢 I Lost Something
+              <Frown size={16} /> I Lost Something
             </button>
             <button
               type="button"
@@ -132,7 +132,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
                   : "bg-[#F8F9FA] border-[#E9ECEF] text-[#868E96] hover:text-[#212529]"
               }`}
             >
-              🎉 I Found Something
+              <PartyPopper size={16} /> I Found Something
             </button>
           </div>
           {/* Title */}
@@ -219,7 +219,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
               required
             />
             <div className="flex items-start gap-2 mt-2 bg-[#F3F0FE] border border-[#E5DAFE] rounded-[9px] px-3 py-2 text-[.73rem] text-[#495057]">
-              <span className="text-[14px] mt-0.5">🔐</span>
+              <LockKeyhole className="h-[14px] w-[14px] mt-0.5 shrink-0 text-[#7048E8]" />
               <span>
                 Only revealed in chat to{" "}
                 <b className="text-[#845EF7] font-bold">verify the true owner</b>
@@ -247,7 +247,9 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
                 htmlFor="item-photo-upload"
                 className="block cursor-pointer"
               >
-                <div className="text-[22px] mb-1">📸</div>
+                <div className="mb-1 flex justify-center text-[#495057]">
+                  <Camera size={22} />
+                </div>
                 <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.8rem] font-bold text-[#868E96]">
                   Tap to upload a photo
                 </div>
