@@ -5,7 +5,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../convex/_generated/api";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutList, LogOut, MapPin, MessageSquare, Pin, ShieldCheck, Trophy } from "lucide-react";
+import { Coffee, Trophy } from "lucide-react";
 import { UserAvatar } from "./UserAvatar";
 
 const ZONES = [
@@ -50,7 +50,9 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
           <div className="h-px bg-[#E9ECEF] my-3.5" />
           <div className="grid grid-cols-3 gap-2">
             <div className="bg-[#F8F9FA] border border-[#E9ECEF] rounded-[10px] py-2 px-1.5 flex flex-col items-center cursor-default transition-all">
-              <div className="text-[.95rem] font-extrabold text-[#D97706] leading-none">🏅 #{stats?.rank ?? 4}</div>
+              <div className="text-[.95rem] font-extrabold text-[#D97706] leading-none inline-flex items-center gap-1">
+                <Trophy size={14} /> #{stats?.rank ?? 4}
+              </div>
               <div className="text-[.61rem] text-[#868E96] font-semibold mt-1 text-center">IT Rank</div>
             </div>
             <div className="bg-[#F8F9FA] border border-[#E9ECEF] rounded-[10px] py-2 px-1.5 flex flex-col items-center cursor-default transition-all">
@@ -66,10 +68,12 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
       </div>
       {/* Donate Card */}
       <div className="rounded-[14px] shadow-md border border-[#E9ECEF] p-4 text-center cursor-pointer transition-all duration-200 relative overflow-hidden bg-transparent">
-        <span className="text-[26px] mb-2 block">☕</span>
+        <span className="mb-2 flex justify-center text-[#A16207]"><Coffee size={26} /></span>
         <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.87rem] font-extrabold text-[#212529] mb-1">Buy the Devs a Coffee</div>
         <div className="text-[.71rem] text-[#868E96] font-medium leading-tight mb-3">WVSULF is free. Help keep the servers running with a small donation!</div>
-        <button className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#5BC4F5] text-[#212529] rounded-[9px] font-['Outfit',sans-serif] text-[.8rem] font-bold shadow-md transition-all">☕ Donate Now</button>
+        <button className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#5BC4F5] text-[#212529] rounded-[9px] font-['Outfit',sans-serif] text-[.8rem] font-bold shadow-md transition-all">
+          <Coffee size={14} /> Donate Now
+        </button>
       </div>
     </aside>
   );
