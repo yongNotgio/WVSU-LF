@@ -55,7 +55,9 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
       {/* Body */}
       <div className="ic-main flex-1 px-3 pt-3 pb-2 flex flex-col min-w-0">
         <div className="ic-top flex items-center gap-1.5 mb-2">
-          <span className={`tag ${isLost ? 'tag-lost' : 'tag-found'} font-['Plus_Jakarta_Sans',sans-serif] text-[.62rem] font-bold uppercase px-2 py-0.5 rounded bg-[${isLost ? '#FFE3E3' : '#D3F9D8'}] text-[${isLost ? '#C92A2A' : '#1C7C34'}]`}>{isLost ? 'Lost' : 'Found'}</span>
+          <span className={`tag ${isLost ? "tag-lost" : "tag-found"}`}>
+            {isLost ? "Lost" : "Found"}
+          </span>
           <span className="tag-cat text-[.67rem] font-medium text-[#868E96]">{item.category}</span>
           {/* Status dot: open = active, resolved = done, expired/flagged = pend */}
           <span className={`sdot ml-auto w-[7px] h-[7px] rounded-full flex-shrink-0 ${item.status === 'open' ? 'bg-[#51CF66] shadow-[0_0_0_3px_rgba(81,207,102,.2)]' : item.status === 'resolved' ? 'bg-[#ADB5BD]' : 'bg-[#FCC419] shadow-[0_0_0_3px_rgba(252,196,25,.2)]'}`}></span>
@@ -68,7 +70,7 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
         </div>
       </div>
       {/* Footer */}
-      <div className="ic-foot flex items-center justify-between gap-1.5 pt-2 border-t border-[#E9ECEF] mt-auto bg-[#F8F9FA]">
+      <div className="ic-foot flex items-center justify-between gap-1.5 px-3 py-2 border-t border-[#E9ECEF] mt-auto bg-[#F8F9FA]">
         <span className="ptime text-[.62rem] text-[#ADB5BD]">{timeAgo}</span>
         {isOwnItem ? (
           <span className="done-tag px-2.5 py-1 flex-shrink-0 bg-[#F8F9FA] border border-[#E9ECEF] rounded text-[#ADB5BD] font-['Outfit',sans-serif] text-[.7rem] font-semibold">Your post</span>
