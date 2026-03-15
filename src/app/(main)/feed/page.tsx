@@ -78,7 +78,7 @@ export default function FeedPage() {
             <span className="text-black">LOST & FOUND</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-30">
+            <div className="w-32">
               <select
                 value={selectedZone}
                 onChange={(e) => setSelectedZone(e.target.value)}
