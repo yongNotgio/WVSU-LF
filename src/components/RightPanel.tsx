@@ -6,6 +6,7 @@ import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { Building2, UserRound, Zap } from "lucide-react";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const RANK_STYLES: Record<number, string> = {
   1: "background:#FFF3BF;color:#92400E;border:1px solid #FFE066;",
   2: "background:#F1F3F5;color:#868E96;border:1px solid #DEE2E6;",
@@ -74,7 +75,7 @@ export function RightPanel() {
             <div className="py-1 text-center">
               <button
                 onClick={() => setShowAllColleges((s) => !s)}
-                className="text-[.85rem] font-semibold text-[#1A9FD4] underline bg-none border-none cursor-pointer"
+                className="text-[.85rem] font-semibold text-[#1A9FD4] underline bg-transparent border-none cursor-pointer"
               >
                 {showAllColleges ? "Show less" : `See more (${colleges.length - 5} more)`}
               </button>
