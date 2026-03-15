@@ -22,14 +22,14 @@ export function RightPanel() {
   return (
     <aside className="flex flex-col gap-2">
       {/* College Rankings */}
-      <div className="bg-white border border-[#E9ECEF] rounded-[10px] shadow p-2 animate-[up_0.4s_var(--ease2)_both]">
-        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-2 mb-2 border-b border-[#E9ECEF]">
+      <div className="bg-white border border-[#E9ECEF] rounded-[10px] shadow p-1 animate-[up_0.4s_var(--ease2)_both]">
+        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-1 mb-1 border-b border-[#E9ECEF]">
           <Building2 size={14} className="text-[#495057]" /> College Rankings
-          <span className="ml-auto text-[.6rem] font-bold px-2 py-0.5 rounded bg-[#FFF3BF] text-[#92400E] border border-[#E9ECEF]">
+          <span className="ml-auto text-[.6rem] font-bold px-1.5 py-0.5 rounded bg-[#FFF3BF] text-[#92400E] border border-[#E9ECEF]">
             This Week
           </span>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-0.5">
           {colleges?.slice(0, showAllColleges ? colleges.length : 5).map(
             (college: { _id: string; name: string; totalKarma: number }, i: number) => {
               const rank = i + 1;
@@ -38,7 +38,7 @@ export function RightPanel() {
               return (
                 <div
                   key={college._id}
-                  className="flex items-center gap-2 py-1 rounded-[7px] bg-[#F8F9FA] cursor-pointer transition-all"
+                  className="flex items-center gap-1 py-0.5 rounded-[7px] bg-[#F8F9FA] cursor-pointer transition-all"
                 >
                   <div
                     className={`w-6 h-6 flex items-center justify-center text-[.74rem] font-extrabold font-['Plus_Jakarta_Sans',sans-serif] rounded-[7px] shrink-0 ${
@@ -60,7 +60,7 @@ export function RightPanel() {
                     <div className="text-[.62rem] text-[#ADB5BD] font-medium mt-0.5">
                       {college.totalKarma} pts
                     </div>
-                    <div className="w-full h-1 bg-[#E9ECEF] rounded-full overflow-hidden mt-1">
+                    <div className="w-full h-1 bg-[#E9ECEF] rounded-full overflow-hidden mt-0.5">
                       <div
                         className="h-1 bg-[#5BC4F5] rounded-full"
                         style={{ width: `${barWidth}%` }}
@@ -72,7 +72,7 @@ export function RightPanel() {
             }
           )}
           {colleges && colleges.length > 5 && (
-            <div className="py-1 text-center">
+            <div className="py-0.5 text-center">
               <button
                 onClick={() => setShowAllColleges((s) => !s)}
                 className="text-[.85rem] font-semibold text-[#1A9FD4] underline bg-transparent border-none cursor-pointer"
@@ -82,7 +82,7 @@ export function RightPanel() {
             </div>
           )}
           {!colleges && (
-            <div className="text-xs text-[#868E96] py-2 text-center">Loading...</div>
+            <div className="text-xs text-[#868E96] py-1 text-center">Loading...</div>
           )}
         </div>
       </div>
