@@ -124,7 +124,7 @@ export function ChatOverlay({
 
   return (
     <div
-      className={`fixed bg-white border-2 border-[#1A9FD4] z-[100] rounded-[18px] shadow-[0_8px_32px_0_rgba(26,159,212,0.15)] transition-all ${
+      className={`fixed bg-white border-2 border-[#1A9FD4] z-[100] rounded-[18px] overflow-hidden shadow-[0_8px_32px_0_rgba(26,159,212,0.15)] transition-all ${
         isMaximized
           ? "inset-4 md:inset-6"
           : "bottom-6 right-6 w-[340px] max-w-[calc(100vw-3rem)]"
@@ -318,7 +318,7 @@ export function ChatOverlay({
           )}
 
           {/* Input */}
-          {convoDetails?.item?.status !== "resolved" && (
+          {challengeStatus === "accepted" && convoDetails?.item?.status !== "resolved" && (
             <div className="flex border-t-2 border-wvsu-border">
               <input
                 ref={attachmentInputRef}
