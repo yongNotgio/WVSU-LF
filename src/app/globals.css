@@ -82,7 +82,7 @@ nav {
 }
 .logo-name span { color: var(--sky-dk); }
 
-.nav-links { display: flex; gap: 2px; list-style: none; }
+.nav-links { gap: 2px; list-style: none; }
 .nav-links a {
   display: flex; align-items: center; gap: 6px;
   padding: 7px 14px; border-radius: 10px;

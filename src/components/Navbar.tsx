@@ -192,17 +192,68 @@ export function Navbar() {
         </div>
       </div>
 
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#E9ECEF] bg-white px-3 py-3 space-y-2">
-          <div className="grid grid-cols-1 gap-1.5">
+      {/* Mobile sidebar drawer */}
+      <div
+        className={`fixed inset-0 z-[60] md:hidden transition-all duration-300 ${mobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+      >
+        {/* Backdrop */}
+        <div
+          className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${mobileMenuOpen ? "opacity-100" : "opacity-0"}`}
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+        {/* Drawer panel */}
+        <div
+          className={`absolute top-0 left-0 h-full w-[280px] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+        >
+          {/* Drawer header */}
+          <div className="flex items-center justify-between px-4 py-4 border-b border-[#E9ECEF]">
+            <Link href="/feed" className="logo flex items-center gap-2.5 no-underline" onClick={() => setMobileMenuOpen(false)}>
+              <div className="logo-mark w-8 h-8 rounded-[9px] bg-[#5BC4F5] flex items-center justify-center text-[#0D4F66]">
+                <Link2 size={15} />
+              </div>
+              <span className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[1.05rem]">
+                <span className="text-[#1A9FD4]">WVSU</span><span className="text-black">LF</span>
+              </span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-8 h-8 rounded-[8px] border border-[#E9ECEF] bg-[#F8F9FA] text-[#868E96] flex items-center justify-center"
+              aria-label="Close menu"
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Profile card */}
+          <div className="flex items-center gap-3 px-4 py-4 border-b border-[#E9ECEF] bg-[#F8F9FA]">
+            <UserAvatar
+              name={stats?.name}
+              avatarType={stats?.avatarType}
+              avatarUrl={stats?.avatarUrl}
+              size={40}
+              className="rounded-[10px] shrink-0"
+            />
+            <div className="min-w-0">
+              <div className="text-[.88rem] font-bold text-[#212529] truncate">{stats?.name ?? "Profile"}</div>
+              <div className="text-[.75rem] text-[#868E96] truncate">{stats?.college ?? "WVSU"}</div>
+            </div>
+          </div>
+
+          {/* Nav links */}
+          <nav className="flex flex-col gap-1 px-3 py-3 flex-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-[10px] text-sm font-semibold no-underline ${pathname?.startsWith(link.href)
+                className={`flex items-center justify-between px-3 py-3 rounded-[10px] text-[.88rem] font-semibold no-underline transition-colors ${pathname?.startsWith(link.href)
                   ? "bg-[#EBF7FD] text-[#1A9FD4]"
-                  : "text-[#495057] bg-[#F8F9FA]"}`}
+                  : "text-[#495057] hover:bg-[#F8F9FA]"}`}
               >
                 <span>{link.label}</span>
                 {link.label === "Messages" && !!unreadCount && unreadCount > 0 && (
@@ -210,49 +261,40 @@ export function Navbar() {
                 )}
               </Link>
             ))}
+          </nav>
+
+          {/* Bottom actions */}
+          <div className="px-3 pb-5 flex flex-col gap-1 border-t border-[#E9ECEF] pt-3">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                router.push("/onboarding");
+              }}
+              className="w-full text-left px-3 py-2.5 rounded-[10px] text-[.87rem] font-semibold text-[#212529] hover:bg-[#F8F9FA] transition-colors"
+            >
+              Customize profile
+            </button>
+            <button
+              type="button"
+              disabled={uploading}
+              onClick={() => avatarInputRef.current?.click()}
+              className="w-full text-left px-3 py-2.5 rounded-[10px] text-[.87rem] font-semibold text-[#212529] hover:bg-[#F8F9FA] transition-colors disabled:opacity-60 inline-flex items-center gap-2"
+            >
+              <Upload size={14} />
+              {uploading ? "Uploading avatar..." : "Upload avatar"}
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full text-left px-3 py-2.5 rounded-[10px] text-[.87rem] font-semibold text-[#D9480F] hover:bg-[#FFF4E6] transition-colors inline-flex items-center gap-2"
+            >
+              <LogOut size={14} />
+              Log out
+            </button>
           </div>
-          <div className="flex items-center gap-2 px-1 pt-1">
-            <UserAvatar
-              name={stats?.name}
-              avatarType={stats?.avatarType}
-              avatarUrl={stats?.avatarUrl}
-              size={32}
-              className="rounded-[8px]"
-            />
-            <div className="min-w-0 flex-1">
-              <div className="text-xs font-bold text-[#212529] truncate">{stats?.name ?? "Profile"}</div>
-              <div className="text-[11px] text-[#868E96] truncate">{stats?.college ?? "WVSU"}</div>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setMobileMenuOpen(false);
-              router.push("/onboarding");
-            }}
-            className="w-full text-left px-3 py-2 rounded-[10px] text-sm font-semibold text-[#212529] bg-[#F8F9FA]"
-          >
-            Customize profile
-          </button>
-          <button
-            type="button"
-            disabled={uploading}
-            onClick={() => avatarInputRef.current?.click()}
-            className="w-full text-left px-3 py-2 rounded-[10px] text-sm font-semibold text-[#212529] bg-[#F8F9FA] disabled:opacity-60 inline-flex items-center gap-2"
-          >
-            <Upload size={14} />
-            {uploading ? "Uploading avatar..." : "Upload avatar"}
-          </button>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="w-full text-left px-3 py-2 rounded-[10px] text-sm font-semibold text-[#D9480F] bg-[#FFF4E6] inline-flex items-center gap-2"
-          >
-            <LogOut size={14} />
-            Log out
-          </button>
         </div>
-      )}
+      </div>
 
       <input
         ref={avatarInputRef}
