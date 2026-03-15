@@ -82,7 +82,7 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-[#E9ECEF] shadow-sm">
-      <div className="max-w-[1280px] mx-auto px-7 h-[62px] flex items-center justify-between gap-4">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-7 h-[62px] flex items-center justify-between gap-3 sm:gap-4">
         {/* Brand */}
         <Link href="/feed" className="logo flex items-center gap-2.5 no-underline shrink-0">
           <div className="logo-mark w-9 h-9 rounded-[10px] bg-[#5BC4F5] flex items-center justify-center text-[#0D4F66] transition-transform duration-300">
@@ -93,7 +93,7 @@ export function Navbar() {
           </span>
         </Link>
         {/* Nav Links */}
-        <ul className="nav-links flex gap-0.5 list-none">
+        <ul className="nav-links flex gap-0.5 list-none overflow-x-auto whitespace-nowrap max-w-[52vw] sm:max-w-none">
           {navLinks.map((link) => (
             <li key={link.href}>
               <Link
