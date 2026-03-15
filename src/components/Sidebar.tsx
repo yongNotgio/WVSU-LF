@@ -2,7 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { Coffee, MapPin, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { UserAvatar } from "./UserAvatar";
 
 const ZONES = [
@@ -61,31 +61,18 @@ export function Sidebar({ selectedZone, onZoneChange }: SidebarProps) {
         </div>
       </div>
 
-      {/* Zone Filter */}
-      <div className="rounded-[14px] shadow-md border border-[#E9ECEF] p-4 bg-white">
-        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.72rem] font-extrabold text-[#212529] uppercase tracking-wide mb-2 inline-flex items-center gap-1">
-          <MapPin size={13} className="text-[#495057]" /> Campus Zone
-        </div>
-        <select
-          value={selectedZone}
-          onChange={(event) => onZoneChange(event.target.value)}
-          className="w-full border border-[#E9ECEF] rounded-[9px] px-3 py-2 text-[.8rem] font-semibold outline-none focus:border-[#5BC4F5] transition-colors bg-white"
-        >
-          {ZONES.map((zone) => (
-            <option key={zone} value={zone}>
-              {zone}
-            </option>
-          ))}
-        </select>
-      </div>
-
       {/* Donate Card */}
-      <div className="rounded-[14px] shadow-md border border-[#E9ECEF] p-4 text-center cursor-pointer transition-all duration-200 relative overflow-hidden bg-white">
-        <span className="mb-2 flex justify-center text-[#A16207]"><Coffee size={26} /></span>
-        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.87rem] font-extrabold text-[#212529] mb-1">Buy the Devs a Coffee</div>
-        <div className="text-[.71rem] text-[#868E96] font-medium leading-tight mb-3">WVSULF is free. Help keep the servers running with a small donation!</div>
-        <button className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#5BC4F5] text-[#212529] rounded-[9px] font-['Outfit',sans-serif] text-[.8rem] font-bold shadow-md transition-all">
-          <Coffee size={14} /> Donate Now
+      <div className="rounded-[14px] shadow-md border border-[#E9ECEF] p-5 text-center transition-all duration-200 relative overflow-hidden bg-white">
+        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.87rem] font-extrabold text-[#212529] mb-2">Buy the Devs a Coffee</div>
+        <div className="text-[.71rem] text-[#868E96] font-medium leading-tight mb-20">WVSULF is free. Help keep the servers running with a small donation!</div>
+        <div className="absolute left-1/2 bottom-6 transform -translate-x-1/2 z-0 pointer-events-none">
+          <img src="/devcoffee.png" alt="Dev Coffee" className="-mb-3 w-50 h-50 object-contain opacity-100 pointer-events-none select-none" />
+        </div>
+        <button
+          className="relative z-20 inline-flex items-center gap-1.5 px-4 py-2 bg-[#5BC4F5] text-[#212529] rounded-[9px] font-['Outfit',sans-serif] text-[.8rem] font-bold shadow-md transition-all mt-0"
+          onClick={() => window.location.reload()}
+        >
+          Donate Now
         </button>
       </div>
     </aside>
