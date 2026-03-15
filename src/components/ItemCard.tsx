@@ -1,13 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Doc, Id } from "../../convex/_generated/dataModel";
 import Image from "next/image";
-import { Briefcase, CreditCard, KeyRound, MapPin, NotebookPen, Package, Shirt, Smartphone, Watch, type LucideIcon } from "lucide-react";
+import { Briefcase, CreditCard, KeyRound, MapPin, NotebookPen, Package, Shirt, Smartphone, Watch, Zap, type LucideIcon } from "lucide-react";
+
+interface ItemFeedCard extends Doc<"items"> {
+  posterCollege?: string;
+  posterKarma?: number;
+  posterName?: string;
+}
 
 interface ItemCardProps {
-  item: Doc<"items">;
+  item: ItemFeedCard;
   currentUserId?: Id<"users">;
   onContact: (itemId: string) => void;
 }
@@ -24,6 +31,7 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 };
 
 export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
+  const [showDetails, setShowDetails] = useState(false);
   const isLost = item.type === "lost";
   const isOwnItem = currentUserId === item.userId;
   const ItemIcon = CATEGORY_ICONS[item.category] ?? Package;
@@ -63,10 +71,25 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
           <span className={`sdot ml-auto w-[7px] h-[7px] rounded-full flex-shrink-0 ${item.status === 'open' ? 'bg-[#51CF66] shadow-[0_0_0_3px_rgba(81,207,102,.2)]' : item.status === 'resolved' ? 'bg-[#ADB5BD]' : 'bg-[#FCC419] shadow-[0_0_0_3px_rgba(252,196,25,.2)]'}`}></span>
         </div>
         <div className="ic-title font-['Plus_Jakarta_Sans',sans-serif] text-[.88rem] font-bold text-[#212529] leading-[1.3] mb-1.5">{item.title}</div>
-        <div className="ic-desc text-[.73rem] text-[#868E96] leading-snug mb-2 flex-1 line-clamp-2">{item.description}</div>
+        <div className={`ic-desc text-[.73rem] text-[#868E96] leading-snug mb-2 flex-1 sm:line-clamp-2 ${showDetails ? "block" : "hidden sm:block"}`}>
+          {item.description}
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowDetails((prev) => !prev)}
+          className="mb-2 text-[.68rem] font-bold text-[#1A9FD4] underline sm:hidden text-left"
+        >
+          {showDetails ? "Hide Details" : "View Details"}
+        </button>
         <div className="ic-chips flex gap-1 flex-wrap mb-2.5">
           <span className="chip inline-flex items-center gap-1 bg-[#F8F9FA] border border-[#E9ECEF] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#868E96]">{item.category}</span>
           <span className="chip inline-flex items-center gap-1 bg-[#F8F9FA] border border-[#E9ECEF] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#868E96]"><MapPin className="h-3 w-3" />{item.locationZone}</span>
+          <span className="chip inline-flex items-center gap-1 bg-[#EBF7FD] border border-[#B6E0FE] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#1A9FD4]">
+            {item.posterCollege ?? "WVSU"}
+          </span>
+          <span className="chip inline-flex items-center gap-1 bg-[#FFF3BF] border border-[#FFE066] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#92400E]">
+            <Zap className="h-3 w-3" /> {item.posterKarma ?? 0}
+          </span>
         </div>
       </div>
       {/* Footer */}

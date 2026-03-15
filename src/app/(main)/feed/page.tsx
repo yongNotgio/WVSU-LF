@@ -11,6 +11,12 @@ import { ChatOverlay } from "../../../components/ChatOverlay";
 import { Id, Doc } from "../../../../convex/_generated/dataModel";
 import { Package, ShieldCheck, X } from "lucide-react";
 
+interface FeedItem extends Doc<"items"> {
+  posterCollege?: string;
+  posterKarma?: number;
+  posterName?: string;
+}
+
 export default function FeedPage() {
   const [selectedZone, setSelectedZone] = useState("All Zones");
   const [typeFilter, setTypeFilter] = useState<"lost" | "found" | undefined>(
@@ -22,7 +28,7 @@ export default function FeedPage() {
     otherUserName: string;
     challenge?: string;
   } | null>(null);
-  const [claimingItem, setClaimingItem] = useState<Doc<"items"> | null>(null);
+  const [claimingItem, setClaimingItem] = useState<FeedItem | null>(null);
   const [challengeAnswer, setChallengeAnswer] = useState("");
   const [claimError, setClaimError] = useState("");
   const [submittingClaim, setSubmittingClaim] = useState(false);
@@ -35,7 +41,7 @@ export default function FeedPage() {
   const getOrCreateConversation = useMutation(api.chat.getOrCreateConversation);
 
   const handleContact = (itemId: string) => {
-    const item = items?.find((i: Doc<"items">) => i._id === itemId);
+    const item = items?.find((i: FeedItem) => i._id === itemId);
     if (item) {
       setClaimingItem(item);
       setChallengeAnswer("");
@@ -66,23 +72,25 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr_300px]">
+    <div className="grid grid-cols-1 gap-4 px-3 pb-4 sm:px-4 lg:grid-cols-[240px_minmax(0,1fr)_300px] lg:gap-0 lg:px-0 lg:pb-0">
       {/* Left Sidebar */}
-      <Sidebar selectedZone={selectedZone} onZoneChange={setSelectedZone} />
+      <div className="hidden lg:block">
+        <Sidebar selectedZone={selectedZone} onZoneChange={setSelectedZone} />
+      </div>
 
       {/* Main Content */}
-      <div className="p-2 min-h-[calc(100vh-56px)]">
+      <div className="p-0 lg:p-2 min-h-[calc(100vh-56px)]">
         {/* Header */}
-        <div className="flex items-center justify-between mb-5 gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-5 gap-3">
           <div className="font-display text-2xl font-extrabold">
             <span className="text-black">LOST & FOUND</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-32">
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div className="w-full sm:w-44">
               <select
                 value={selectedZone}
                 onChange={(e) => setSelectedZone(e.target.value)}
-                className="w-full text-sm font-semibold px-2 py-2 border border-wvsu-border rounded"
+                className="w-full text-sm font-semibold px-3 py-2.5 border border-wvsu-border rounded-md"
               >
                 <option value="All Zones">All Zones</option>
                 {["Library", "CICT Bldg", "CON Bldg", "CAS Bldg", "Canteen Area", "Main Gate"].map((zone) => (
@@ -94,7 +102,7 @@ export default function FeedPage() {
             </div>
             <button
               onClick={() => setShowPostForm(true)}
-              className="bg-[#1A9FD4] text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-[#5BC4F5] hover:text-[#212529] transition-colors shadow-md border border-[#1A9FD4]"
+              className="bg-[#1A9FD4] text-white px-4 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-[#5BC4F5] hover:text-[#212529] transition-colors shadow-md border border-[#1A9FD4] rounded-md w-full sm:w-auto"
             >
               + Post Item
             </button>
@@ -102,7 +110,7 @@ export default function FeedPage() {
         </div>
 
         {/* Type Filter Tabs */}
-        <div className="flex gap-2 mb-5">
+        <div className="flex flex-wrap gap-2 mb-5">
           <button
             onClick={() => setTypeFilter(undefined)}
             className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border-2 transition-all ${
@@ -153,8 +161,8 @@ export default function FeedPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            {items.map((item: Doc<"items">) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {items.map((item: FeedItem) => (
               <ItemCard
                 key={item._id}
                 item={item}
@@ -167,7 +175,9 @@ export default function FeedPage() {
       </div>
 
       {/* Right Panel */}
-      <RightPanel />
+      <div className="hidden lg:block">
+        <RightPanel />
+      </div>
 
       {/* Post Form Modal */}
       {showPostForm && (

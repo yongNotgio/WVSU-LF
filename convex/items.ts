@@ -66,7 +66,19 @@ export const getItems = query({
       items = items.filter((item) => item.locationZone === args.locationZone);
     }
 
-    return items;
+    const itemsWithPosterMeta = await Promise.all(
+      items.map(async (item) => {
+        const poster = await ctx.db.get(item.userId);
+        return {
+          ...item,
+          posterCollege: poster?.college,
+          posterKarma: poster?.karma,
+          posterName: poster?.name,
+        };
+      })
+    );
+
+    return itemsWithPosterMeta;
   },
 });
 

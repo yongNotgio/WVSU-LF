@@ -6,7 +6,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../convex/_generated/api";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, Link2, LogOut, Upload } from "lucide-react";
+import { Bell, Link2, LogOut, Menu, Upload, X } from "lucide-react";
 import { UserAvatar } from "./UserAvatar";
 
 export function Navbar() {
@@ -18,6 +18,7 @@ export function Navbar() {
   const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -32,6 +33,7 @@ export function Navbar() {
 
   const handleLogout = async () => {
     setMenuOpen(false);
+    setMobileMenuOpen(false);
     await signOut();
     router.push("/sign-in");
   };
@@ -68,6 +70,7 @@ export function Navbar() {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setMenuOpen(false);
+        setMobileMenuOpen(false);
       }
     };
 
@@ -82,7 +85,7 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-[#E9ECEF] shadow-sm">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-7 h-[62px] flex items-center justify-between gap-3 sm:gap-4">
+      <div className="max-w-[1280px] mx-auto px-3 sm:px-7 h-[62px] flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand */}
         <Link href="/feed" className="logo flex items-center gap-2.5 no-underline shrink-0">
           <div className="logo-mark w-9 h-9 rounded-[10px] bg-[#5BC4F5] flex items-center justify-center text-[#0D4F66] transition-transform duration-300">
@@ -93,7 +96,7 @@ export function Navbar() {
           </span>
         </Link>
         {/* Nav Links */}
-        <ul className="nav-links flex gap-0.5 list-none overflow-x-auto whitespace-nowrap max-w-[52vw] sm:max-w-none">
+        <ul className="hidden md:flex nav-links gap-0.5 list-none overflow-x-auto whitespace-nowrap max-w-[52vw] sm:max-w-none">
           {navLinks.map((link) => (
             <li key={link.href}>
               <Link
@@ -111,11 +114,11 @@ export function Navbar() {
         </ul>
         {/* Right */}
         <div className="nav-right flex items-center gap-2 shrink-0">
-          <button className="icon-btn w-9 h-9 rounded-[10px] bg-[#F8F9FA] border border-[#E9ECEF] flex items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#EBF7FD] hover:border-[#5BC4F5]">
+          <button className="hidden md:flex icon-btn w-9 h-9 rounded-[10px] bg-[#F8F9FA] border border-[#E9ECEF] items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#EBF7FD] hover:border-[#5BC4F5]">
             <Bell size={15} className="text-[#495057]" />
             <span className="notif-dot absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF6B6B] rounded-full border-[1.5px] border-white animate-pulse"></span>
           </button>
-          <div ref={menuRef} className="relative">
+          <div ref={menuRef} className="relative hidden md:block">
             <button
               type="button"
               onClick={() => setMenuOpen((prev) => !prev)}
@@ -176,16 +179,88 @@ export function Navbar() {
               </div>
             )}
 
-            <input
-              ref={avatarInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleAvatarUpload}
-            />
           </div>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            className="md:hidden w-9 h-9 rounded-[10px] border border-[#E9ECEF] bg-[#F8F9FA] text-[#495057] inline-flex items-center justify-center"
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
+
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-[#E9ECEF] bg-white px-3 py-3 space-y-2">
+          <div className="grid grid-cols-1 gap-1.5">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center justify-between px-3 py-2.5 rounded-[10px] text-sm font-semibold no-underline ${pathname?.startsWith(link.href)
+                  ? "bg-[#EBF7FD] text-[#1A9FD4]"
+                  : "text-[#495057] bg-[#F8F9FA]"}`}
+              >
+                <span>{link.label}</span>
+                {link.label === "Messages" && !!unreadCount && unreadCount > 0 && (
+                  <span className="bg-[#FF6B6B] text-white text-[.62rem] px-1.5 py-0.5 rounded-full font-bold">{unreadCount}</span>
+                )}
+              </Link>
+            ))}
+          </div>
+          <div className="flex items-center gap-2 px-1 pt-1">
+            <UserAvatar
+              name={stats?.name}
+              avatarType={stats?.avatarType}
+              avatarUrl={stats?.avatarUrl}
+              size={32}
+              className="rounded-[8px]"
+            />
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-bold text-[#212529] truncate">{stats?.name ?? "Profile"}</div>
+              <div className="text-[11px] text-[#868E96] truncate">{stats?.college ?? "WVSU"}</div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              router.push("/onboarding");
+            }}
+            className="w-full text-left px-3 py-2 rounded-[10px] text-sm font-semibold text-[#212529] bg-[#F8F9FA]"
+          >
+            Customize profile
+          </button>
+          <button
+            type="button"
+            disabled={uploading}
+            onClick={() => avatarInputRef.current?.click()}
+            className="w-full text-left px-3 py-2 rounded-[10px] text-sm font-semibold text-[#212529] bg-[#F8F9FA] disabled:opacity-60 inline-flex items-center gap-2"
+          >
+            <Upload size={14} />
+            {uploading ? "Uploading avatar..." : "Upload avatar"}
+          </button>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full text-left px-3 py-2 rounded-[10px] text-sm font-semibold text-[#D9480F] bg-[#FFF4E6] inline-flex items-center gap-2"
+          >
+            <LogOut size={14} />
+            Log out
+          </button>
+        </div>
+      )}
+
+      <input
+        ref={avatarInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleAvatarUpload}
+      />
     </nav>
   );
 }
