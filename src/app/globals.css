@@ -4,6 +4,15 @@
 
 @layer base {
   :root {
+    --blue:       #1A9FD4;
+    --blue-dark:  #0F7EAB;
+    --blue-deeper:#0D4F66;
+    --gold:       #FCC419;
+    --white:      #FFFFFF;
+    --off-white:  #F8F9FA;
+    --light-blue: #EBF7FD;
+    --text:       #212529;
+    --muted:      #868E96;
     --bg:       #F8F9FA;
     --surface:  #FFFFFF;
     --border:   #E9ECEF;
@@ -34,6 +43,16 @@ body {
   color: var(--ink);
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+@keyframes up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modalUp {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* ── NAV ── */
@@ -369,7 +388,7 @@ nav {
 .n1 { background: #FFF3BF; color: #92400E; border: 1px solid #FFE066; }
 .n2 { background: #F1F3F5; color: var(--ink3); border: 1px solid var(--border2); }
 .n3 { background: #FFE8D6; color: #9A3412; border: 1px solid #FFCBA4; }
-nx { background: var(--surface); color: var(--ink4); border: 1px solid var(--border); }
+.nx { background: var(--surface); color: var(--ink4); border: 1px solid var(--border); }
 .cr-info { flex: 1; min-width: 0; }
 .cr-name { font-size: .78rem; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cr-pts  { font-size: .66rem; color: var(--ink4); font-weight: 500; margin-top: 1px; }
