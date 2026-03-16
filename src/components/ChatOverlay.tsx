@@ -58,7 +58,6 @@ export function ChatOverlay({
     }
   }, [messages]);
 
-  // Mark conversation as read when opened and when new messages arrive
   useEffect(() => {
     markRead({ conversationId });
   }, [markRead, conversationId, messages?.length]);
