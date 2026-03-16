@@ -14,7 +14,6 @@ export const getOrCreateConversation = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    // Ban & reputation gates
     if (user.isBanned) throw new Error("Your account has been banned.");
     if (user.shadowBannedUntil && user.shadowBannedUntil > Date.now()) {
       throw new Error("Your account is temporarily restricted. Try again later.");
