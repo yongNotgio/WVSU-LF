@@ -14,7 +14,6 @@ export const reportPost = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    // Prevent duplicate reports
     const existingReport = await ctx.db
       .query("reports")
       .withIndex("by_itemId_reporterId", (q) =>
