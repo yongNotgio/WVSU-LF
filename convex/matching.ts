@@ -52,8 +52,7 @@ function tokenize(text: string): string[] {
     .filter((w) => w.length > 1);
 }
 
-/** Fuzzy keyword score (0-1). Each word in text1 is matched to the best
- *  word in text2 via normalised Levenshtein similarity. */
+
 function keywordScore(text1: string, text2: string): number {
   const words1 = tokenize(text1);
   const words2 = tokenize(text2);
