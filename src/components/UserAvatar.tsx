@@ -34,7 +34,6 @@ export function UserAvatar({
     );
   }
 
-  // Fallback: initials
   const initials = name
     ? name
         .split(" ")
