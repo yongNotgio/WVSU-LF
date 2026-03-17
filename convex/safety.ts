@@ -28,7 +28,7 @@ export const reportPost = mutation({
       reason: args.reason,
     });
 
-    // Auto-flag if threshold reached
+    
     const reports = await ctx.db
       .query("reports")
       .withIndex("by_itemId", (q) => q.eq("itemId", args.itemId))
