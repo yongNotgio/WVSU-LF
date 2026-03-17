@@ -31,7 +31,7 @@ export const createItem = mutation({
       imageId: args.imageId,
     });
 
-    // +5 karma for listing a "Found" item (rewards the act of reporting)
+    
     if (args.type === "found") {
       await ctx.db.patch(user._id, { karma: (user.karma ?? 0) + 5 });
     }
