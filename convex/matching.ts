@@ -79,8 +79,7 @@ function locationScore(zone1: string, zone2: string): number {
 }
 
 // ---------------------------------------------------------------------------
-// Queries & actions
-// ---------------------------------------------------------------------------
+
 
 export const findPotentialMatches = query({
   args: { lostItemId: v.id("items") },
