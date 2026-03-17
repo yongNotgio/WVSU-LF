@@ -35,7 +35,7 @@ export const awardKarmaPoints = mutation({
     const finder = await ctx.db.get(args.finderId);
     if (!finder) throw new Error("Finder not found");
 
-    // Award karma to finder (+50) and owner (+10)
+    
     await ctx.db.patch(finder._id, { karma: (finder.karma ?? 0) + 50 });
     await ctx.db.patch(owner._id, { karma: (owner.karma ?? 0) + 10 });
 
