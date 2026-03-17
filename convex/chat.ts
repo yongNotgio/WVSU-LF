@@ -28,7 +28,7 @@ export const getOrCreateConversation = mutation({
       throw new Error("You cannot claim your own item.");
     }
 
-    // Check existing conversations for this item
+    
     const conversations = await ctx.db
       .query("conversations")
       .withIndex("by_itemId", (q) => q.eq("itemId", args.itemId))
