@@ -78,7 +78,7 @@ function locationScore(zone1: string, zone2: string): number {
   return adjacent.includes(zone2) ? 0.5 : 0;
 }
 
-// ---------------------------------------------------------------------------
+
 
 
 export const findPotentialMatches = query({
