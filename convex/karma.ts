@@ -39,7 +39,7 @@ export const awardKarmaPoints = mutation({
     await ctx.db.patch(finder._id, { karma: (finder.karma ?? 0) + 50 });
     await ctx.db.patch(owner._id, { karma: (owner.karma ?? 0) + 10 });
 
-    // Award college karma (+50 to finder's college)
+    
     if (finder.college) {
       const college = await ctx.db
         .query("colleges")
