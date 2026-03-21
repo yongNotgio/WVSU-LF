@@ -34,8 +34,7 @@ export const getOrCreateConversation = mutation({
       .withIndex("by_itemId", (q) => q.eq("itemId", args.itemId))
       .collect();
 
-    // Blocked if previously rejected
-    const rejected = conversations.find(
+      const rejected = conversations.find(
       (c) => c.participantIds.includes(userId) && c.challengeStatus === "rejected"
     );
     if (rejected) throw new Error("Your claim for this item was already rejected.");
