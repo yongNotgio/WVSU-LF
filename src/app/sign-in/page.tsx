@@ -25,11 +25,11 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen bg-wvsu-off-white flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-wvsu-off-white flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md">
         {/* Brand */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-wvsu-blue border-3 border-wvsu-gold flex items-center justify-center font-display text-2xl text-white font-black mx-auto mb-3">
+          <div className="w-14 h-14 bg-wvsu-blue border-2 border-wvsu-gold rounded-2xl flex items-center justify-center font-display text-2xl text-white font-black mx-auto mb-3 shadow-sm">
             W
           </div>
           <div className="font-display text-2xl text-wvsu-text">
@@ -41,11 +41,11 @@ export default function SignInPage() {
         </div>
 
         {/* Form */}
-        <div className="bg-white border-2 border-wvsu-border shadow-[4px_4px_0_var(--blue)]">
-          <div className="bg-wvsu-blue px-4 py-3">
+        <div className="bg-white border border-wvsu-border rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-wvsu-blue px-5 py-4">
             <div className="font-display text-lg text-white">Sign In</div>
           </div>
-          <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4">
             {error && (
               <div className="bg-lost-red/10 border border-lost-red text-lost-red text-xs px-3 py-2">
                 {error}
@@ -60,7 +60,7 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@wvsu.edu.ph"
-                className="w-full border-2 border-wvsu-border px-3 py-2 text-sm outline-none focus:border-wvsu-blue transition-colors"
+                className="w-full border border-wvsu-border rounded-xl px-3 py-2.5 text-sm outline-none focus:border-wvsu-blue transition-colors"
                 required
               />
             </div>
@@ -73,19 +73,19 @@ export default function SignInPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="********"
-                className="w-full border-2 border-wvsu-border px-3 py-2 text-sm outline-none focus:border-wvsu-blue transition-colors"
+                className="w-full border border-wvsu-border rounded-xl px-3 py-2.5 text-sm outline-none focus:border-wvsu-blue transition-colors"
                 required
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-wvsu-blue text-white py-2.5 text-sm font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors disabled:opacity-50"
+              className="w-full bg-wvsu-blue rounded-xl text-white py-2.5 text-sm font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
-          <div className="px-5 pb-5 text-center">
+          <div className="px-5 pb-6 text-center">
             <span className="text-xs text-wvsu-muted">
               Don&apos;t have an account?{" "}
               <Link

@@ -18,14 +18,14 @@ export default function LeaderboardPage() {
   const maxKarma = colleges?.[0]?.totalKarma || 1;
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto px-1 py-2 sm:px-2">
       {/* College Rankings */}
       <div className="mb-10">
         <div className="font-display text-2xl text-wvsu-text mb-5 flex items-center gap-2">
           <Trophy className="h-6 w-6 text-wvsu-blue" />
           College Rankings
         </div>
-        <div className="bg-white border-2 border-wvsu-border">
+        <div className="bg-white border border-wvsu-border rounded-2xl shadow-sm overflow-hidden">
           {colleges === undefined ? (
             <div className="text-sm text-wvsu-muted font-mono text-center py-12">
               Loading...
@@ -40,10 +40,10 @@ export default function LeaderboardPage() {
               return (
                 <div
                   key={college._id}
-                  className="flex items-center gap-4 px-5 py-3.5 border-b border-wvsu-border last:border-b-0"
+                  className="flex items-center gap-4 px-4 sm:px-5 py-3.5 border-b border-wvsu-border last:border-b-0"
                 >
                   <div
-                    className={`w-8 h-8 flex items-center justify-center text-sm font-extrabold font-mono shrink-0 ${
+                    className={`w-8 h-8 flex items-center justify-center text-sm font-extrabold font-mono rounded-lg shrink-0 ${
                       RANK_STYLES[rank] ?? "bg-wvsu-light-blue text-wvsu-blue"
                     }`}
                   >
@@ -77,7 +77,7 @@ export default function LeaderboardPage() {
           <ShieldCheck className="h-6 w-6 text-wvsu-blue" />
           Campus Heroes
         </div>
-        <div className="bg-white border-2 border-wvsu-border">
+        <div className="bg-white border border-wvsu-border rounded-2xl shadow-sm overflow-hidden">
           {topFinders === undefined ? (
             <div className="text-sm text-wvsu-muted font-mono text-center py-12">
               Loading...
@@ -103,12 +103,12 @@ export default function LeaderboardPage() {
               return (
                 <div
                   key={finder._id}
-                  className="flex items-center gap-4 px-5 py-3.5 border-b border-wvsu-border last:border-b-0"
+                  className="flex items-center gap-4 px-4 sm:px-5 py-3.5 border-b border-wvsu-border last:border-b-0"
                 >
                   <div className="text-sm font-extrabold font-mono text-wvsu-muted w-6 text-center shrink-0">
                     {i + 1}
                   </div>
-                  <div className="w-10 h-10 bg-wvsu-blue flex items-center justify-center text-white font-extrabold text-sm font-display shrink-0">
+                  <div className="w-10 h-10 bg-wvsu-blue rounded-lg flex items-center justify-center text-white font-extrabold text-sm font-display shrink-0">
                     {initials}
                   </div>
                   <div className="flex-1 min-w-0">

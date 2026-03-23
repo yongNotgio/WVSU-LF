@@ -39,7 +39,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto px-1 py-2 sm:px-2">
       <div className="font-display text-2xl text-wvsu-text mb-5 flex items-center gap-2">
         <MessageSquare className="h-6 w-6 text-wvsu-blue" />
         Messages
@@ -60,12 +60,12 @@ export default function MessagesPage() {
           </div>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {conversations.map((convo) => (
             <button
               key={convo._id}
               onClick={() => setActiveChatId(convo._id)}
-              className={`w-full bg-white border-2 p-4 flex items-center gap-3 text-left transition-all hover:border-wvsu-blue group ${
+              className={`w-full bg-white border rounded-2xl p-4 flex items-center gap-3 text-left transition-all hover:border-wvsu-blue hover:shadow-sm group ${
                 activeChatId === convo._id
                   ? "border-wvsu-blue"
                   : convo.hasUnread

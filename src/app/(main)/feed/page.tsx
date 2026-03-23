@@ -72,16 +72,17 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 px-3 pb-4 sm:px-4 lg:grid-cols-[240px_minmax(0,1fr)_300px] lg:gap-0 lg:px-0 lg:pb-0">
+    <div className="grid grid-cols-1 gap-5 pb-3 lg:grid-cols-[260px_minmax(0,1fr)_300px] lg:gap-5">
       {/* Left Sidebar */}
       <div className="hidden lg:block">
         <Sidebar selectedZone={selectedZone} onZoneChange={setSelectedZone} />
       </div>
 
       {/* Main Content */}
-      <div className="p-0 lg:p-2 min-h-[calc(100vh-56px)]">
+      <div className="min-h-[calc(100vh-56px)]">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-5 gap-3">
+        <div className="mb-5 rounded-2xl border border-[#E9ECEF] bg-white px-4 py-4 shadow-sm sm:px-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="font-display text-2xl font-extrabold">
             <span className="text-black">LOST & FOUND</span>
           </div>
@@ -90,7 +91,7 @@ export default function FeedPage() {
               <select
                 value={selectedZone}
                 onChange={(e) => setSelectedZone(e.target.value)}
-                className="w-full text-sm font-semibold px-3 py-2.5 border border-wvsu-border rounded-md"
+                className="w-full text-sm font-semibold px-3 py-2.5 border border-wvsu-border rounded-xl bg-white text-[#495057]"
               >
                 <option value="All Zones">All Zones</option>
                 {["Library", "CICT Bldg", "CON Bldg", "CAS Bldg", "Canteen Area", "Main Gate"].map((zone) => (
@@ -102,10 +103,11 @@ export default function FeedPage() {
             </div>
             <button
               onClick={() => setShowPostForm(true)}
-              className="bg-[#1A9FD4] text-white px-4 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-[#5BC4F5] hover:text-[#212529] transition-colors shadow-md border border-[#1A9FD4] rounded-md w-full sm:w-auto"
+              className="bg-[#1A9FD4] text-white px-4 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-[#5BC4F5] hover:text-[#212529] transition-colors shadow-sm border border-[#1A9FD4] rounded-xl w-full sm:w-auto"
             >
               + Post Item
             </button>
+          </div>
           </div>
         </div>
 
@@ -113,9 +115,9 @@ export default function FeedPage() {
         <div className="flex flex-wrap gap-2 mb-5">
           <button
             onClick={() => setTypeFilter(undefined)}
-            className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border-2 transition-all ${
+            className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border rounded-xl transition-all ${
               !typeFilter
-                ? "bg-[#1A9FD4] text-white border-[#1A9FD4] shadow-md"
+                ? "bg-[#1A9FD4] text-white border-[#1A9FD4] shadow-sm"
                 : "bg-white text-[#868E96] border-[#B6E0FE] hover:border-[#1A9FD4] hover:text-[#1A9FD4]"
             }`}
           >
@@ -123,9 +125,9 @@ export default function FeedPage() {
           </button>
           <button
             onClick={() => setTypeFilter("lost")}
-            className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border-2 transition-all ${
+            className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border rounded-xl transition-all ${
               typeFilter === "lost"
-                ? "bg-[#FF6B6B] text-white border-[#FF6B6B] shadow-md"
+                ? "bg-[#FF6B6B] text-white border-[#FF6B6B] shadow-sm"
                 : "bg-white text-[#868E96] border-[#B6E0FE] hover:border-[#FF6B6B] hover:text-[#FF6B6B]"
             }`}
           >
@@ -133,9 +135,9 @@ export default function FeedPage() {
           </button>
           <button
             onClick={() => setTypeFilter("found")}
-            className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border-2 transition-all ${
+            className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border rounded-xl transition-all ${
               typeFilter === "found"
-                ? "bg-[#51CF66] text-white border-[#51CF66] shadow-md"
+                ? "bg-[#51CF66] text-white border-[#51CF66] shadow-sm"
                 : "bg-white text-[#868E96] border-[#B6E0FE] hover:border-[#51CF66] hover:text-[#51CF66]"
             }`}
           >
@@ -161,7 +163,7 @@ export default function FeedPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {items.map((item: FeedItem) => (
               <ItemCard
                 key={item._id}
@@ -186,8 +188,8 @@ export default function FeedPage() {
 
       {/* Claim Verification Modal */}
       {claimingItem && (
-        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-wvsu-blue w-full max-w-sm shadow-[6px_6px_0_var(--blue)]">
+        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 sm:p-6">
+          <div className="bg-white border border-wvsu-blue/30 w-full max-w-sm rounded-2xl shadow-xl overflow-hidden">
             <div className="bg-wvsu-blue px-4 py-3 flex items-center justify-between">
               <div className="font-display text-lg text-white">Verify Ownership</div>
               <button
@@ -202,7 +204,7 @@ export default function FeedPage() {
               <div className="text-xs text-wvsu-muted font-mono">
                 Re: <span className="font-bold text-wvsu-text">{claimingItem.title}</span>
               </div>
-              <div className="bg-[#fff8e1] border border-wvsu-gold p-3">
+              <div className="bg-[#fff8e1] border border-wvsu-gold/70 rounded-xl p-3">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-wvsu-muted font-mono mb-1 flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   Verification Challenge
@@ -228,13 +230,13 @@ export default function FeedPage() {
                     if (e.key === "Enter") handleSubmitClaim();
                   }}
                   placeholder="Prove you're the owner / have the item..."
-                  className="w-full border-2 border-wvsu-border px-3 py-2 text-sm outline-none focus:border-wvsu-blue transition-colors"
+                  className="w-full border border-wvsu-border rounded-xl px-3 py-2 text-sm outline-none focus:border-wvsu-blue transition-colors"
                 />
               </div>
               <button
                 onClick={handleSubmitClaim}
                 disabled={!challengeAnswer.trim() || submittingClaim}
-                className="w-full bg-wvsu-blue text-white py-2.5 text-sm font-bold uppercase tracking-wider hover:bg-wvsu-blue-dark transition-colors disabled:opacity-50"
+                className="w-full bg-wvsu-blue text-white py-2.5 text-sm font-bold uppercase tracking-wider rounded-xl hover:bg-wvsu-blue-dark transition-colors disabled:opacity-50"
               >
                 {submittingClaim ? "Submitting..." : "Submit Claim"}
               </button>

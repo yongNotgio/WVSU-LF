@@ -32,7 +32,7 @@ export default function MyPostsPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto px-1 py-2 sm:px-2">
       <div className="font-display text-2xl text-wvsu-text mb-5 flex items-center gap-2">
         <Pin className="h-6 w-6 text-wvsu-blue" />
         My Posts
@@ -57,12 +57,12 @@ export default function MyPostsPage() {
           {items.map((item: Doc<"items">) => (
             <div
               key={item._id}
-              className="bg-white border-2 border-wvsu-border p-4 flex items-start gap-4"
+              className="bg-white border border-wvsu-border rounded-2xl p-4 flex items-start gap-4 shadow-sm"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span
-                    className={`text-[10px] font-extrabold uppercase font-mono px-2 py-0.5 ${
+                    className={`text-[10px] font-extrabold uppercase font-mono px-2 py-0.5 rounded-md ${
                       item.type === "lost"
                         ? "bg-lost-red text-white"
                         : "bg-found-green text-white"
@@ -71,7 +71,7 @@ export default function MyPostsPage() {
                     {item.type}
                   </span>
                   <span
-                    className={`text-[10px] font-bold uppercase font-mono px-2 py-0.5 border ${
+                    className={`text-[10px] font-bold uppercase font-mono px-2 py-0.5 border rounded-md ${
                       STATUS_STYLES[item.status] ?? ""
                     }`}
                   >
@@ -85,10 +85,10 @@ export default function MyPostsPage() {
                   {item.description}
                 </div>
                 <div className="flex gap-2 mt-2">
-                  <span className="text-[10px] font-semibold px-2 py-0.5 bg-wvsu-light-blue text-wvsu-blue font-mono">
+                  <span className="text-[10px] font-semibold px-2 py-0.5 bg-wvsu-light-blue text-wvsu-blue font-mono rounded-md">
                     {item.category}
                   </span>
-                  <span className="text-[10px] font-semibold px-2 py-0.5 bg-wvsu-light-blue text-wvsu-blue font-mono">
+                  <span className="text-[10px] font-semibold px-2 py-0.5 bg-wvsu-light-blue text-wvsu-blue font-mono rounded-md">
                     <span className="inline-flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
                       {item.locationZone}
@@ -99,7 +99,7 @@ export default function MyPostsPage() {
               {item.status === "open" && (
                 <button
                   onClick={() => setItemToResolve(item._id)}
-                  className="text-[11px] font-bold text-found-green border-[1.5px] border-found-green px-3 py-1.5 uppercase tracking-wide hover:bg-found-green hover:text-white transition-all shrink-0"
+                  className="text-[11px] font-bold text-found-green border border-found-green rounded-xl px-3 py-1.5 uppercase tracking-wide hover:bg-found-green hover:text-white transition-all shrink-0"
                   type="button"
                 >
                   Resolve

@@ -53,7 +53,11 @@ export default function MainLayout({
   return (
     <div className="min-h-screen bg-wvsu-off-white">
       <Navbar />
-      <main className="pt-8">{children}</main>
+      <main className="pt-6 pb-8">
+        <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:px-8">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }
