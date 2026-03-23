@@ -124,14 +124,14 @@ export function ChatOverlay({
 
   return (
     <div
-      className={`fixed bg-white border-2 border-[#1A9FD4] z-[100] rounded-[18px] overflow-hidden shadow-[0_8px_32px_0_rgba(26,159,212,0.15)] transition-all ${
+      className={`fixed bg-white border border-[#1A9FD4]/30 z-[100] rounded-2xl overflow-hidden shadow-[0_8px_32px_0_rgba(26,159,212,0.15)] transition-all ${
         isMaximized
-          ? "inset-4 md:inset-6"
-          : "bottom-6 right-6 w-[340px] max-w-[calc(100vw-3rem)]"
+          ? "inset-3 sm:inset-5 md:inset-6"
+          : "bottom-4 right-4 sm:bottom-6 sm:right-6 w-[340px] max-w-[calc(100vw-2rem)]"
       }`}
     >
       {/* Header */}
-      <div className="bg-[#1A9FD4] px-4 py-3 flex items-center justify-between rounded-t-[16px]">
+      <div className="bg-[#1A9FD4] px-4 py-3 flex items-center justify-between">
         <div className="text-xs font-bold text-white uppercase font-sans truncate flex items-center gap-2">
           <MessageSquare className="h-4 w-4 shrink-0" />
           {otherUserName}
@@ -227,7 +227,7 @@ export function ChatOverlay({
           <div
             ref={bodyRef}
             className={`p-3 overflow-y-auto bg-wvsu-off-white flex flex-col gap-2 ${
-              isMaximized ? "h-[calc(100vh-14rem)] md:h-[calc(100vh-12rem)]" : "h-40"
+              isMaximized ? "h-[calc(100vh-14rem)] md:h-[calc(100vh-12rem)]" : "h-44"
             }`}
           >
             {challenge && (
@@ -241,7 +241,7 @@ export function ChatOverlay({
               return (
                 <div
                   key={msg._id}
-                  className={`max-w-[75%] px-3 py-2 text-xs rounded-[10px] ${
+                  className={`max-w-[80%] px-3 py-2 text-xs rounded-xl ${
                     isMe
                       ? "bg-[#1A9FD4] text-white self-end"
                       : "bg-white border border-[#B6E0FE] text-[#212529] self-start"
@@ -319,7 +319,7 @@ export function ChatOverlay({
 
           {/* Input */}
           {challengeStatus === "accepted" && convoDetails?.item?.status !== "resolved" && (
-            <div className="flex border-t-2 border-wvsu-border">
+            <div className="flex border-t border-wvsu-border">
               <input
                 ref={attachmentInputRef}
                 type="file"
@@ -359,7 +359,7 @@ export function ChatOverlay({
               <button
                 onClick={handleSend}
                 disabled={uploading}
-                className="bg-[#1A9FD4] text-white px-4 font-bold text-sm hover:bg-[#5BC4F5] hover:text-[#212529] transition-colors rounded-r-[8px]"
+                className="bg-[#1A9FD4] text-white px-4 font-bold text-sm hover:bg-[#5BC4F5] hover:text-[#212529] transition-colors"
                 type="button"
               >
                 <SendHorizontal className="h-4 w-4" />

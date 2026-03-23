@@ -42,7 +42,7 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
   const timeAgo = getTimeAgo(item._creationTime);
 
   return (
-    <div className="icard bg-white border border-[#E9ECEF] rounded-[14px] shadow-md flex flex-col overflow-hidden cursor-pointer transition-all animate-[up_0.35s_var(--ease2)_both]">
+    <div className="icard bg-white border border-[#E9ECEF] rounded-2xl shadow-sm flex flex-col overflow-hidden cursor-pointer transition-all animate-[up_0.35s_var(--ease2)_both] hover:-translate-y-0.5 hover:shadow-md">
       {/* Image Area */}
       <div className={`ic-thumb w-full h-[180px] flex items-center justify-center text-[38px] border-b border-[#E9ECEF] flex-shrink-0 transition-transform overflow-hidden relative ${isLost ? 'bg-[#FFE3E3]' : 'bg-[#D3F9D8]'}`}> 
         {imageUrl ? (
@@ -61,7 +61,7 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
         )}
       </div>
       {/* Body */}
-      <div className="ic-main flex-1 px-3 pt-3 pb-2 flex flex-col min-w-0">
+      <div className="ic-main flex-1 p-4 flex flex-col min-w-0">
         <div className="ic-top flex items-center gap-1.5 mb-2">
           <span className={`tag ${isLost ? "tag-lost" : "tag-found"}`}>
             {isLost ? "Lost" : "Found"}
@@ -70,7 +70,7 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
           {/* Status dot: open = active, resolved = done, expired/flagged = pend */}
           <span className={`sdot ml-auto w-[7px] h-[7px] rounded-full flex-shrink-0 ${item.status === 'open' ? 'bg-[#51CF66] shadow-[0_0_0_3px_rgba(81,207,102,.2)]' : item.status === 'resolved' ? 'bg-[#ADB5BD]' : 'bg-[#FCC419] shadow-[0_0_0_3px_rgba(252,196,25,.2)]'}`}></span>
         </div>
-        <div className="ic-title font-['Plus_Jakarta_Sans',sans-serif] text-[.88rem] font-bold text-[#212529] leading-[1.3] mb-1.5">{item.title}</div>
+        <div className="ic-title font-['Plus_Jakarta_Sans',sans-serif] text-[.92rem] font-bold text-[#212529] leading-[1.3] mb-1.5">{item.title}</div>
         <div className={`ic-desc text-[.73rem] text-[#868E96] leading-snug mb-2 flex-1 sm:line-clamp-2 ${showDetails ? "block" : "hidden sm:block"}`}>
           {item.description}
         </div>
@@ -81,7 +81,7 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
         >
           {showDetails ? "Hide Details" : "View Details"}
         </button>
-        <div className="ic-chips flex gap-1 flex-wrap mb-2.5">
+        <div className="ic-chips flex gap-1.5 flex-wrap mb-2.5">
           <span className="chip inline-flex items-center gap-1 bg-[#F8F9FA] border border-[#E9ECEF] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#868E96]">{item.category}</span>
           <span className="chip inline-flex items-center gap-1 bg-[#F8F9FA] border border-[#E9ECEF] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#868E96]"><MapPin className="h-3 w-3" />{item.locationZone}</span>
           <span className="chip inline-flex items-center gap-1 bg-[#EBF7FD] border border-[#B6E0FE] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#1A9FD4]">
@@ -93,7 +93,7 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
         </div>
       </div>
       {/* Footer */}
-      <div className="ic-foot flex items-center justify-between gap-1.5 px-3 py-2 border-t border-[#E9ECEF] mt-auto bg-[#F8F9FA]">
+      <div className="ic-foot flex items-center justify-between gap-1.5 px-4 py-3 border-t border-[#E9ECEF] mt-auto bg-[#F8F9FA]">
         <span className="ptime text-[.62rem] text-[#ADB5BD]">{timeAgo}</span>
         {isOwnItem ? (
           <span className="done-tag px-2.5 py-1 flex-shrink-0 bg-[#F8F9FA] border border-[#E9ECEF] rounded text-[#ADB5BD] font-['Outfit',sans-serif] text-[.7rem] font-semibold">Your post</span>
@@ -103,7 +103,7 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
               e.stopPropagation();
               onContact(item._id);
             }}
-            className="claim-btn px-3 py-1.5 bg-[#5BC4F5] text-[#212529] border-none rounded font-['Outfit',sans-serif] text-[.73rem] font-bold cursor-pointer whitespace-nowrap flex-shrink-0 shadow-md transition-all hover:scale-105 hover:shadow-lg"
+            className="claim-btn px-3 py-1.5 bg-[#5BC4F5] text-[#212529] border-none rounded-xl font-['Outfit',sans-serif] text-[.73rem] font-bold cursor-pointer whitespace-nowrap flex-shrink-0 shadow-sm transition-all hover:scale-105 hover:shadow-md"
           >
             Contact {isLost ? "Owner" : "Finder"}
           </button>

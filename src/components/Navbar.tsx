@@ -84,8 +84,8 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-[#E9ECEF] shadow-sm">
-      <div className="max-w-[1280px] mx-auto px-3 sm:px-7 h-[62px] flex items-center justify-between gap-2 sm:gap-4">
+    <nav className="sticky top-0 z-50 bg-white/95 border-b border-[#E9ECEF] shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/85">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 h-[64px] flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand */}
         <Link href="/feed" className="logo flex items-center gap-2.5 no-underline shrink-0">
           <div className="logo-mark w-9 h-9 rounded-[10px] bg-[#5BC4F5] flex items-center justify-center text-[#0D4F66] transition-transform duration-300">
@@ -102,7 +102,7 @@ export function Navbar() {
               <Link
                 href={link.href}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-[.84rem] font-semibold transition-all duration-200 no-underline ${pathname?.startsWith(link.href)
-                  ? 'bg-[#EBF7FD] text-[#1A9FD4] font-bold' : 'text-[#868E96] hover:bg-[#F8F9FA] hover:text-[#212529]'}`}
+                  ? 'bg-[#EBF7FD] text-[#1A9FD4] font-bold shadow-sm' : 'text-[#868E96] hover:bg-[#F8F9FA] hover:text-[#212529]'}`}
               >
                 {link.label}
                 {link.label === "Messages" && !!unreadCount && unreadCount > 0 && (
@@ -114,7 +114,7 @@ export function Navbar() {
         </ul>
         {/* Right */}
         <div className="nav-right flex items-center gap-2 shrink-0">
-          <button className="hidden md:flex icon-btn w-9 h-9 rounded-[10px] bg-[#F8F9FA] border border-[#E9ECEF] items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#EBF7FD] hover:border-[#5BC4F5]">
+          <button className="hidden md:flex icon-btn w-9 h-9 rounded-[10px] bg-[#F8F9FA] border border-[#E9ECEF] items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#EBF7FD] hover:border-[#5BC4F5] hover:shadow-sm">
             <Bell size={15} className="text-[#495057]" />
             <span className="notif-dot absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF6B6B] rounded-full border-[1.5px] border-white animate-pulse"></span>
           </button>
@@ -138,7 +138,7 @@ export function Navbar() {
 
             {menuOpen && (
               <div
-                className="absolute right-0 mt-2 w-52 rounded-[12px] border border-[#E9ECEF] bg-white shadow-lg p-1.5 z-50"
+                className="absolute right-0 mt-2 w-56 rounded-[12px] border border-[#E9ECEF] bg-white shadow-xl p-1.5 z-50"
                 role="menu"
                 aria-label="Profile actions"
               >
@@ -183,7 +183,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="md:hidden w-9 h-9 rounded-[10px] border border-[#E9ECEF] bg-[#F8F9FA] text-[#495057] inline-flex items-center justify-center"
+            className="md:hidden w-9 h-9 rounded-[10px] border border-[#E9ECEF] bg-[#F8F9FA] text-[#495057] inline-flex items-center justify-center hover:bg-[#EBF7FD]"
             aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={mobileMenuOpen}
           >

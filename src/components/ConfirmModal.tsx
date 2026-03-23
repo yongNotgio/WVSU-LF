@@ -33,14 +33,14 @@ export function ConfirmModal({
       : "bg-wvsu-blue text-white hover:bg-wvsu-blue-dark";
 
   return (
-    <div className="fixed inset-0 z-[140] flex items-center justify-center bg-[#1A9FD4]/20 px-4">
+    <div className="fixed inset-0 z-[140] flex items-center justify-center bg-[#1A9FD4]/20 px-4 sm:px-6">
       <div
         className="absolute inset-0"
         onClick={loading ? undefined : onClose}
         aria-hidden="true"
       />
-      <div className="relative w-full max-w-md border-2 border-[#1A9FD4] bg-white rounded-[16px] shadow-[0_8px_32px_0_rgba(26,159,212,0.15)]">
-        <div className="flex items-center justify-between bg-[#1A9FD4] px-4 py-3 rounded-t-[14px]">
+      <div className="relative w-full max-w-md border border-[#1A9FD4]/30 bg-white rounded-2xl shadow-[0_10px_30px_0_rgba(26,159,212,0.14)] overflow-hidden">
+        <div className="flex items-center justify-between bg-[#1A9FD4] px-4 py-3">
           <div className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white font-sans">
             <AlertTriangle className="h-4 w-4" />
             Confirm Action
@@ -57,16 +57,16 @@ export function ConfirmModal({
         </div>
 
         <div className="space-y-3 p-5">
-          <div className="font-sans text-xl text-[#212529] font-bold">{title}</div>
+          <div className="font-sans text-lg sm:text-xl text-[#212529] font-bold">{title}</div>
           <div className="text-sm leading-6 text-wvsu-muted">{description}</div>
         </div>
 
-        <div className="flex justify-end gap-2 border-t border-wvsu-border px-5 py-4">
+        <div className="flex justify-end gap-2 border-t border-wvsu-border px-5 py-4 bg-[#FCFDFE]">
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="border border-wvsu-border px-4 py-2 text-xs font-bold uppercase tracking-wide text-wvsu-muted transition-colors hover:bg-wvsu-light-blue hover:text-wvsu-blue disabled:opacity-50"
+            className="border border-wvsu-border rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wide text-wvsu-muted transition-colors hover:bg-wvsu-light-blue hover:text-wvsu-blue disabled:opacity-50"
           >
             {cancelLabel}
           </button>
@@ -74,7 +74,7 @@ export function ConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wide transition-colors disabled:opacity-50 ${confirmButtonClass}`}
+            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wide transition-colors disabled:opacity-50 ${confirmButtonClass}`}
           >
             {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             {confirmLabel}
