@@ -20,16 +20,16 @@ export function RightPanel() {
   const maxKarma = colleges?.[0]?.totalKarma || 1;
 
   return (
-    <aside className="flex flex-col gap-2">
+    <aside className="flex flex-col gap-4">
       {/* College Rankings */}
-      <div className="bg-white border border-[#E9ECEF] rounded-[10px] shadow p-1 animate-[up_0.4s_var(--ease2)_both]">
-        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-1 mb-1 border-b border-[#E9ECEF]">
+      <div className="bg-white border border-[#E9ECEF] rounded-2xl shadow-sm p-4 animate-[up_0.4s_var(--ease2)_both]">
+        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-2 mb-3 border-b border-[#E9ECEF]">
           <Building2 size={14} className="text-[#495057]" /> College Rankings
           <span className="ml-auto text-[.6rem] font-bold px-1.5 py-0.5 rounded bg-[#FFF3BF] text-[#92400E] border border-[#E9ECEF]">
             This Week
           </span>
         </div>
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-1.5">
           {colleges?.slice(0, showAllColleges ? colleges.length : 5).map(
             (college: { _id: string; name: string; totalKarma: number }, i: number) => {
               const rank = i + 1;
@@ -38,7 +38,7 @@ export function RightPanel() {
               return (
                 <div
                   key={college._id}
-                  className="flex items-center gap-1 py-0.5 rounded-[7px] bg-[#F8F9FA] cursor-pointer transition-all"
+                  className="flex items-center gap-2 px-2 py-2 rounded-xl bg-[#F8F9FA] cursor-pointer transition-all hover:bg-[#EBF7FD]"
                 >
                   <div
                     className={`w-6 h-6 flex items-center justify-center text-[.74rem] font-extrabold font-['Plus_Jakarta_Sans',sans-serif] rounded-[7px] shrink-0 ${
@@ -60,7 +60,7 @@ export function RightPanel() {
                     <div className="text-[.62rem] text-[#ADB5BD] font-medium mt-0.5">
                       {college.totalKarma} pts
                     </div>
-                    <div className="w-full h-1 bg-[#E9ECEF] rounded-full overflow-hidden mt-0.5">
+                    <div className="w-full h-1 bg-[#E9ECEF] rounded-full overflow-hidden mt-1">
                       <div
                         className="h-1 bg-[#5BC4F5] rounded-full"
                         style={{ width: `${barWidth}%` }}
@@ -87,14 +87,14 @@ export function RightPanel() {
         </div>
       </div>
       {/* Campus Heroes */}
-      <div className="bg-white border border-[#E9ECEF] rounded-[10px] shadow p-2 animate-[up_0.4s_var(--ease2)_both]">
-        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-2 mb-2 border-b border-[#E9ECEF]">
+      <div className="bg-white border border-[#E9ECEF] rounded-2xl shadow-sm p-4 animate-[up_0.4s_var(--ease2)_both]">
+        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-2 mb-3 border-b border-[#E9ECEF]">
           <UserRound size={14} className="text-[#495057]" /> Student Heroes
           <span className="ml-auto text-[.6rem] font-bold px-2 py-0.5 rounded bg-[#FFE3E3] text-[#C92A2A] border border-[#E9ECEF]">
             Top 5
           </span>
         </div>
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-1.5">
           {topFinders?.map(
             (finder: { _id: Id<"users">; name?: string; college?: string; karma?: number }, i: number) => {
               const initials = (finder.name ?? "")
@@ -106,7 +106,7 @@ export function RightPanel() {
               return (
                 <div
                   key={finder._id}
-                  className="flex items-center gap-2 py-1 rounded-[7px] cursor-pointer transition-all"
+                  className="flex items-center gap-2 px-2 py-2 rounded-xl cursor-pointer transition-all hover:bg-[#F8F9FA]"
                 >
                   <div className="w-[13px] text-center font-['Plus_Jakarta_Sans',sans-serif] text-[.68rem] font-bold text-[#ADB5BD] shrink-0">
                     {i + 1}

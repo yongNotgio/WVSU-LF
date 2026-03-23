@@ -94,8 +94,8 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4">
-      <div className="bg-white border border-[#E9ECEF] rounded-[20px] w-full max-w-[510px] max-h-[90vh] overflow-y-auto shadow-2xl animate-[modalUp_0.3s_var(--ease)_both]">
+    <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 sm:p-6">
+      <div className="bg-white border border-[#E9ECEF] rounded-[20px] w-full max-w-[560px] max-h-[90vh] overflow-y-auto shadow-2xl animate-[modalUp_0.3s_var(--ease)_both]">
         {/* Header */}
         <div className="bg-[#5BC4F5] px-7 pt-6 pb-4 rounded-t-[19px] border-b border-[#5bc4f54d] relative">
           <div className="font-['Plus_Jakarta_Sans',sans-serif] text-lg font-extrabold text-[#212529]">
@@ -109,13 +109,13 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
             <X className="h-5 w-5" />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="px-7 py-6 space-y-5">
+        <form onSubmit={handleSubmit} className="px-5 sm:px-7 py-6 space-y-5">
           {/* Type Toggle */}
           <div className="flex gap-2 mb-3">
             <button
               type="button"
               onClick={() => setType("lost")}
-              className={`flex-1 py-2 rounded-[9px] border text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-2 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                 type === "lost"
                   ? "bg-[#FFE3E3] border-[#FFC9C9] text-[#C92A2A]"
                   : "bg-[#F8F9FA] border-[#E9ECEF] text-[#868E96] hover:text-[#212529]"
@@ -126,7 +126,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
             <button
               type="button"
               onClick={() => setType("found")}
-              className={`flex-1 py-2 rounded-[9px] border text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-2 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                 type === "found"
                   ? "bg-[#D3F9D8] border-[#B2F2BB] text-[#1C7C34]"
                   : "bg-[#F8F9FA] border-[#E9ECEF] text-[#868E96] hover:text-[#212529]"
@@ -141,7 +141,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
               Item Name
             </label>
             <input
-              className="w-full border border-[#E9ECEF] rounded-[9px] px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors"
+              className="w-full border border-[#E9ECEF] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -156,7 +156,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
                 Category
               </label>
               <select
-                className="w-full border border-[#E9ECEF] rounded-[9px] px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors bg-white"
+                className="w-full border border-[#E9ECEF] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors bg-white"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 required
@@ -174,7 +174,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
                 Location
               </label>
               <select
-                className="w-full border border-[#E9ECEF] rounded-[9px] px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors bg-white"
+                className="w-full border border-[#E9ECEF] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors bg-white"
                 value={locationZone}
                 onChange={(e) => setLocationZone(e.target.value)}
                 required
@@ -197,7 +197,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
               </span>
             </label>
             <textarea
-              className="w-full border border-[#E9ECEF] rounded-[9px] px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors resize-vertical min-h-[78px]"
+              className="w-full border border-[#E9ECEF] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors resize-vertical min-h-[78px]"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Color, brand, size, any noticeable features…"
@@ -211,7 +211,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
               Verification Challenge
             </label>
             <input
-              className="w-full border border-[#E9ECEF] rounded-[9px] px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors"
+              className="w-full border border-[#E9ECEF] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#5BC4F5] transition-colors"
               type="text"
               value={challenge}
               onChange={(e) => setChallenge(e.target.value)}
@@ -235,7 +235,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
                 Optional
               </span>
             </label>
-            <div className="border border-dashed border-[#DEE2E6] rounded-[9px] p-5 text-center bg-[#F8F9FA] cursor-pointer transition-all">
+            <div className="border border-dashed border-[#DEE2E6] rounded-xl p-5 text-center bg-[#F8F9FA] cursor-pointer transition-all">
               <input
                 type="file"
                 accept="image/*"
@@ -270,7 +270,7 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-[#5BC4F5] text-[#212529] py-3 text-sm font-bold uppercase tracking-wider rounded-[10px] shadow-md transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
+            className="w-full bg-[#5BC4F5] text-[#212529] py-3 text-sm font-bold uppercase tracking-wider rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
           >
             {submitting
               ? "Posting..."
