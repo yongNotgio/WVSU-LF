@@ -94,7 +94,7 @@ export default function FeedPage() {
                 className="w-full text-sm font-semibold px-3 py-2.5 border border-wvsu-border rounded-xl bg-white text-[#495057]"
               >
                 <option value="All Zones">All Zones</option>
-                {["Library", "CICT Bldg", "CON Bldg", "CAS Bldg", "Canteen Area", "Main Gate"].map((zone) => (
+                {["Library", "CICT Bldg", "Pescar Bldg", "CBM Bldg","COC Bldg", "NAB", "CON Bldg", "CAS Bldg", "Canteen Area", "Main Gate"].map((zone) => (
                   <option key={zone} value={zone}>
                     {zone}
                   </option>
