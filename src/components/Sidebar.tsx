@@ -53,15 +53,10 @@ export function Sidebar({ selectedZone: _selectedZone, onZoneChange: _onZoneChan
 
       {/* Project Card */}
       <div className="donate-card">
-        <div className="donate-title">WVSULF Community Board</div>
-        <div className="donate-sub">Track activity and help keep campus reporting accurate and up to date.</div>
-        <div className="donate-goal">
-          <span>{items?.length ?? 0} total reports</span>
-          <span>{resolvedCount} resolved</span>
-        </div>
-        <div className="donate-progress"><div className="donate-progress-bar" style={{ width: `${items?.length ? Math.min(100, Math.round((resolvedCount / items.length) * 100)) : 0}%` }}></div></div>
+        <div className="donate-title">Fuel the Devs!</div>
+        <div className="donate-sub">For the students, by the students. Help us keep the servers running with coffee.</div>
         <button className="donate-btn" onClick={() => window.location.reload()}>
-          Refresh Dashboard
+          Donate Now
         </button>
       </div>
     </aside>
