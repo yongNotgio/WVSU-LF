@@ -500,11 +500,6 @@ nav {
   border: 1px solid #FDE68A;
   position: relative; overflow: hidden;
 }
-.donate-card::before {
-  content: '☕';
-  position: absolute; right: 12px; top: 12px;
-  font-size: 32px; opacity: 0.4;
-}
 .donate-title { font-size: 14px; font-weight: 700; color: #92400E; margin-bottom: 4px; }
 .donate-sub { font-size: 12px; color: #A16207; line-height: 1.5; margin-bottom: 14px; }
 .donate-goal {
@@ -530,16 +525,18 @@ nav {
 .feed-header { display: flex; align-items: center; gap: 10px; }
 .feed-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
 .new-post-btn {
-  width: 100%; padding: 13px;
+  width: auto;
+  min-height: 36px;
+  padding: 8px 14px;
   background: linear-gradient(135deg, #38BDF8, #0EA5E9);
   color: #fff; border: none; border-radius: var(--r);
   font-size: 14px; font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 3px 14px rgba(14,165,233,0.35);
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
-.new-post-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14,165,233,0.45); }
+.new-post-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(14,165,233,0.4); }
 
 .post-card {
   background: var(--surface);
@@ -594,6 +591,9 @@ nav {
 .post-meta-item {
   display: flex; align-items: center; gap: 4px;
   font-size: 12px; color: var(--ink3);
+  background: var(--surface2);
+  padding: 4px 8px;
+  border-radius: 6px;
 }
 .post-footer {
   display: flex; align-items: center; justify-content: space-between;
@@ -661,4 +661,13 @@ nav {
 .dept-fill { height: 100%; border-radius: 100px; }
 .dept-pts { font-size: 12px; font-weight: 700; color: var(--ink2); flex-shrink: 0; }
 
-.feed-stack { display: flex; flex-direction: column; gap: 14px; }
+.feed-stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 900px) {
+  .feed-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const COLLEGES = [
@@ -52,11 +53,15 @@ export default function OnboardingPage() {
       <div className="w-full max-w-md">
         {/* Brand */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-wvsu-blue border-2 border-wvsu-gold rounded-2xl flex items-center justify-center font-display text-2xl text-white font-black mx-auto mb-3 shadow-sm">
-            W
-          </div>
-          <div className="font-display text-2xl text-wvsu-text">
-            Welcome to WVS<span className="text-wvsu-gold">ULF</span>
+          <div className="flex items-center justify-center gap-2.5">
+            <Image
+              src="/logo.png"
+              alt="WVSU LF Logo"
+              width={46}
+              height={46}
+              priority
+              className="h-20 w-auto"
+            />
           </div>
           <div className="text-xs text-wvsu-muted mt-1 font-mono">
             COMPLETE YOUR PROFILE

@@ -9,7 +9,7 @@ import { ItemCard } from "../../../components/ItemCard";
 import { PostItemForm } from "../../../components/PostItemForm";
 import { ChatOverlay } from "../../../components/ChatOverlay";
 import { Id, Doc } from "../../../../convex/_generated/dataModel";
-import { ListFilter, Package, ShieldCheck, SlidersHorizontal, X } from "lucide-react";
+import { Package, ShieldCheck, X } from "lucide-react";
 
 interface FeedItem extends Doc<"items"> {
   posterCollege?: string;
@@ -29,6 +29,7 @@ export default function FeedPage() {
     challenge?: string;
   } | null>(null);
   const [claimingItem, setClaimingItem] = useState<FeedItem | null>(null);
+  const [expandedItem, setExpandedItem] = useState<FeedItem | null>(null);
   const [challengeAnswer, setChallengeAnswer] = useState("");
   const [claimError, setClaimError] = useState("");
   const [submittingClaim, setSubmittingClaim] = useState(false);
@@ -43,6 +44,7 @@ export default function FeedPage() {
   const handleContact = (itemId: string) => {
     const item = items?.find((i: FeedItem) => i._id === itemId);
     if (item) {
+      setExpandedItem(null);
       setClaimingItem(item);
       setChallengeAnswer("");
       setClaimError("");
@@ -80,13 +82,10 @@ export default function FeedPage() {
 
       {/* Main Content */}
       <div className="c-col min-h-[calc(100vh-56px)]">
-        <button
-          onClick={() => setShowPostForm(true)}
-          className="new-post-btn"
-        >
-          + Post a Report
-        </button>
-
+        <div className="mb-4">
+          <h1 className="font-display text-3xl font-bold text-wvsu-text tracking-tight">Lost <span className="text-wvsu-blue">&</span> Found</h1>
+          <p className="text-sm text-wvsu-muted mt-1">Help reunite items with their owners</p>
+        </div>
         <div className="feed-header mb-4">
           <div className="tab-group">
             <button
@@ -108,13 +107,7 @@ export default function FeedPage() {
               Found
             </button>
           </div>
-          <div className="feed-actions">
-            <button className="icon-btn" title="Filter list">
-              <ListFilter className="h-4 w-4" />
-            </button>
-            <button className="icon-btn" title="Sort list">
-              <SlidersHorizontal className="h-4 w-4" />
-            </button>
+          <div className="feed-actions flex items-center gap-3">
             <select
               value={selectedZone}
               onChange={(e) => setSelectedZone(e.target.value)}
@@ -127,6 +120,12 @@ export default function FeedPage() {
                 </option>
               ))}
             </select>
+            <button
+              onClick={() => setShowPostForm(true)}
+              className="new-post-btn text-sm"
+            >
+              + Post a Report
+            </button>
           </div>
         </div>
 
@@ -150,12 +149,25 @@ export default function FeedPage() {
         ) : (
           <div className="feed-stack">
             {items.map((item: FeedItem) => (
-              <ItemCard
+              <div
                 key={item._id}
-                item={item}
-                currentUserId={stats?._id}
-                onContact={handleContact}
-              />
+                className="cursor-pointer"
+                role="button"
+                tabIndex={0}
+                onClick={() => setExpandedItem(item)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setExpandedItem(item);
+                  }
+                }}
+              >
+                <ItemCard
+                  item={item}
+                  currentUserId={stats?._id}
+                  onContact={handleContact}
+                />
+              </div>
             ))}
           </div>
         )}
@@ -165,6 +177,36 @@ export default function FeedPage() {
       <div className="r-col hidden lg:block">
         <RightPanel />
       </div>
+
+      {/* Expanded Item Modal */}
+      {expandedItem && (
+        <div
+          className="fixed inset-0 bg-black/50 z-[210] flex items-center justify-center p-4 sm:p-6"
+          onClick={() => setExpandedItem(null)}
+        >
+          <div
+            className="w-full max-w-3xl bg-white border border-wvsu-blue/30 rounded-2xl shadow-xl p-4 sm:p-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-end mb-2">
+              <button
+                onClick={() => setExpandedItem(null)}
+                className="text-wvsu-muted hover:text-wvsu-text"
+                aria-label="Close expanded item"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="scale-[1.03] sm:scale-[1.05] origin-top">
+              <ItemCard
+                item={expandedItem}
+                currentUserId={stats?._id}
+                onContact={handleContact}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Post Form Modal */}
       {showPostForm && (

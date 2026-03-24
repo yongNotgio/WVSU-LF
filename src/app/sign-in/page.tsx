@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function SignInPage() {
@@ -29,13 +30,17 @@ export default function SignInPage() {
       <div className="w-full max-w-md">
         {/* Brand */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-wvsu-blue border-2 border-wvsu-gold rounded-2xl flex items-center justify-center font-display text-2xl text-white font-black mx-auto mb-3 shadow-sm">
-            W
+          <div className="flex items-center justify-center gap-2.5">
+            <Image
+              src="/logo.png"
+              alt="WVSU LF Logo"
+              width={46}
+              height={46}
+              priority
+              className="h-20 w-auto"
+            />
           </div>
-          <div className="font-display text-2xl text-wvsu-text">
-            WVS<span className="text-wvsu-gold">ULF</span>
-          </div>
-          <div className="text-xs text-wvsu-muted mt-1 font-mono">
+          <div className="text-m text-wvsu-muted mt-1 font-mono">
             LOST & FOUND PLATFORM
           </div>
         </div>

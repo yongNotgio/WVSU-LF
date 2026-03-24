@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import { Navbar } from "../../components/Navbar";
@@ -39,9 +40,14 @@ export default function MainLayout({
     return (
       <div className="min-h-screen bg-wvsu-off-white flex items-center justify-center">
         <div className="text-center">
-          <div className="w-14 h-14 bg-wvsu-blue border-3 border-wvsu-gold flex items-center justify-center font-display text-2xl text-white font-black mx-auto mb-3 animate-pulse">
-            W
-          </div>
+          <Image
+            src="/logo.png"
+            alt="WVSU LF Logo"
+            width={56}
+            height={56}
+            priority
+            className="mx-auto mb-3 h-14 w-14 animate-pulse"
+          />
           <div className="text-sm text-wvsu-muted font-mono">Loading...</div>
         </div>
       </div>
