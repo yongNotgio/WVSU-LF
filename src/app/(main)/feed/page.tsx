@@ -9,7 +9,7 @@ import { ItemCard } from "../../../components/ItemCard";
 import { PostItemForm } from "../../../components/PostItemForm";
 import { ChatOverlay } from "../../../components/ChatOverlay";
 import { Id, Doc } from "../../../../convex/_generated/dataModel";
-import { Package, ShieldCheck, X } from "lucide-react";
+import { ListFilter, Package, ShieldCheck, SlidersHorizontal, X } from "lucide-react";
 
 interface FeedItem extends Doc<"items"> {
   posterCollege?: string;
@@ -72,77 +72,62 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-5 pb-3 lg:grid-cols-[260px_minmax(0,1fr)_300px] lg:gap-5">
+    <div className="page">
       {/* Left Sidebar */}
-      <div className="hidden lg:block">
+      <div className="l-col hidden lg:block">
         <Sidebar selectedZone={selectedZone} onZoneChange={setSelectedZone} />
       </div>
 
       {/* Main Content */}
-      <div className="min-h-[calc(100vh-56px)]">
-        {/* Header */}
-        <div className="mb-5 rounded-2xl border border-[#E9ECEF] bg-white px-4 py-4 shadow-sm sm:px-5">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="font-display text-2xl font-extrabold">
-            <span className="text-black">LOST & FOUND</span>
-          </div>
-          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-stretch sm:items-center gap-2">
-            <div className="w-full sm:w-44">
-              <select
-                value={selectedZone}
-                onChange={(e) => setSelectedZone(e.target.value)}
-                className="w-full text-sm font-semibold px-3 py-2.5 border border-wvsu-border rounded-xl bg-white text-[#495057]"
-              >
-                <option value="All Zones">All Zones</option>
-                {["Library", "CICT Bldg", "Pescar Bldg", "CBM Bldg","COC Bldg", "NAB", "CON Bldg", "CAS Bldg", "Canteen Area", "Main Gate"].map((zone) => (
-                  <option key={zone} value={zone}>
-                    {zone}
-                  </option>
-                ))}
-              </select>
-            </div>
+      <div className="c-col min-h-[calc(100vh-56px)]">
+        <button
+          onClick={() => setShowPostForm(true)}
+          className="new-post-btn"
+        >
+          + Post a Report
+        </button>
+
+        <div className="feed-header mb-4">
+          <div className="tab-group">
             <button
-              onClick={() => setShowPostForm(true)}
-              className="bg-[#1A9FD4] text-white px-4 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-[#5BC4F5] hover:text-[#212529] transition-colors shadow-sm border border-[#1A9FD4] rounded-xl w-full sm:w-auto"
+              onClick={() => setTypeFilter(undefined)}
+              className={`ftab ${!typeFilter ? "on" : ""}`}
             >
-              + Post Item
+              All
+            </button>
+            <button
+              onClick={() => setTypeFilter("lost")}
+              className={`ftab ${typeFilter === "lost" ? "on" : ""}`}
+            >
+              Lost
+            </button>
+            <button
+              onClick={() => setTypeFilter("found")}
+              className={`ftab ${typeFilter === "found" ? "on" : ""}`}
+            >
+              Found
             </button>
           </div>
+          <div className="feed-actions">
+            <button className="icon-btn" title="Filter list">
+              <ListFilter className="h-4 w-4" />
+            </button>
+            <button className="icon-btn" title="Sort list">
+              <SlidersHorizontal className="h-4 w-4" />
+            </button>
+            <select
+              value={selectedZone}
+              onChange={(e) => setSelectedZone(e.target.value)}
+              className="loc-sel h-9 min-w-[140px]"
+            >
+              <option value="All Zones">All Zones</option>
+              {["Library", "CICT Bldg", "Pescar Bldg", "CBM Bldg", "COC Bldg", "NAB", "CON Bldg", "CAS Bldg", "Canteen Area", "Main Gate"].map((zone) => (
+                <option key={zone} value={zone}>
+                  {zone}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
-
-        {/* Type Filter Tabs */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          <button
-            onClick={() => setTypeFilter(undefined)}
-            className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border rounded-xl transition-all ${
-              !typeFilter
-                ? "bg-[#1A9FD4] text-white border-[#1A9FD4] shadow-sm"
-                : "bg-white text-[#868E96] border-[#B6E0FE] hover:border-[#1A9FD4] hover:text-[#1A9FD4]"
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setTypeFilter("lost")}
-            className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border rounded-xl transition-all ${
-              typeFilter === "lost"
-                ? "bg-[#FF6B6B] text-white border-[#FF6B6B] shadow-sm"
-                : "bg-white text-[#868E96] border-[#B6E0FE] hover:border-[#FF6B6B] hover:text-[#FF6B6B]"
-            }`}
-          >
-            Lost
-          </button>
-          <button
-            onClick={() => setTypeFilter("found")}
-            className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider border rounded-xl transition-all ${
-              typeFilter === "found"
-                ? "bg-[#51CF66] text-white border-[#51CF66] shadow-sm"
-                : "bg-white text-[#868E96] border-[#B6E0FE] hover:border-[#51CF66] hover:text-[#51CF66]"
-            }`}
-          >
-            Found
-          </button>
         </div>
 
         {/* Items Grid */}
@@ -163,7 +148,7 @@ export default function FeedPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="feed-stack">
             {items.map((item: FeedItem) => (
               <ItemCard
                 key={item._id}
@@ -177,7 +162,7 @@ export default function FeedPage() {
       </div>
 
       {/* Right Panel */}
-      <div className="hidden lg:block">
+      <div className="r-col hidden lg:block">
         <RightPanel />
       </div>
 
