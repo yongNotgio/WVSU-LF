@@ -53,8 +53,14 @@ export function Sidebar({ selectedZone: _selectedZone, onZoneChange: _onZoneChan
 
       {/* Project Card */}
       <div className="donate-card">
-        <div className="donate-title">Fuel the Devs!</div>
-        <div className="donate-sub">For the students, by the students. Help us keep the servers running with coffee.</div>
+        <div className="flex items-center justify-between">
+          <div className="donate-title">Fuel the Devs!</div>
+          <div className="flex gap-1.5">
+            <div className="w-7 h-7 rounded-full bg-[#FAF9F6] flex items-center justify-center text-sm">👨‍💻</div>
+            <div className="w-7 h-7 rounded-full bg-[#FAF9F6] flex items-center justify-center text-sm">👨‍💻</div>
+          </div>
+        </div>
+        <div className="donate-sub">For the students, by the students. Help us keep the servers running with coffee!</div>  
         <button className="donate-btn" onClick={() => window.location.reload()}>
           Donate Now
         </button>

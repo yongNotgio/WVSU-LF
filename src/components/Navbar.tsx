@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../convex/_generated/api";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -97,13 +98,15 @@ export function Navbar() {
     <nav>
       <div className="nav-wrap">
         {/* Brand */}
-        <Link href="/feed" className="logo flex items-center gap-2.5 no-underline shrink-0">
-          <div className="logo-mark w-9 h-9 rounded-[10px] flex items-center justify-center text-[13px] font-extrabold transition-transform duration-300">
-            WL
-          </div>
-          <span className="logo-name font-['Plus_Jakarta_Sans',sans-serif] font-extrabold">
-            WVSU<span>LF</span>
-          </span>
+        <Link href="/feed" className="logo flex items-center no-underline shrink-0 gap--5.5">
+            <Image
+              src="/logo.png"
+              alt="WVSU LF Logo"
+              width={50}
+              height={50}
+              priority
+              className="h-20 w-auto"
+            />
         </Link>
         {/* Nav Links */}
         <ul className="hidden md:flex nav-links gap-0.5 list-none overflow-x-auto whitespace-nowrap max-w-[52vw] sm:max-w-none ml-auto">
@@ -223,13 +226,14 @@ export function Navbar() {
         >
           {/* Drawer header */}
           <div className="flex items-center justify-between px-4 py-4 border-b border-[rgba(59,155,212,0.15)]">
-            <Link href="/feed" className="logo flex items-center gap-2.5 no-underline" onClick={() => setMobileMenuOpen(false)}>
-              <div className="logo-mark w-8 h-8 rounded-[9px] flex items-center justify-center text-[12px] font-extrabold">
-                WL
-              </div>
-              <span className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[1.05rem] text-[#1A2E3B]">
-                WVSU<span className="text-[#3B9BD4]">LF</span>
-              </span>
+            <Link href="/feed" className="logo flex items-center no-underline gap-2" onClick={() => setMobileMenuOpen(false)}>
+              <Image
+                src="/logo.png"
+                alt="WVSU LF Logo"
+                width={34}
+                height={34}
+                className="h-8 w-auto"
+              />
             </Link>
             <button
               type="button"
