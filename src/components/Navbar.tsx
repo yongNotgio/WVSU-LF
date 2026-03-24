@@ -6,7 +6,17 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../convex/_generated/api";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, Link2, LogOut, Menu, Upload, X } from "lucide-react";
+import {
+  Bell,
+  FileText,
+  Grid2x2,
+  LogOut,
+  Menu,
+  MessageSquare,
+  Trophy,
+  Upload,
+  X,
+} from "lucide-react";
 import { UserAvatar } from "./UserAvatar";
 
 export function Navbar() {
@@ -25,10 +35,10 @@ export function Navbar() {
 
   const pathname = usePathname();
   const navLinks = [
-    { label: "Feed", href: "/feed" },
-    { label: "My Posts", href: "/my-posts" },
-    { label: "Messages", href: "/messages" },
-    { label: "Leaderboard", href: "/leaderboard" },
+    { label: "Feed", href: "/feed", icon: Grid2x2 },
+    { label: "My Posts", href: "/my-posts", icon: FileText },
+    { label: "Messages", href: "/messages", icon: MessageSquare },
+    { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
   ];
 
   const handleLogout = async () => {
@@ -84,29 +94,31 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 border-b border-[#E9ECEF] shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/85">
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 h-[64px] flex items-center justify-between gap-2 sm:gap-4">
+    <nav>
+      <div className="nav-wrap">
         {/* Brand */}
         <Link href="/feed" className="logo flex items-center gap-2.5 no-underline shrink-0">
-          <div className="logo-mark w-9 h-9 rounded-[10px] bg-[#5BC4F5] flex items-center justify-center text-[#0D4F66] transition-transform duration-300">
-            <Link2 size={17} />
+          <div className="logo-mark w-9 h-9 rounded-[10px] flex items-center justify-center text-[13px] font-extrabold transition-transform duration-300">
+            WL
           </div>
-          <span className="logo-name font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[1.15rem]">
-            <span className="text-[#1A9FD4]">WVSU</span><span className="text-black">LF</span>
+          <span className="logo-name font-['Plus_Jakarta_Sans',sans-serif] font-extrabold">
+            WVSU<span>LF</span>
           </span>
         </Link>
         {/* Nav Links */}
-        <ul className="hidden md:flex nav-links gap-0.5 list-none overflow-x-auto whitespace-nowrap max-w-[52vw] sm:max-w-none">
+        <ul className="hidden md:flex nav-links gap-0.5 list-none overflow-x-auto whitespace-nowrap max-w-[52vw] sm:max-w-none ml-auto">
           {navLinks.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-[10px] text-[.84rem] font-semibold transition-all duration-200 no-underline ${pathname?.startsWith(link.href)
-                  ? 'bg-[#EBF7FD] text-[#1A9FD4] font-bold shadow-sm' : 'text-[#868E96] hover:bg-[#F8F9FA] hover:text-[#212529]'}`}
+                className={pathname?.startsWith(link.href) ? "on" : ""}
               >
+                <link.icon size={16} />
                 {link.label}
                 {link.label === "Messages" && !!unreadCount && unreadCount > 0 && (
-                  <span className="nav-badge bg-[#FF6B6B] text-white text-[.58rem] px-1.5 py-0.5 rounded-full font-bold ml-1">{unreadCount}</span>
+                  <span className="nav-badge bg-[#EF4444] text-white text-[10px] px-1.5 py-[1px] rounded-full font-bold ml-1">
+                    {unreadCount}
+                  </span>
                 )}
               </Link>
             </li>
@@ -114,15 +126,15 @@ export function Navbar() {
         </ul>
         {/* Right */}
         <div className="nav-right flex items-center gap-2 shrink-0">
-          <button className="hidden md:flex icon-btn w-9 h-9 rounded-[10px] bg-[#F8F9FA] border border-[#E9ECEF] items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#EBF7FD] hover:border-[#5BC4F5] hover:shadow-sm">
-            <Bell size={15} className="text-[#495057]" />
-            <span className="notif-dot absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF6B6B] rounded-full border-[1.5px] border-white animate-pulse"></span>
+          <button className="hidden md:flex icon-btn w-9 h-9 rounded-[10px] bg-white border border-[rgba(59,155,212,0.15)] items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#C8E4F7] hover:border-[rgba(59,155,212,0.25)] hover:shadow-sm">
+            <Bell size={15} className="text-[#4A6478]" />
+            <span className="notif-dot absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#EF4444] rounded-full border-[1.5px] border-white animate-pulse"></span>
           </button>
           <div ref={menuRef} className="relative hidden md:block">
             <button
               type="button"
               onClick={() => setMenuOpen((prev) => !prev)}
-              className="nav-av w-9 h-9 rounded-[10px] bg-white border border-[#5bc4f54d] overflow-hidden flex items-center justify-center cursor-pointer transition-all duration-200 hover:border-[#5BC4F5]"
+              className="nav-av w-9 h-9 rounded-full overflow-hidden flex items-center justify-center cursor-pointer transition-all duration-200"
               aria-label="Open profile menu"
               aria-haspopup="menu"
               aria-expanded={menuOpen}
@@ -132,13 +144,13 @@ export function Navbar() {
                 avatarType={stats?.avatarType}
                 avatarUrl={stats?.avatarUrl}
                 size={36}
-                className="w-full h-full rounded-[10px]"
+                className="w-full h-full rounded-full"
               />
             </button>
 
             {menuOpen && (
               <div
-                className="absolute right-0 mt-2 w-56 rounded-[12px] border border-[#E9ECEF] bg-white shadow-xl p-1.5 z-50"
+                className="absolute right-0 mt-2 w-56 rounded-[12px] border border-[rgba(59,155,212,0.15)] bg-white shadow-xl p-1.5 z-50"
                 role="menu"
                 aria-label="Profile actions"
               >
@@ -148,7 +160,7 @@ export function Navbar() {
                     setMenuOpen(false);
                     router.push("/onboarding");
                   }}
-                  className="w-full text-left px-3 py-2 rounded-[8px] text-[.82rem] font-semibold text-[#212529] hover:bg-[#F8F9FA]"
+                  className="w-full text-left px-3 py-2 rounded-[8px] text-[.82rem] font-semibold text-[#1A2E3B] hover:bg-[#E8F2FA]"
                   role="menuitem"
                 >
                   Customize profile
@@ -157,7 +169,7 @@ export function Navbar() {
                   type="button"
                   disabled={uploading}
                   onClick={() => avatarInputRef.current?.click()}
-                  className="w-full text-left px-3 py-2 rounded-[8px] text-[.82rem] font-semibold text-[#212529] hover:bg-[#F8F9FA] disabled:opacity-60"
+                  className="w-full text-left px-3 py-2 rounded-[8px] text-[.82rem] font-semibold text-[#1A2E3B] hover:bg-[#E8F2FA] disabled:opacity-60"
                   role="menuitem"
                 >
                   <span className="inline-flex items-center gap-2">
@@ -183,7 +195,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="md:hidden w-9 h-9 rounded-[10px] border border-[#E9ECEF] bg-[#F8F9FA] text-[#495057] inline-flex items-center justify-center hover:bg-[#EBF7FD]"
+            className="md:hidden w-9 h-9 rounded-[10px] border border-[rgba(59,155,212,0.15)] bg-white text-[#4A6478] inline-flex items-center justify-center hover:bg-[#E8F2FA]"
             aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={mobileMenuOpen}
           >
@@ -210,19 +222,19 @@ export function Navbar() {
           aria-label="Navigation menu"
         >
           {/* Drawer header */}
-          <div className="flex items-center justify-between px-4 py-4 border-b border-[#E9ECEF]">
+          <div className="flex items-center justify-between px-4 py-4 border-b border-[rgba(59,155,212,0.15)]">
             <Link href="/feed" className="logo flex items-center gap-2.5 no-underline" onClick={() => setMobileMenuOpen(false)}>
-              <div className="logo-mark w-8 h-8 rounded-[9px] bg-[#5BC4F5] flex items-center justify-center text-[#0D4F66]">
-                <Link2 size={15} />
+              <div className="logo-mark w-8 h-8 rounded-[9px] flex items-center justify-center text-[12px] font-extrabold">
+                WL
               </div>
-              <span className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[1.05rem]">
-                <span className="text-[#1A9FD4]">WVSU</span><span className="text-black">LF</span>
+              <span className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[1.05rem] text-[#1A2E3B]">
+                WVSU<span className="text-[#3B9BD4]">LF</span>
               </span>
             </Link>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-8 h-8 rounded-[8px] border border-[#E9ECEF] bg-[#F8F9FA] text-[#868E96] flex items-center justify-center"
+              className="w-8 h-8 rounded-[8px] border border-[rgba(59,155,212,0.15)] bg-[#F0F6FB] text-[#7A97A8] flex items-center justify-center"
               aria-label="Close menu"
             >
               <X size={16} />
@@ -230,17 +242,17 @@ export function Navbar() {
           </div>
 
           {/* Profile card */}
-          <div className="flex items-center gap-3 px-4 py-4 border-b border-[#E9ECEF] bg-[#F8F9FA]">
+          <div className="flex items-center gap-3 px-4 py-4 border-b border-[rgba(59,155,212,0.15)] bg-[#F0F6FB]">
             <UserAvatar
               name={stats?.name}
               avatarType={stats?.avatarType}
               avatarUrl={stats?.avatarUrl}
               size={40}
-              className="rounded-[10px] shrink-0"
+              className="rounded-full shrink-0"
             />
             <div className="min-w-0">
-              <div className="text-[.88rem] font-bold text-[#212529] truncate">{stats?.name ?? "Profile"}</div>
-              <div className="text-[.75rem] text-[#868E96] truncate">{stats?.college ?? "WVSU"}</div>
+              <div className="text-[.88rem] font-bold text-[#1A2E3B] truncate">{stats?.name ?? "Profile"}</div>
+              <div className="text-[.75rem] text-[#7A97A8] truncate">{stats?.college ?? "WVSU"}</div>
             </div>
           </div>
 
@@ -252,26 +264,29 @@ export function Navbar() {
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center justify-between px-3 py-3 rounded-[10px] text-[.88rem] font-semibold no-underline transition-colors ${pathname?.startsWith(link.href)
-                  ? "bg-[#EBF7FD] text-[#1A9FD4]"
-                  : "text-[#495057] hover:bg-[#F8F9FA]"}`}
+                  ? "bg-[#E8F2FA] text-[#1E6FA0]"
+                  : "text-[#4A6478] hover:bg-[#F0F6FB]"}`}
               >
-                <span>{link.label}</span>
+                <span className="inline-flex items-center gap-2">
+                  <link.icon size={16} />
+                  {link.label}
+                </span>
                 {link.label === "Messages" && !!unreadCount && unreadCount > 0 && (
-                  <span className="bg-[#FF6B6B] text-white text-[.62rem] px-1.5 py-0.5 rounded-full font-bold">{unreadCount}</span>
+                  <span className="bg-[#EF4444] text-white text-[.62rem] px-1.5 py-0.5 rounded-full font-bold">{unreadCount}</span>
                 )}
               </Link>
             ))}
           </nav>
 
           {/* Bottom actions */}
-          <div className="px-3 pb-5 flex flex-col gap-1 border-t border-[#E9ECEF] pt-3">
+          <div className="px-3 pb-5 flex flex-col gap-1 border-t border-[rgba(59,155,212,0.15)] pt-3">
             <button
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 router.push("/onboarding");
               }}
-              className="w-full text-left px-3 py-2.5 rounded-[10px] text-[.87rem] font-semibold text-[#212529] hover:bg-[#F8F9FA] transition-colors"
+              className="w-full text-left px-3 py-2.5 rounded-[10px] text-[.87rem] font-semibold text-[#1A2E3B] hover:bg-[#F0F6FB] transition-colors"
             >
               Customize profile
             </button>
@@ -279,7 +294,7 @@ export function Navbar() {
               type="button"
               disabled={uploading}
               onClick={() => avatarInputRef.current?.click()}
-              className="w-full text-left px-3 py-2.5 rounded-[10px] text-[.87rem] font-semibold text-[#212529] hover:bg-[#F8F9FA] transition-colors disabled:opacity-60 inline-flex items-center gap-2"
+              className="w-full text-left px-3 py-2.5 rounded-[10px] text-[.87rem] font-semibold text-[#1A2E3B] hover:bg-[#F0F6FB] transition-colors disabled:opacity-60 inline-flex items-center gap-2"
             >
               <Upload size={14} />
               {uploading ? "Uploading avatar..." : "Upload avatar"}

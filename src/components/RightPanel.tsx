@@ -4,7 +4,7 @@ import { useQuery } from "convex/react";
 import { useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
-import { Building2, UserRound, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const RANK_STYLES: Record<number, string> = {
@@ -12,6 +12,21 @@ const RANK_STYLES: Record<number, string> = {
   2: "background:#F1F3F5;color:#868E96;border:1px solid #DEE2E6;",
   3: "background:#FFE8D6;color:#9A3412;border:1px solid #FFCBA4;",
 };
+
+function getDepartmentColor(collegeName: string): string {
+  const name = collegeName.toUpperCase();
+
+  if (name.includes("CICT")) return "#FB923C";
+  if (name.includes("CAS")) return "#FACC15";
+  if (name.includes("CBM")) return "#34D399";
+  if (name.includes("COC")) return "#EF4444";
+  if (name.includes("COD")) return "#A78BFA";
+  if (name.includes("COE")) return "#38BDF8";
+  if (name.includes("CON")) return "#F472B6";
+  if (name.includes("PESCAR")) return "#8B5CF6";
+
+  return "#38BDF8";
+}
 
 export function RightPanel() {
   const colleges = useQuery(api.karma.getGlobalLeaderboard);
@@ -22,121 +37,79 @@ export function RightPanel() {
   return (
     <aside className="flex flex-col gap-4">
       {/* College Rankings */}
-      <div className="bg-white border border-[#E9ECEF] rounded-2xl shadow-sm p-4 animate-[up_0.4s_var(--ease2)_both]">
-        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-2 mb-3 border-b border-[#E9ECEF]">
-          <Building2 size={14} className="text-[#495057]" /> College Rankings
-          <span className="ml-auto text-[.6rem] font-bold px-1.5 py-0.5 rounded bg-[#FFF3BF] text-[#92400E] border border-[#E9ECEF]">
-            This Week
-          </span>
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Department Board</span>
+          <span className="text-[11px] text-[#7A97A8]">This Month</span>
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="card-body !px-[14px] !py-3">
           {colleges?.slice(0, showAllColleges ? colleges.length : 5).map(
-            (college: { _id: string; name: string; totalKarma: number }, i: number) => {
-              const rank = i + 1;
+            (college: { _id: string; name: string; totalKarma: number }) => {
               const barWidth =
                 maxKarma > 0 ? Math.round((college.totalKarma / maxKarma) * 100) : 0;
+              const deptColor = getDepartmentColor(college.name);
+
               return (
-                <div
-                  key={college._id}
-                  className="flex items-center gap-2 px-2 py-2 rounded-xl bg-[#F8F9FA] cursor-pointer transition-all hover:bg-[#EBF7FD]"
-                >
-                  <div
-                    className={`w-6 h-6 flex items-center justify-center text-[.74rem] font-extrabold font-['Plus_Jakarta_Sans',sans-serif] rounded-[7px] shrink-0 ${
-                      rank === 1
-                        ? "bg-[#FFF3BF] text-[#92400E] border border-[#FFE066]"
-                        : rank === 2
-                        ? "bg-[#F1F3F5] text-[#868E96] border border-[#DEE2E6]"
-                        : rank === 3
-                        ? "bg-[#FFE8D6] text-[#9A3412] border border-[#FFCBA4]"
-                        : "bg-white text-[#ADB5BD] border border-[#E9ECEF]"
-                    }`}
-                  >
-                    {rank}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[.75rem] font-bold text-[#212529] truncate">
-                      {college.name}
-                    </div>
-                    <div className="text-[.62rem] text-[#ADB5BD] font-medium mt-0.5">
-                      {college.totalKarma} pts
-                    </div>
-                    <div className="w-full h-1 bg-[#E9ECEF] rounded-full overflow-hidden mt-1">
-                      <div
-                        className="h-1 bg-[#5BC4F5] rounded-full"
-                        style={{ width: `${barWidth}%` }}
-                      />
-                    </div>
-                  </div>
+                <div key={college._id} className="dept-bar">
+                  <div className="dept-color" style={{ background: deptColor }}></div>
+                  <span className="dept-name">{college.name}</span>
+                  <div className="dept-track"><div className="dept-fill" style={{ width: `${barWidth}%`, background: deptColor }}></div></div>
+                  <span className="dept-pts">{college.totalKarma}</span>
                 </div>
               );
             }
           )}
+          {!colleges && <div className="text-xs text-[#7A97A8] py-1 text-center">Loading...</div>}
           {colleges && colleges.length > 5 && (
-            <div className="py-0.5 text-center">
+            <div className="py-1 text-center">
               <button
                 onClick={() => setShowAllColleges((s) => !s)}
-                className="text-[.85rem] font-semibold text-[#1A9FD4] underline bg-transparent border-none cursor-pointer"
+                className="text-[.8rem] font-semibold text-[#1E6FA0] bg-transparent border-none cursor-pointer"
               >
-                {showAllColleges ? "Show less" : `See more (${colleges.length - 5} more)`}
+                {showAllColleges ? "Show less" : `See more (${colleges.length - 5})`}
               </button>
             </div>
           )}
-          {!colleges && (
-            <div className="text-xs text-[#868E96] py-1 text-center">Loading...</div>
-          )}
         </div>
       </div>
+
       {/* Campus Heroes */}
-      <div className="bg-white border border-[#E9ECEF] rounded-2xl shadow-sm p-4 animate-[up_0.4s_var(--ease2)_both]">
-        <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.75rem] font-extrabold text-[#212529] uppercase tracking-wide flex items-center gap-1 pb-2 mb-3 border-b border-[#E9ECEF]">
-          <UserRound size={14} className="text-[#495057]" /> Student Heroes
-          <span className="ml-auto text-[.6rem] font-bold px-2 py-0.5 rounded bg-[#FFE3E3] text-[#C92A2A] border border-[#E9ECEF]">
-            Top 5
-          </span>
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Campus Heroes</span>
+          <span className="text-[11px] text-[#3B9BD4] font-semibold cursor-pointer">See All</span>
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="card-body !px-3 !py-1.5">
           {topFinders?.map(
             (finder: { _id: Id<"users">; name?: string; college?: string; karma?: number }, i: number) => {
-              const initials = (finder.name ?? "")
-                .split(" ")
-                .map((n: string) => n[0])
-                .join("")
-                .toUpperCase()
-                .slice(0, 2);
+              let rankClass = "normal";
+              if (i === 0) rankClass = "gold";
+              if (i === 1) rankClass = "silver";
+              if (i === 2) rankClass = "bronze";
+
               return (
-                <div
-                  key={finder._id}
-                  className="flex items-center gap-2 px-2 py-2 rounded-xl cursor-pointer transition-all hover:bg-[#F8F9FA]"
-                >
-                  <div className="w-[13px] text-center font-['Plus_Jakarta_Sans',sans-serif] text-[.68rem] font-bold text-[#ADB5BD] shrink-0">
-                    {i + 1}
+                <div key={finder._id} className="leaderboard-item">
+                  <div className={`lb-rank ${rankClass}`}>{i < 3 ? ["🥇", "🥈", "🥉"][i] : `#${i + 1}`}</div>
+                  <div className="lb-info">
+                    <div className="lb-name">{finder.name ?? "Unknown"}</div>
+                    <div className="lb-sub">{finder.college ?? "WVSU"}</div>
                   </div>
-                  <div className="w-8 h-8 rounded-[7px] border border-[#E9ECEF] flex items-center justify-center font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[.65rem] text-[#495057] shrink-0 relative">
-                    {initials}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[.75rem] font-bold text-[#212529] flex items-center gap-1">
-                      {finder.name}
-                    </div>
-                    <div className="text-[.62rem] text-[#ADB5BD] font-medium truncate">
-                      {finder.college}
-                    </div>
-                  </div>
-                  <div className="font-['Plus_Jakarta_Sans',sans-serif] text-[.7rem] font-bold text-[#D97706] shrink-0 bg-[#FFF3BF] px-2 py-0.5 rounded border border-[#FFE066] inline-flex items-center gap-1">
-                    <Zap size={12} /> {finder.karma}
+                  <div className="lb-score">
+                    <span className="inline-flex items-center gap-1"><Zap size={12} /> {finder.karma ?? 0}</span> <span>pts</span>
                   </div>
                 </div>
               );
             }
           )}
           {topFinders?.length === 0 && (
-            <div className="text-xs text-[#868E96] py-2 text-center">No heroes yet. Be the first.</div>
+            <div className="text-xs text-[#7A97A8] py-2 text-center">No heroes yet. Be the first.</div>
           )}
           {!topFinders && (
-            <div className="text-xs text-[#868E96] py-2 text-center">Loading...</div>
+            <div className="text-xs text-[#7A97A8] py-2 text-center">Loading...</div>
           )}
         </div>
       </div>
+
     </aside>
   );
 }

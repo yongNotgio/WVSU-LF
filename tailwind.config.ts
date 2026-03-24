@@ -23,9 +23,9 @@ const config: Config = {
         "found-green": "#2a9d3f",
       },
       fontFamily: {
-        display: ['"DM Serif Display"', "serif"],
-        mono: ['"DM Mono"', "monospace"],
-        sans: ["Figtree", "sans-serif"],
+        display: ['"Plus Jakarta Sans"', "sans-serif"],
+        mono: ['"Plus Jakarta Sans"', "sans-serif"],
+        sans: ['"Plus Jakarta Sans"', "sans-serif"],
       },
       keyframes: {
         ticker: {

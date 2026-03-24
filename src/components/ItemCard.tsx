@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Doc, Id } from "../../convex/_generated/dataModel";
@@ -31,7 +30,6 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 };
 
 export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
-  const [showDetails, setShowDetails] = useState(false);
   const isLost = item.type === "lost";
   const isOwnItem = currentUserId === item.userId;
   const ItemIcon = CATEGORY_ICONS[item.category] ?? Package;
@@ -42,74 +40,78 @@ export function ItemCard({ item, currentUserId, onContact }: ItemCardProps) {
   const timeAgo = getTimeAgo(item._creationTime);
 
   return (
-    <div className="icard bg-white border border-[#E9ECEF] rounded-2xl shadow-sm flex flex-col overflow-hidden cursor-pointer transition-all animate-[up_0.35s_var(--ease2)_both] hover:-translate-y-0.5 hover:shadow-md">
-      {/* Image Area */}
-      <div className={`ic-thumb w-full h-[180px] flex items-center justify-center text-[38px] border-b border-[#E9ECEF] flex-shrink-0 transition-transform overflow-hidden relative ${isLost ? 'bg-[#FFE3E3]' : 'bg-[#D3F9D8]'}`}> 
-        {imageUrl ? (
-          <>
+    <article className={`post-card ${isLost ? "tag-lost" : "tag-found"}`}>
+      <span className="post-tag">
+        {isLost ? "🔴 Lost" : "🟢 Found"}
+      </span>
+
+      <div className="post-top">
+        <div className={`post-img ${isLost ? "bg-[#FEF2F2]" : "bg-[#ECFDF5]"}`}>
+          {imageUrl ? (
             <Image
               src={imageUrl}
               alt={item.title}
-              fill
-              sizes="(max-width: 640px) 100vw, 50vw"
-              className="absolute inset-0 object-cover"
+              width={62}
+              height={62}
+              className="h-full w-full rounded-[10px] object-cover"
             />
-            <div className={`absolute inset-0 ${isLost ? 'bg-[#FFE3E3]/20' : 'bg-[#D3F9D8]/20'}`} />
-          </>
-        ) : (
-          <ItemIcon className={`h-12 w-12 ${isLost ? 'text-[#C92A2A]' : 'text-[#1C7C34]'}`} />
-        )}
-      </div>
-      {/* Body */}
-      <div className="ic-main flex-1 p-4 flex flex-col min-w-0">
-        <div className="ic-top flex items-center gap-1.5 mb-2">
-          <span className={`tag ${isLost ? "tag-lost" : "tag-found"}`}>
-            {isLost ? "Lost" : "Found"}
-          </span>
-          <span className="tag-cat text-[.67rem] font-medium text-[#868E96]">{item.category}</span>
-          {/* Status dot: open = active, resolved = done, expired/flagged = pend */}
-          <span className={`sdot ml-auto w-[7px] h-[7px] rounded-full flex-shrink-0 ${item.status === 'open' ? 'bg-[#51CF66] shadow-[0_0_0_3px_rgba(81,207,102,.2)]' : item.status === 'resolved' ? 'bg-[#ADB5BD]' : 'bg-[#FCC419] shadow-[0_0_0_3px_rgba(252,196,25,.2)]'}`}></span>
+          ) : (
+            <ItemIcon className={`h-7 w-7 ${isLost ? "text-[#DC2626]" : "text-[#059669]"}`} />
+          )}
         </div>
-        <div className="ic-title font-['Plus_Jakarta_Sans',sans-serif] text-[.92rem] font-bold text-[#212529] leading-[1.3] mb-1.5">{item.title}</div>
-        <div className={`ic-desc text-[.73rem] text-[#868E96] leading-snug mb-2 flex-1 sm:line-clamp-2 ${showDetails ? "block" : "hidden sm:block"}`}>
-          {item.description}
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowDetails((prev) => !prev)}
-          className="mb-2 text-[.68rem] font-bold text-[#1A9FD4] underline sm:hidden text-left"
-        >
-          {showDetails ? "Hide Details" : "View Details"}
-        </button>
-        <div className="ic-chips flex gap-1.5 flex-wrap mb-2.5">
-          <span className="chip inline-flex items-center gap-1 bg-[#F8F9FA] border border-[#E9ECEF] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#868E96]">{item.category}</span>
-          <span className="chip inline-flex items-center gap-1 bg-[#F8F9FA] border border-[#E9ECEF] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#868E96]"><MapPin className="h-3 w-3" />{item.locationZone}</span>
-          <span className="chip inline-flex items-center gap-1 bg-[#EBF7FD] border border-[#B6E0FE] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#1A9FD4]">
-            {item.posterCollege ?? "WVSU"}
-          </span>
-          <span className="chip inline-flex items-center gap-1 bg-[#FFF3BF] border border-[#FFE066] px-2 py-0.5 rounded text-[.65rem] font-semibold text-[#92400E]">
-            <Zap className="h-3 w-3" /> {item.posterKarma ?? 0}
-          </span>
+        <div className="post-info">
+          <div className="post-title">{item.title}</div>
+          <div className="post-desc">{item.description}</div>
         </div>
       </div>
-      {/* Footer */}
-      <div className="ic-foot flex items-center justify-between gap-1.5 px-4 py-3 border-t border-[#E9ECEF] mt-auto bg-[#F8F9FA]">
-        <span className="ptime text-[.62rem] text-[#ADB5BD]">{timeAgo}</span>
+
+      <div className="post-meta">
+        <span className="post-meta-item">
+          <MapPin className="h-[13px] w-[13px]" />
+          {item.locationZone}
+        </span>
+        <span className="post-meta-item">
+          <Zap className="h-[13px] w-[13px]" />
+          {item.posterKarma ?? 0} pts
+        </span>
+        <span className="post-meta-item">{item.category}</span>
+      </div>
+
+      <div className="post-footer">
+        <div className="post-user">
+          <div className="post-user-avatar">
+            {(item.posterName ?? "WU")
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2)}
+          </div>
+          <div>
+            <div className="post-user-name">{item.posterName ?? "WVSU User"}</div>
+            <div className="post-user-time">{timeAgo}</div>
+          </div>
+        </div>
         {isOwnItem ? (
-          <span className="done-tag px-2.5 py-1 flex-shrink-0 bg-[#F8F9FA] border border-[#E9ECEF] rounded text-[#ADB5BD] font-['Outfit',sans-serif] text-[.7rem] font-semibold">Your post</span>
+          <div className="post-actions">
+            <span className="post-action-btn">Your post</span>
+          </div>
         ) : (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onContact(item._id);
-            }}
-            className="claim-btn px-3 py-1.5 bg-[#5BC4F5] text-[#212529] border-none rounded-xl font-['Outfit',sans-serif] text-[.73rem] font-bold cursor-pointer whitespace-nowrap flex-shrink-0 shadow-sm transition-all hover:scale-105 hover:shadow-md"
-          >
-            Contact {isLost ? "Owner" : "Finder"}
-          </button>
+          <div className="post-actions">
+            <button className="post-action-btn">View</button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onContact(item._id);
+              }}
+              className="post-action-btn primary"
+            >
+              Contact {isLost ? "Owner" : "Finder"}
+            </button>
+          </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }
 
