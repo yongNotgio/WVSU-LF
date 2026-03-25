@@ -76,7 +76,7 @@ export function RightPanel() {
       {/* Campus Heroes */}
       <div className="card">
         <div className="card-header">
-          <span className="card-title">Campus Heroes</span>
+          <span className="card-title" style={{ fontSize: "14px" }}>Campus Heroes</span>
           <span className="text-[11px] text-[#3B9BD4] font-semibold cursor-pointer">See All</span>
         </div>
         <div className="card-body !px-3 !py-1.5">
