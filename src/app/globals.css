@@ -44,6 +44,39 @@ body {
   color: var(--ink);
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
+  isolation: isolate;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.65;
+  background-image:
+    radial-gradient(850px 520px at -10% -8%, var(--surface2) 0%, transparent 70%),
+    radial-gradient(780px 500px at 110% 12%, var(--sky-lt) 0%, transparent 68%),
+    radial-gradient(920px 560px at 50% 108%, var(--surface2) 0%, transparent 72%);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.55;
+  background-image:
+    linear-gradient(rgba(59,155,212,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,155,212,0.06) 1px, transparent 1px),
+    radial-gradient(circle at 14% 22%, rgba(59,155,212,0.14) 0 2px, transparent 2px),
+    radial-gradient(circle at 78% 30%, rgba(59,155,212,0.11) 0 2px, transparent 2px),
+    radial-gradient(circle at 28% 76%, rgba(59,155,212,0.12) 0 2px, transparent 2px),
+    radial-gradient(circle at 88% 82%, rgba(59,155,212,0.1) 0 2px, transparent 2px);
+  background-size: 34px 34px, 34px 34px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
 }
 
 @keyframes up {

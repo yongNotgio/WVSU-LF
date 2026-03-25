@@ -73,7 +73,7 @@ export default function LeaderboardPage() {
 
       {/* Campus Heroes */}
       <div id="heroes">
-        <div className="font-display text-2xl text-wvsu-text mb-5 flex items-center gap-2">
+        <div className="font-display text-xl text-wvsu-text mb-5 flex items-center gap-2">
           <ShieldCheck className="h-6 w-6 text-wvsu-blue" />
           Campus Heroes
         </div>
