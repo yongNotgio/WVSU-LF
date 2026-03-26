@@ -1,6 +1,8 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 import { v } from "convex/values";
+import { deriveConversationRoles } from "./roles";
 
 const DEFAULT_COLLEGES = [
   "CAS",
@@ -78,9 +80,16 @@ export const confirmReturn = mutation({
     if (!item) throw new Error("Item not found");
     if (item.status !== "open") throw new Error("Item is already resolved");
 
-    // The CLAIMER (owner) clicks "Item Received," not the poster
-    if (item.userId === userId) {
-      throw new Error("Only the claimer can confirm item received.");
+    const { ownerId, finderId } = deriveConversationRoles(
+      item,
+      conversation.participantIds
+    );
+    const ownerUserId = ownerId as Id<"users">;
+    const finderUserId = finderId as Id<"users">;
+
+    // The owner confirms receipt once meetup proof is uploaded by the finder.
+    if (ownerUserId !== userId) {
+      throw new Error("Only the owner can confirm item received.");
     }
 
     const claimStatus = conversation.challengeStatus ?? "accepted";
@@ -94,30 +103,29 @@ export const confirmReturn = mutation({
       .collect();
     const hasMeetupProof = messages.some(
       (message) =>
-        message.senderId === item.userId &&
+        message.senderId === finderUserId &&
         !!message.imageId &&
         !!message.isMeetupProof
     );
     if (!hasMeetupProof) {
-      throw new Error("The poster must upload a meetup photo before you can confirm item received.");
+      throw new Error("The finder must upload a meetup photo before confirmation.");
     }
 
-    // Poster (finder) = item.userId, Claimer (owner) = userId
-    const poster = await ctx.db.get(item.userId);
-    if (!poster) throw new Error("Poster not found");
+    const finder = await ctx.db.get(finderUserId);
+    if (!finder) throw new Error("Finder not found");
 
-    const claimer = await ctx.db.get(userId);
-    if (!claimer) throw new Error("User not found");
+    const owner = await ctx.db.get(ownerUserId);
+    if (!owner) throw new Error("Owner not found");
 
-    // Poster (Finder) +50, Claimer (Owner) +5 "Gratitude Bonus"
-    await ctx.db.patch(item.userId, { karma: (poster.karma ?? 0) + 50 });
-    await ctx.db.patch(userId, { karma: (claimer.karma ?? 0) + 5 });
+    // Consistent rewards regardless of who posted: Finder +50, Owner +10.
+    await ctx.db.patch(finderUserId, { karma: (finder.karma ?? 0) + 50 });
+    await ctx.db.patch(ownerUserId, { karma: (owner.karma ?? 0) + 10 });
 
-    // College karma: poster's college +50, claimer's college +5
-    if (poster.college) {
+    // College karma: finder +50, owner +10.
+    if (finder.college) {
       const college = await ctx.db
         .query("colleges")
-        .withIndex("by_name", (q) => q.eq("name", poster.college!))
+        .withIndex("by_name", (q) => q.eq("name", finder.college!))
         .unique();
       if (college) {
         await ctx.db.patch(college._id, {
@@ -125,24 +133,25 @@ export const confirmReturn = mutation({
         });
       } else {
         await ctx.db.insert("colleges", {
-          name: poster.college,
+          name: finder.college,
           totalKarma: 50,
         });
       }
     }
-    if (claimer.college) {
+
+    if (owner.college) {
       const college = await ctx.db
         .query("colleges")
-        .withIndex("by_name", (q) => q.eq("name", claimer.college!))
+        .withIndex("by_name", (q) => q.eq("name", owner.college!))
         .unique();
       if (college) {
         await ctx.db.patch(college._id, {
-          totalKarma: college.totalKarma + 5,
+          totalKarma: college.totalKarma + 10,
         });
       } else {
         await ctx.db.insert("colleges", {
-          name: claimer.college,
-          totalKarma: 5,
+          name: owner.college,
+          totalKarma: 10,
         });
       }
     }

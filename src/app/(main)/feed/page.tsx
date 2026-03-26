@@ -218,7 +218,7 @@ export default function FeedPage() {
         <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 sm:p-6">
           <div className="bg-white border border-wvsu-blue/30 w-full max-w-sm rounded-2xl shadow-xl overflow-hidden">
             <div className="bg-wvsu-blue px-4 py-3 flex items-center justify-between">
-              <div className="font-display text-lg text-white">Verify Ownership</div>
+              <div className="font-display text-lg text-white">Verification Step</div>
               <button
                 onClick={() => setClaimingItem(null)}
                 className="text-white/70 hover:text-white text-xl font-bold leading-none"
@@ -235,6 +235,11 @@ export default function FeedPage() {
                 <div className="text-[10px] font-bold uppercase tracking-wider text-wvsu-muted font-mono mb-1 flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   Verification Challenge
+                </div>
+                <div className="text-[11px] text-wvsu-muted mb-1">
+                  {claimingItem.type === "found"
+                    ? "Answer to prove you are the owner of this item."
+                    : "Answer to prove you are the finder for this lost report."}
                 </div>
                 <div className="text-sm text-wvsu-text font-semibold">
                   {claimingItem.challenge}
@@ -256,7 +261,11 @@ export default function FeedPage() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleSubmitClaim();
                   }}
-                  placeholder="Prove you're the owner / have the item..."
+                  placeholder={
+                    claimingItem.type === "found"
+                      ? "e.g., Correct color/brand/unique mark"
+                      : "e.g., Where and when you found it"
+                  }
                   className="w-full border border-wvsu-border rounded-xl px-3 py-2 text-sm outline-none focus:border-wvsu-blue transition-colors"
                 />
               </div>

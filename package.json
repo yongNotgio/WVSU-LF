@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:matrix": "node scripts/run-e2e-matrix.mjs",
+    "test:matrix:keep": "node scripts/run-e2e-matrix.mjs --no-cleanup"
   },
   "dependencies": {
     "@auth/core": "^0.37.4",

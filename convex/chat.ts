@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { deriveConversationRoles } from "./roles";
 
 export const getOrCreateConversation = mutation({
   args: {
@@ -103,7 +104,13 @@ export const verifyClaim = mutation({
 
     const item = await ctx.db.get(conversation.itemId);
     if (!item) throw new Error("Item not found");
-    if (item.userId !== userId) throw new Error("Only the item poster can verify claims.");
+    if (item.status !== "open") throw new Error("Item is no longer open for verification.");
+
+    const { verifierId } = deriveConversationRoles(item, conversation.participantIds);
+    if (verifierId !== userId) {
+      throw new Error("Only the verification owner can review this claim.");
+    }
+
     if (conversation.challengeStatus !== "pending") throw new Error("This claim has already been reviewed.");
 
     await ctx.db.patch(args.conversationId, {
@@ -136,6 +143,7 @@ export const sendMessage = mutation({
 
     const item = await ctx.db.get(conversation.itemId);
     if (!item) throw new Error("Item not found");
+    const { finderId } = deriveConversationRoles(item, conversation.participantIds);
 
     const body = args.body?.trim();
     if (!body && !args.imageId) {
@@ -143,8 +151,8 @@ export const sendMessage = mutation({
     }
 
     if (args.isMeetupProof) {
-      if (item.userId !== userId) {
-        throw new Error("Only the poster can upload meetup proof.");
+      if (finderId !== userId) {
+        throw new Error("Only the finder can upload meetup proof.");
       }
       if (!args.imageId) {
         throw new Error("Meetup proof requires an image.");
@@ -207,21 +215,44 @@ export const getConversationDetails = query({
     if (!conversation.participantIds.includes(userId)) return null;
 
     const item = await ctx.db.get(conversation.itemId);
+    if (!item) return null;
+
+    const { ownerId, finderId, verifierId } = deriveConversationRoles(
+      item,
+      conversation.participantIds
+    );
+
     const messages = await ctx.db
       .query("messages")
       .withIndex("by_conversationId", (q) => q.eq("conversationId", conversation._id))
       .collect();
     const hasMeetupProof = messages.some(
       (message) =>
-        message.senderId === item?.userId &&
+        message.senderId === finderId &&
         !!message.imageId &&
         !!message.isMeetupProof
     );
 
+    const isOwner = ownerId === userId;
+    const isFinder = finderId === userId;
+
     return {
       ...conversation,
       item,
-      isItemOwner: item?.userId === userId,
+      isItemOwner: item.userId === userId,
+      isVerifier: verifierId === userId,
+      isOwner,
+      isFinder,
+      myRole: isOwner ? "owner" : "finder",
+      otherRole: isOwner ? "finder" : "owner",
+      canUploadMeetupProof:
+        isFinder &&
+        item.status === "open" &&
+        (conversation.challengeStatus ?? "accepted") === "accepted",
+      canConfirmReturn:
+        isOwner &&
+        item.status === "open" &&
+        (conversation.challengeStatus ?? "accepted") === "accepted",
       hasMeetupProof,
     };
   },

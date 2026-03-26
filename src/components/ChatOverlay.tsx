@@ -43,13 +43,17 @@ export function ChatOverlay({
   const meetupProofInputRef = useRef<HTMLInputElement>(null);
 
   const challengeStatus = convoDetails?.challengeStatus ?? "accepted";
-  const isItemPoster = convoDetails?.isItemOwner;
+  const isVerifier = convoDetails?.isVerifier ?? false;
+  const isOwner = convoDetails?.isOwner ?? false;
+  const isFinder = convoDetails?.isFinder ?? false;
+  const canUploadMeetupProof = convoDetails?.canUploadMeetupProof ?? false;
+  const canConfirmReturn = convoDetails?.canConfirmReturn ?? false;
+  const roleLabel = isOwner ? "Owner" : isFinder ? "Finder" : "Participant";
+
   const showItemReceivedButton =
     convoDetails !== undefined &&
     convoDetails !== null &&
-    isItemPoster === false &&
-    convoDetails.item?.status === "open" &&
-    challengeStatus === "accepted" &&
+    canConfirmReturn &&
     !!convoDetails.hasMeetupProof;
 
   useEffect(() => {
@@ -156,8 +160,12 @@ export function ChatOverlay({
         </div>
       </div>
 
-      {/* Pending: Item poster sees the challenge answer and accept/reject */}
-      {challengeStatus === "pending" && isItemPoster && (
+      <div className="px-4 py-1.5 bg-[#E8F7FF] border-b border-[#B6E0FE] text-[10px] uppercase tracking-wider font-mono text-[#0B6E99]">
+        Your role: {roleLabel}
+      </div>
+
+      {/* Pending: verifier sees challenge answer and accept/reject */}
+      {challengeStatus === "pending" && isVerifier && (
         <div className="p-3 bg-[#fff8e1] border-b border-wvsu-gold space-y-2">
           <div className="text-[10px] font-bold uppercase tracking-wider text-wvsu-muted font-mono flex items-center gap-1">
             <ShieldCheck className="h-3.5 w-3.5" />
@@ -192,15 +200,15 @@ export function ChatOverlay({
         </div>
       )}
 
-      {/* Pending: Claimer sees waiting message */}
-      {challengeStatus === "pending" && !isItemPoster && (
+      {/* Pending: non-verifier sees waiting message */}
+      {challengeStatus === "pending" && !isVerifier && (
         <div className="p-4 bg-[#fff8e1] border-b border-wvsu-gold text-center">
           <Clock3 className="h-5 w-5 mx-auto mb-1 text-wvsu-text" />
           <div className="text-xs font-bold text-wvsu-text uppercase font-mono">
             Waiting for verification
           </div>
           <div className="text-[11px] text-wvsu-muted mt-1">
-            The poster is reviewing your answer.
+            The verifier is reviewing your answer.
           </div>
         </div>
       )}
@@ -213,7 +221,7 @@ export function ChatOverlay({
             Claim Rejected
           </div>
           <div className="text-[11px] text-wvsu-muted mt-1">
-            {isItemPoster
+            {isVerifier
               ? "You marked this as a mismatch."
               : "Sorry! The details didn't match. Keep looking!"}
           </div>
@@ -284,13 +292,13 @@ export function ChatOverlay({
           )}
 
           {/* "Item Received" button - only the claimer confirms */}
-          {!isItemPoster && convoDetails?.item?.status === "open" && challengeStatus === "accepted" && !convoDetails?.hasMeetupProof && (
+          {!canUploadMeetupProof && canConfirmReturn && !convoDetails?.hasMeetupProof && (
             <div className="px-3 py-2 border-t border-wvsu-border bg-[#fff8e1] text-[11px] text-wvsu-muted">
-              Waiting for the poster to upload a meetup photo before you can confirm item received.
+              Waiting for the finder to upload a meetup photo before you can confirm receipt.
             </div>
           )}
 
-          {isItemPoster && convoDetails?.item?.status === "open" && challengeStatus === "accepted" && !convoDetails?.hasMeetupProof && (
+          {canUploadMeetupProof && !convoDetails?.hasMeetupProof && (
             <div className="px-3 py-2 border-t border-wvsu-border bg-[#fff8e1]">
               <button
                 onClick={() => meetupProofInputRef.current?.click()}
@@ -298,7 +306,7 @@ export function ChatOverlay({
                 className="w-full bg-[#5BC4F5] text-[#212529] py-2 text-xs font-bold uppercase tracking-wider hover:bg-[#1A9FD4] hover:text-white transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-1"
               >
                 <Camera className="h-3.5 w-3.5" />
-                {uploading ? "Uploading..." : "Upload Meetup Proof"}
+                {uploading ? "Uploading..." : "Upload Meetup Proof (Finder)"}
               </button>
             </div>
           )}
@@ -385,7 +393,7 @@ export function ChatOverlay({
       <ConfirmModal
         open={showConfirmReceiveModal}
         title="Confirm item received?"
-        description="This will mark the item as returned and award karma to the participants involved."
+        description="This marks the item as returned and awards karma to the finder and owner."
         confirmLabel="Confirm Receipt"
         loading={confirming}
         onConfirm={handleConfirmReceived}

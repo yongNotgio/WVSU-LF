@@ -215,15 +215,17 @@ export function PostItemForm({ onClose }: PostItemFormProps) {
               type="text"
               value={challenge}
               onChange={(e) => setChallenge(e.target.value)}
-              placeholder="A question only the owner can answer"
+              placeholder={
+                type === "found"
+                  ? "Ask something only the real owner can answer"
+                  : "Ask something only the real finder can answer"
+              }
               required
             />
             <div className="flex items-start gap-2 mt-2 bg-[#F3F0FE] border border-[#E5DAFE] rounded-[9px] px-3 py-2 text-[.73rem] text-[#495057]">
               <LockKeyhole className="h-[14px] w-[14px] mt-0.5 shrink-0 text-[#7048E8]" />
               <span>
-                Only revealed in chat to{" "}
-                <b className="text-[#845EF7] font-bold">verify the true owner</b>
-                . Never shown publicly.
+                Only revealed in chat to verify the other party. For found posts, verify the owner. For lost posts, verify the finder.
               </span>
             </div>
           </div>
