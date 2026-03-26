@@ -79,6 +79,24 @@ body::after {
   background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
 }
 
+/* Keep scrolling behavior while hiding visible scrollbars. */
+.scrollbar-hidden,
+.c-col,
+.l-col,
+.r-col {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar,
+.c-col::-webkit-scrollbar,
+.l-col::-webkit-scrollbar,
+.r-col::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 @keyframes up {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -90,7 +108,7 @@ body::after {
 }
 
 /* ── NAV ── */
-nav {
+.top-nav {
   position: sticky; top: 0; z-index: 50;
   background: rgba(240,246,251,0.92);
   backdrop-filter: blur(20px);
@@ -168,25 +186,40 @@ nav {
   grid-template-columns: 260px 1fr 260px;
   gap: 20px;
   align-items: start;
-  height: calc(100vh - 64px);
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
 }
 @media (max-width: 1080px) {
-  .page { grid-template-columns: 230px 1fr; }
+  .page {
+    grid-template-columns: 1fr;
+    padding: 16px 14px 84px;
+  }
+  .l-col,
   .r-col { display: none; }
 }
 @media (max-width: 700px)  {
   .page {
     grid-template-columns: 1fr;
-    padding: 16px 16px 72px;
-    height: auto;
-    overflow: visible;
+    padding: 12px 12px 86px;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
   }
-  .l-col { display: none; }
+
   .feed-sticky-top {
     position: static;
     border-bottom: 0;
-    margin-bottom: 0;
+    margin-bottom: 8px;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 1080px) {
+  .feed-sticky-top {
+    position: static;
+    border-bottom: 0;
+    margin-bottom: 10px;
     padding-top: 0;
   }
 }
@@ -779,5 +812,44 @@ nav {
 @media (min-width: 900px) {
   .feed-stack {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1080px) {
+  .feed-stack {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Final mobile/tablet overrides (kept at end to win cascade). */
+@media (max-width: 1080px) {
+  .page {
+    grid-template-columns: 1fr;
+    padding: 16px 14px 84px;
+  }
+
+  .l-col,
+  .r-col {
+    display: none !important;
+  }
+
+  .feed-sticky-top {
+    position: static;
+    border-bottom: 0;
+    margin-bottom: 10px;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding: 12px 12px 86px;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .feed-sticky-top {
+    margin-bottom: 8px;
   }
 }

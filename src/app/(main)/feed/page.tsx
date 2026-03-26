@@ -140,13 +140,13 @@ export default function FeedPage() {
       </div>
 
       {/* Main Content */}
-      <div className="c-col min-h-[calc(100vh-56px)]">
+      <div className="c-col h-full min-h-0">
         <div className="feed-sticky-top">
-          <div className="mb-4">
-            <h1 className="font-display text-3xl font-bold text-wvsu-text tracking-tight">Lost <span className="text-wvsu-blue">&</span> Found</h1>
+          <div className="mb-3 sm:mb-4">
+            <h1 className="font-display text-[2.1rem] leading-none sm:text-3xl font-bold text-wvsu-text tracking-tight">Lost <span className="text-wvsu-blue">&</span> Found</h1>
             <p className="text-sm text-wvsu-muted mt-1">Help reunite items with their owners</p>
           </div>
-          <div className="feed-header mb-4 space-y-3 sm:space-y-0">
+          <div className="feed-header mb-3 sm:mb-4 space-y-3 sm:space-y-0">
             <div className="tab-group">
               <button
                 onClick={() => setTypeFilter(undefined)}

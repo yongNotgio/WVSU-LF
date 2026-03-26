@@ -18,7 +18,7 @@ export default function LeaderboardPage() {
   const maxKarma = colleges?.[0]?.totalKarma || 1;
 
   return (
-    <div className="max-w-4xl mx-auto px-1 py-2 sm:px-2">
+    <div className="max-w-4xl mx-auto h-full overflow-y-auto scrollbar-hidden px-1 py-2 sm:px-2">
       {/* College Rankings */}
       <div className="mb-10">
         <div className="font-display text-2xl text-wvsu-text mb-5 flex items-center gap-2">

@@ -36,6 +36,18 @@ export default function MainLayout({
     }
   }, [user, router]);
 
+  useEffect(() => {
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+    };
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-wvsu-off-white flex items-center justify-center">
@@ -59,14 +71,14 @@ export default function MainLayout({
   const year = new Date().getFullYear();
 
   return (
-    <div className="min-h-screen bg-wvsu-off-white">
+    <div className="h-[100dvh] overflow-hidden bg-wvsu-off-white flex flex-col">
       <Navbar />
-      <main className="pt-0 pb-20">
-        <div className="mx-auto w-full max-w-[1280px] px-0">
+      <main className="flex-1 min-h-0 overflow-hidden pt-0">
+        <div className="mx-auto h-full w-full max-w-[1280px] px-0 overflow-hidden">
           {children}
         </div>
       </main>
-      <footer className="fixed inset-x-0 bottom-0 z-40 border-t border-wvsu-blue/15 bg-white/90 backdrop-blur-sm">
+      <footer className="hidden md:block shrink-0 border-t border-wvsu-blue/15 bg-white/90 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between px-4 py-3 text-xs text-wvsu-muted sm:px-6">
           <p>WVSULF © {year}</p>
           <p>Built for the WVSU community</p>

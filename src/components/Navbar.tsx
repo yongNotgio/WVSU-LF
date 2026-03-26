@@ -121,8 +121,15 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav>
-      <div className="nav-wrap">
+    <>
+      <nav className="top-nav">
+      <div
+        className={`nav-wrap ${
+          mobileMenuOpen
+            ? "pointer-events-none opacity-0 md:pointer-events-auto md:opacity-100"
+            : ""
+        }`}
+      >
         {/* Brand */}
         <Link href="/feed" className="logo flex items-center no-underline shrink-0 gap--5.5">
             <Image
@@ -284,19 +291,22 @@ export function Navbar() {
         </div>
       </div>
 
+      </nav>
+
       {/* Mobile sidebar drawer */}
       <div
-        className={`fixed inset-0 z-[60] md:hidden transition-all duration-300 ${mobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-[500] md:hidden transition-all duration-300 ${mobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"}`}
       >
         {/* Backdrop */}
         <div
-          className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${mobileMenuOpen ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 z-[501] bg-white transition-opacity duration-300 ${mobileMenuOpen ? "opacity-100" : "opacity-0"}`}
           onClick={() => setMobileMenuOpen(false)}
           aria-hidden="true"
         />
         {/* Drawer panel */}
         <div
-          className={`absolute top-0 left-0 h-full w-[280px] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+          className={`fixed inset-y-0 left-0 z-[502] isolate h-full w-[280px] bg-white border-r border-[rgba(59,155,212,0.2)] shadow-2xl opacity-100 flex flex-col transition-transform duration-300 ease-in-out ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+          style={{ backgroundColor: "#ffffff" }}
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
@@ -359,6 +369,26 @@ export function Navbar() {
             ))}
           </nav>
 
+          {/* Mobile donate card */}
+          <div className="mx-3 mb-2 rounded-xl border border-[#FDECB5] bg-[#FFFDF7] p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-8 w-8 rounded-lg border border-[#FDECB5] bg-white flex items-center justify-center text-sm">
+                ☕
+              </div>
+              <div className="min-w-0">
+                <div className="text-[12px] font-bold text-[#92400E] leading-tight">Keep the devs caffeinated.</div>
+                <div className="text-[11px] text-[#B17108]">Buy us a coffee</div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="w-full rounded-[10px] bg-[#EFA13A] px-3 py-2 text-[12px] font-semibold text-white hover:bg-[#DE8F25]"
+            >
+              Donate
+            </button>
+          </div>
+
           {/* Bottom actions */}
           <div className="px-3 pb-5 flex flex-col gap-1 border-t border-[rgba(59,155,212,0.15)] pt-3">
             <button
@@ -399,7 +429,7 @@ export function Navbar() {
         className="hidden"
         onChange={handleAvatarUpload}
       />
-    </nav>
+    </>
   );
 }
 
