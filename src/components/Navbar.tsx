@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../convex/_generated/api";
+import { Id } from "../../convex/_generated/dataModel";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -23,16 +24,22 @@ import { UserAvatar } from "./UserAvatar";
 export function Navbar() {
   const stats = useQuery(api.auth.getUserStats);
   const unreadCount = useQuery(api.chat.getUnreadCount);
+  const notifications = useQuery(api.notifications.getMyNotifications, { limit: 8 });
+  const unreadNotificationCount = useQuery(api.notifications.getUnreadNotificationCount);
   const updateAvatar = useMutation(api.auth.updateAvatar);
   const generateUploadUrl = useMutation(api.items.generateUploadUrl);
+  const markNotificationRead = useMutation(api.notifications.markNotificationRead);
+  const markAllNotificationsRead = useMutation(api.notifications.markAllNotificationsRead);
   const { signOut } = useAuthActions();
   const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
   const navLinks = [
@@ -70,17 +77,36 @@ export function Navbar() {
     }
   };
 
+  const openNotification = async (note: {
+    _id: Id<"notifications">;
+    isRead: boolean;
+    link?: string;
+  }) => {
+    if (!note.isRead) {
+      await markNotificationRead({ notificationId: note._id });
+    }
+    setNotifOpen(false);
+    if (note.link) {
+      router.push(note.link);
+    }
+  };
+
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {
       if (!menuRef.current) return;
       if (!menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false);
       }
+      if (!notifRef.current) return;
+      if (!notifRef.current.contains(event.target as Node)) {
+        setNotifOpen(false);
+      }
     };
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setMenuOpen(false);
+        setNotifOpen(false);
         setMobileMenuOpen(false);
       }
     };
@@ -129,10 +155,61 @@ export function Navbar() {
         </ul>
         {/* Right */}
         <div className="nav-right flex items-center gap-2 shrink-0">
-          <button className="hidden md:flex icon-btn w-9 h-9 rounded-[10px] bg-white border border-[rgba(59,155,212,0.15)] items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#C8E4F7] hover:border-[rgba(59,155,212,0.25)] hover:shadow-sm">
-            <Bell size={15} className="text-[#4A6478]" />
-            <span className="notif-dot absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#EF4444] rounded-full border-[1.5px] border-white animate-pulse"></span>
-          </button>
+          <div ref={notifRef} className="relative hidden md:block">
+            <button
+              className="icon-btn w-9 h-9 rounded-[10px] bg-white border border-[rgba(59,155,212,0.15)] items-center justify-center text-[15px] cursor-pointer relative transition-all duration-200 hover:bg-[#C8E4F7] hover:border-[rgba(59,155,212,0.25)] hover:shadow-sm inline-flex"
+              onClick={() => setNotifOpen((prev) => !prev)}
+              aria-label="Open notifications"
+              type="button"
+            >
+              <Bell size={15} className="text-[#4A6478]" />
+              {!!unreadNotificationCount && unreadNotificationCount > 0 && (
+                <span className="notif-dot absolute top-1.5 right-1.5 min-w-[14px] h-[14px] px-1 bg-[#EF4444] rounded-full border-[1.5px] border-white text-white text-[9px] font-bold leading-[11px] flex items-center justify-center">
+                  {unreadNotificationCount > 9 ? "9+" : unreadNotificationCount}
+                </span>
+              )}
+            </button>
+
+            {notifOpen && (
+              <div className="absolute right-0 mt-2 w-80 rounded-[12px] border border-[rgba(59,155,212,0.15)] bg-white shadow-xl z-50 overflow-hidden">
+                <div className="px-3 py-2 border-b border-[rgba(59,155,212,0.15)] flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#1A2E3B] uppercase tracking-wider">Notifications</span>
+                  <button
+                    type="button"
+                    className="text-[11px] font-semibold text-[#1E6FA0] hover:underline disabled:opacity-50"
+                    disabled={!unreadNotificationCount}
+                    onClick={async () => {
+                      await markAllNotificationsRead({});
+                    }}
+                  >
+                    Mark all read
+                  </button>
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {!notifications || notifications.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-xs text-[#7A97A8]">
+                      No notifications yet.
+                    </div>
+                  ) : (
+                    notifications.map((note) => (
+                      <button
+                        key={note._id}
+                        type="button"
+                        onClick={() => openNotification(note)}
+                        className={`w-full text-left px-3 py-2.5 border-b border-[rgba(59,155,212,0.08)] hover:bg-[#F0F6FB] ${
+                          note.isRead ? "bg-white" : "bg-[#E8F7FF]"
+                        }`}
+                      >
+                        <div className="text-[12px] font-semibold text-[#1A2E3B]">{note.title}</div>
+                        <div className="text-[11px] text-[#4A6478] mt-0.5 line-clamp-2">{note.body}</div>
+                        <div className="text-[10px] text-[#7A97A8] mt-1">{getTimeAgo(note._creationTime)}</div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
           <div ref={menuRef} className="relative hidden md:block">
             <button
               type="button"
@@ -324,4 +401,15 @@ export function Navbar() {
       />
     </nav>
   );
+}
+
+function getTimeAgo(timestamp: number): string {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if (seconds < 60) return "Just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }

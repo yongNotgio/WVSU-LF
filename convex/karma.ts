@@ -2,6 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 import { v } from "convex/values";
+import { internal } from "./_generated/api";
 import { deriveConversationRoles } from "./roles";
 
 const DEFAULT_COLLEGES = [
@@ -157,6 +158,26 @@ export const confirmReturn = mutation({
     }
 
     await ctx.db.patch(item._id, { status: "resolved" });
+
+    await ctx.runMutation(internal.notifications.createNotificationInternal, {
+      userId: finderUserId,
+      type: "karma",
+      title: "Karma added",
+      body: `You earned +50 karma for returning \"${item.title}\".`,
+      link: "/leaderboard",
+      conversationId: conversation._id,
+      itemId: item._id,
+    });
+
+    await ctx.runMutation(internal.notifications.createNotificationInternal, {
+      userId: ownerUserId,
+      type: "karma",
+      title: "Karma added",
+      body: `You earned +10 karma after confirming \"${item.title}\".`,
+      link: "/leaderboard",
+      conversationId: conversation._id,
+      itemId: item._id,
+    });
   },
 });
 

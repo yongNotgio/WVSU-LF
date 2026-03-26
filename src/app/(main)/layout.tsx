@@ -56,14 +56,22 @@ export default function MainLayout({
 
   if (!isAuthenticated) return null;
 
+  const year = new Date().getFullYear();
+
   return (
     <div className="min-h-screen bg-wvsu-off-white">
       <Navbar />
-      <main className="pt-0 pb-8">
+      <main className="pt-0 pb-20">
         <div className="mx-auto w-full max-w-[1280px] px-0">
           {children}
         </div>
       </main>
+      <footer className="fixed inset-x-0 bottom-0 z-40 border-t border-wvsu-blue/15 bg-white/90 backdrop-blur-sm">
+        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between px-4 py-3 text-xs text-wvsu-muted sm:px-6">
+          <p>WVSULF © {year}</p>
+          <p>Built for the WVSU community</p>
+        </div>
+      </footer>
     </div>
   );
 }

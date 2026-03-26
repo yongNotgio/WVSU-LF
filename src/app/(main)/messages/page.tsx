@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { ChatOverlay } from "../../../components/ChatOverlay";
 import { ConfirmModal } from "../../../components/ConfirmModal";
 import { UserAvatar } from "../../../components/UserAvatar";
+import { usePersistentChatHeads } from "../../../lib/usePersistentChatHeads";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { Clock3, MessageSquare, Trash2 } from "lucide-react";
 
@@ -15,11 +16,71 @@ export default function MessagesPage() {
   const deleteConversation = useMutation(api.chat.deleteConversation);
   const [conversationToDelete, setConversationToDelete] = useState<Id<"conversations"> | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [activeChatId, setActiveChatId] = useState<Id<"conversations"> | null>(
-    null
+  const [isMobile, setIsMobile] = useState(false);
+  const storageKey = `wvsulf.chatheads.${stats?._id ?? "guest"}`;
+  const {
+    openChatIds,
+    setOpenChatIds,
+    minimizedChatIds,
+    setMinimizedChatIds,
+    isHydrated,
+  } = usePersistentChatHeads(storageKey);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!conversations || !isHydrated) return;
+
+    const validIds = new Set(conversations.map((c) => c._id as string));
+    setOpenChatIds((prev) => prev.filter((id) => validIds.has(id)));
+    setMinimizedChatIds((prev) => prev.filter((id) => validIds.has(id)));
+  }, [conversations, isHydrated, setMinimizedChatIds, setOpenChatIds]);
+
+  const conversationMap = new Map(
+    (conversations ?? []).map((c: { _id: Id<"conversations"> }) => [c._id as string, c])
   );
 
-  const activeConvo = conversations?.find((c: { _id: Id<"conversations"> }) => c._id === activeChatId);
+  const activeConversations = openChatIds
+    .filter((id) => !minimizedChatIds.includes(id))
+    .map((id) => conversationMap.get(id))
+    .filter(Boolean);
+
+  const visibleActiveConversations = isMobile
+    ? activeConversations.slice(-1)
+    : activeConversations;
+
+  const minimizedConversations = minimizedChatIds
+    .map((id) => conversationMap.get(id))
+    .filter(Boolean);
+
+  const openChat = (conversationId: Id<"conversations">) => {
+    const key = conversationId as string;
+    setOpenChatIds((prev) => (prev.includes(key) ? prev : [...prev, key]));
+    setMinimizedChatIds((prev) => prev.filter((id) => id !== key));
+  };
+
+  const closeChat = (conversationId: Id<"conversations">) => {
+    const key = conversationId as string;
+    setOpenChatIds((prev) => prev.filter((id) => id !== key));
+    setMinimizedChatIds((prev) => prev.filter((id) => id !== key));
+  };
+
+  const minimizeChat = (conversationId: Id<"conversations">) => {
+    const key = conversationId as string;
+    setMinimizedChatIds((prev) => (prev.includes(key) ? prev : [...prev, key]));
+  };
+
+  const restoreChat = (conversationId: Id<"conversations">) => {
+    const key = conversationId as string;
+    setMinimizedChatIds((prev) => prev.filter((id) => id !== key));
+    setOpenChatIds((prev) => (prev.includes(key) ? prev : [...prev, key]));
+  };
 
   const handleDeleteClick = (e: React.MouseEvent, convoId: Id<"conversations">) => {
     e.stopPropagation();
@@ -30,7 +91,7 @@ export default function MessagesPage() {
     if (!conversationToDelete) return;
     setDeleting(true);
     try {
-      if (activeChatId === conversationToDelete) setActiveChatId(null);
+      closeChat(conversationToDelete);
       await deleteConversation({ conversationId: conversationToDelete });
       setConversationToDelete(null);
     } finally {
@@ -62,11 +123,19 @@ export default function MessagesPage() {
       ) : (
         <div className="space-y-3">
           {conversations.map((convo) => (
-            <button
+            <div
               key={convo._id}
-              onClick={() => setActiveChatId(convo._id)}
+              role="button"
+              tabIndex={0}
+              onClick={() => openChat(convo._id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openChat(convo._id);
+                }
+              }}
               className={`w-full bg-white border rounded-2xl p-4 flex items-center gap-3 text-left transition-all hover:border-wvsu-blue hover:shadow-sm group ${
-                activeChatId === convo._id
+                openChatIds.includes(convo._id as string)
                   ? "border-wvsu-blue"
                   : convo.hasUnread
                     ? "border-wvsu-gold"
@@ -139,20 +208,62 @@ export default function MessagesPage() {
                   </div>
                 )}
               </div>
-            </button>
+            </div>
           ))}
         </div>
       )}
 
-      {/* Chat Overlay */}
-      {activeChatId && activeConvo && stats && (
-        <ChatOverlay
-          conversationId={activeChatId}
-          currentUserId={stats._id}
-          otherUserName={activeConvo.otherUser?.name ?? "User"}
-          challenge={activeConvo.item?.challenge}
-          onClose={() => setActiveChatId(null)}
-        />
+      {/* Docked Chat Windows */}
+      {stats && visibleActiveConversations.map((convo, index) => {
+        if (!convo) return null;
+
+        const desktopIndex = isMobile ? 0 : index;
+        return (
+          <ChatOverlay
+            key={convo._id}
+            conversationId={convo._id}
+            currentUserId={stats._id}
+            otherUserName={convo.otherUser?.name ?? "User"}
+            challenge={convo.item?.challenge}
+            nonMaximizedClassName="bottom-20 left-2 right-2 sm:left-auto sm:bottom-6"
+            nonMaximizedStyle={
+              isMobile
+                ? { right: "0.5rem", left: "0.5rem" }
+                : { right: `${16 + desktopIndex * 356}px` }
+            }
+            onMinimize={() => minimizeChat(convo._id)}
+            onClose={() => closeChat(convo._id)}
+          />
+        );
+      })}
+
+      {/* Chat Heads */}
+      {stats && minimizedConversations.length > 0 && (
+        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-[110] flex items-center gap-2 max-w-[calc(100vw-1.5rem)] overflow-x-auto pb-1">
+          {minimizedConversations.map((convo) => {
+            if (!convo) return null;
+            return (
+              <button
+                key={convo._id}
+                onClick={() => restoreChat(convo._id)}
+                className="relative w-12 h-12 rounded-full border-2 border-white shadow-lg overflow-hidden bg-white"
+                aria-label={`Restore chat with ${convo.otherUser?.name ?? "User"}`}
+                type="button"
+              >
+                <UserAvatar
+                  name={convo.otherUser?.name}
+                  avatarType={convo.otherUser?.avatarType}
+                  avatarUrl={convo.otherUser?.avatarUrl}
+                  size={48}
+                  className="w-full h-full"
+                />
+                {convo.hasUnread && (
+                  <span className="absolute top-0.5 right-0.5 w-3 h-3 rounded-full bg-lost-red border border-white" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       )}
 
       <ConfirmModal

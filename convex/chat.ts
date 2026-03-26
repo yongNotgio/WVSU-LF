@@ -1,5 +1,6 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { deriveConversationRoles } from "./roles";
 
@@ -81,12 +82,25 @@ export const getOrCreateConversation = mutation({
     });
 
     // Create conversation with pending verification
-    return await ctx.db.insert("conversations", {
+    const conversationId = await ctx.db.insert("conversations", {
       itemId: args.itemId,
       participantIds: [item.userId, userId],
       challengeAnswer,
       challengeStatus: "pending",
     });
+
+    // Notify verifier that a new claim is waiting for review.
+    await ctx.runMutation(internal.notifications.createNotificationInternal, {
+      userId: item.userId,
+      type: "verification",
+      title: "New claim to verify",
+      body: `Review the verification answer for \"${item.title}\".`,
+      link: "/messages",
+      conversationId,
+      itemId: item._id,
+    });
+
+    return conversationId;
   },
 });
 
@@ -115,6 +129,19 @@ export const verifyClaim = mutation({
 
     await ctx.db.patch(args.conversationId, {
       challengeStatus: args.accept ? "accepted" : "rejected",
+    });
+
+    const { claimerId } = deriveConversationRoles(item, conversation.participantIds);
+    await ctx.runMutation(internal.notifications.createNotificationInternal, {
+      userId: claimerId,
+      type: "verification",
+      title: args.accept ? "Claim accepted" : "Claim rejected",
+      body: args.accept
+        ? `Your verification for \"${item.title}\" was accepted. You can now chat.`
+        : `Your verification for \"${item.title}\" was rejected.`,
+      link: "/messages",
+      conversationId: conversation._id,
+      itemId: item._id,
     });
   },
 });
@@ -159,13 +186,30 @@ export const sendMessage = mutation({
       }
     }
 
-    return await ctx.db.insert("messages", {
+    const messageId = await ctx.db.insert("messages", {
       conversationId: args.conversationId,
       senderId: userId,
       body,
       imageId: args.imageId,
       isMeetupProof: args.isMeetupProof ?? false,
     });
+
+    const recipientId = conversation.participantIds.find((id) => id !== userId);
+    if (recipientId) {
+      await ctx.runMutation(internal.notifications.createNotificationInternal, {
+        userId: recipientId,
+        type: "message",
+        title: "New message",
+        body: args.isMeetupProof
+          ? "A meetup proof message was sent."
+          : body || "You received an image attachment.",
+        link: "/messages",
+        conversationId: conversation._id,
+        itemId: item._id,
+      });
+    }
+
+    return messageId;
   },
 });
 

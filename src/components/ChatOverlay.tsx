@@ -1,18 +1,21 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { CSSProperties, useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { ConfirmModal } from "./ConfirmModal";
 import Image from "next/image";
-import { Camera, Check, CheckCircle2, Clock3, Expand, ImagePlus, MessageSquare, Minimize2, SendHorizontal, ShieldCheck, X, XCircle } from "lucide-react";
+import { Camera, Check, CheckCircle2, Clock3, Expand, ImagePlus, MessageSquare, Minus, Minimize2, SendHorizontal, ShieldCheck, X, XCircle } from "lucide-react";
 
 interface ChatOverlayProps {
   conversationId: Id<"conversations">;
   currentUserId: Id<"users">;
   otherUserName: string;
   challenge?: string;
+  nonMaximizedClassName?: string;
+  nonMaximizedStyle?: CSSProperties;
+  onMinimize?: () => void;
   onClose: () => void;
 }
 
@@ -21,6 +24,9 @@ export function ChatOverlay({
   currentUserId,
   otherUserName,
   challenge,
+  nonMaximizedClassName,
+  nonMaximizedStyle,
+  onMinimize,
   onClose,
 }: ChatOverlayProps) {
   const messages = useQuery(api.chat.listMessages, { conversationId });
@@ -128,10 +134,11 @@ export function ChatOverlay({
 
   return (
     <div
+      style={!isMaximized ? nonMaximizedStyle : undefined}
       className={`fixed bg-white border border-[#1A9FD4]/30 z-[100] rounded-2xl overflow-hidden shadow-[0_8px_32px_0_rgba(26,159,212,0.15)] transition-all ${
         isMaximized
           ? "inset-3 sm:inset-5 md:inset-6"
-          : "bottom-4 right-4 sm:bottom-6 sm:right-6 w-[340px] max-w-[calc(100vw-2rem)]"
+          : `${nonMaximizedClassName ?? "bottom-4 right-4 sm:bottom-6 sm:right-6"} w-[340px] max-w-[calc(100vw-2rem)]`
       }`}
     >
       {/* Header */}
@@ -141,6 +148,16 @@ export function ChatOverlay({
           {otherUserName}
         </div>
         <div className="flex items-center gap-1">
+          {onMinimize && (
+            <button
+              onClick={onMinimize}
+              className="text-white/70 hover:text-white p-1"
+              aria-label="Minimize to chat head"
+              type="button"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+          )}
           <button
             onClick={() => setIsMaximized((current) => !current)}
             className="text-white/70 hover:text-white p-1"
@@ -267,7 +284,7 @@ export function ChatOverlay({
                       alt="Chat attachment"
                       width={240}
                       height={160}
-                      className="mb-2 max-h-40 w-full rounded object-cover"
+                      className="mb-2 max-h-40 w-full h-auto rounded object-cover"
                     />
                   )}
                   {msg.body}

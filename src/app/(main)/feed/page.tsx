@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Sidebar } from "../../../components/Sidebar";
@@ -8,6 +8,8 @@ import { RightPanel } from "../../../components/RightPanel";
 import { ItemCard } from "../../../components/ItemCard";
 import { PostItemForm } from "../../../components/PostItemForm";
 import { ChatOverlay } from "../../../components/ChatOverlay";
+import { UserAvatar } from "../../../components/UserAvatar";
+import { usePersistentChatHeads } from "../../../lib/usePersistentChatHeads";
 import { Id, Doc } from "../../../../convex/_generated/dataModel";
 import { Package, ShieldCheck, X } from "lucide-react";
 
@@ -23,11 +25,7 @@ export default function FeedPage() {
     undefined
   );
   const [showPostForm, setShowPostForm] = useState(false);
-  const [chatState, setChatState] = useState<{
-    conversationId: Id<"conversations">;
-    otherUserName: string;
-    challenge?: string;
-  } | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [claimingItem, setClaimingItem] = useState<FeedItem | null>(null);
   const [expandedItem, setExpandedItem] = useState<FeedItem | null>(null);
   const [challengeAnswer, setChallengeAnswer] = useState("");
@@ -35,11 +33,76 @@ export default function FeedPage() {
   const [submittingClaim, setSubmittingClaim] = useState(false);
 
   const stats = useQuery(api.auth.getUserStats);
+  const myConversations = useQuery(api.chat.getMyConversations);
   const items = useQuery(api.items.getItems, {
     type: typeFilter,
     locationZone: selectedZone === "All Zones" ? undefined : selectedZone,
   });
   const getOrCreateConversation = useMutation(api.chat.getOrCreateConversation);
+  const storageKey = `wvsulf.chatheads.${stats?._id ?? "guest"}`;
+  const {
+    openChatIds,
+    setOpenChatIds,
+    minimizedChatIds,
+    setMinimizedChatIds,
+    isHydrated,
+  } = usePersistentChatHeads(storageKey);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!myConversations || !isHydrated) return;
+
+    const validIds = new Set(myConversations.map((c) => c._id as string));
+    setOpenChatIds((prev) => prev.filter((id) => validIds.has(id)));
+    setMinimizedChatIds((prev) => prev.filter((id) => validIds.has(id)));
+  }, [isHydrated, myConversations, setMinimizedChatIds, setOpenChatIds]);
+
+  const conversationMap = new Map(
+    (myConversations ?? []).map((c: { _id: Id<"conversations"> }) => [c._id as string, c])
+  );
+
+  const activeConversations = openChatIds
+    .filter((id) => !minimizedChatIds.includes(id))
+    .map((id) => conversationMap.get(id))
+    .filter(Boolean);
+
+  const visibleActiveConversations = isMobile
+    ? activeConversations.slice(-1)
+    : activeConversations;
+
+  const minimizedConversations = minimizedChatIds
+    .map((id) => conversationMap.get(id))
+    .filter(Boolean);
+
+  const openChat = (conversationId: Id<"conversations">) => {
+    const key = conversationId as string;
+    setOpenChatIds((prev) => (prev.includes(key) ? prev : [...prev, key]));
+    setMinimizedChatIds((prev) => prev.filter((id) => id !== key));
+  };
+
+  const closeChat = (conversationId: Id<"conversations">) => {
+    const key = conversationId as string;
+    setOpenChatIds((prev) => prev.filter((id) => id !== key));
+    setMinimizedChatIds((prev) => prev.filter((id) => id !== key));
+  };
+
+  const minimizeChat = (conversationId: Id<"conversations">) => {
+    const key = conversationId as string;
+    setMinimizedChatIds((prev) => (prev.includes(key) ? prev : [...prev, key]));
+  };
+
+  const restoreChat = (conversationId: Id<"conversations">) => {
+    const key = conversationId as string;
+    setMinimizedChatIds((prev) => prev.filter((id) => id !== key));
+    setOpenChatIds((prev) => (prev.includes(key) ? prev : [...prev, key]));
+  };
 
   const handleContact = (itemId: string) => {
     const item = items?.find((i: FeedItem) => i._id === itemId);
@@ -61,11 +124,7 @@ export default function FeedPage() {
         challengeAnswer: challengeAnswer.trim(),
       });
       setClaimingItem(null);
-      setChatState({
-        conversationId,
-        otherUserName: "User",
-        challenge: claimingItem.challenge,
-      });
+      openChat(conversationId);
     } catch (e) {
       setClaimError(e instanceof Error ? e.message : "Failed to submit claim.");
     } finally {
@@ -82,50 +141,52 @@ export default function FeedPage() {
 
       {/* Main Content */}
       <div className="c-col min-h-[calc(100vh-56px)]">
-        <div className="mb-4">
-          <h1 className="font-display text-3xl font-bold text-wvsu-text tracking-tight">Lost <span className="text-wvsu-blue">&</span> Found</h1>
-          <p className="text-sm text-wvsu-muted mt-1">Help reunite items with their owners</p>
-        </div>
-        <div className="feed-header mb-4">
-          <div className="tab-group">
-            <button
-              onClick={() => setTypeFilter(undefined)}
-              className={`ftab ${!typeFilter ? "on" : ""}`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setTypeFilter("lost")}
-              className={`ftab ${typeFilter === "lost" ? "on" : ""}`}
-            >
-              Lost
-            </button>
-            <button
-              onClick={() => setTypeFilter("found")}
-              className={`ftab ${typeFilter === "found" ? "on" : ""}`}
-            >
-              Found
-            </button>
+        <div className="feed-sticky-top">
+          <div className="mb-4">
+            <h1 className="font-display text-3xl font-bold text-wvsu-text tracking-tight">Lost <span className="text-wvsu-blue">&</span> Found</h1>
+            <p className="text-sm text-wvsu-muted mt-1">Help reunite items with their owners</p>
           </div>
-          <div className="feed-actions flex items-center gap-3">
-            <select
-              value={selectedZone}
-              onChange={(e) => setSelectedZone(e.target.value)}
-              className="loc-sel h-9 min-w-[140px]"
-            >
-              <option value="All Zones">All Zones</option>
-              {["Library", "CICT Bldg", "Pescar Bldg", "CBM Bldg", "COC Bldg", "NAB", "CON Bldg", "CAS Bldg", "Canteen Area", "Main Gate"].map((zone) => (
-                <option key={zone} value={zone}>
-                  {zone}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={() => setShowPostForm(true)}
-              className="new-post-btn text-sm"
-            >
-              + Post a Report
-            </button>
+          <div className="feed-header mb-4 space-y-3 sm:space-y-0">
+            <div className="tab-group">
+              <button
+                onClick={() => setTypeFilter(undefined)}
+                className={`ftab ${!typeFilter ? "on" : ""}`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setTypeFilter("lost")}
+                className={`ftab ${typeFilter === "lost" ? "on" : ""}`}
+              >
+                Lost
+              </button>
+              <button
+                onClick={() => setTypeFilter("found")}
+                className={`ftab ${typeFilter === "found" ? "on" : ""}`}
+              >
+                Found
+              </button>
+            </div>
+            <div className="feed-actions flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+              <select
+                value={selectedZone}
+                onChange={(e) => setSelectedZone(e.target.value)}
+                className="loc-sel h-9 min-w-[140px] w-full sm:w-auto"
+              >
+                <option value="All Zones">All Zones</option>
+                {["Library", "CICT Bldg", "Pescar Bldg", "CBM Bldg", "COC Bldg", "NAB", "CON Bldg", "CAS Bldg", "Canteen Area", "Main Gate"].map((zone) => (
+                  <option key={zone} value={zone}>
+                    {zone}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={() => setShowPostForm(true)}
+                className="new-post-btn text-sm w-full sm:w-auto"
+              >
+                + Post a Report
+              </button>
+            </div>
           </div>
         </div>
 
@@ -281,15 +342,57 @@ export default function FeedPage() {
         </div>
       )}
 
-      {/* Chat Overlay */}
-      {chatState && stats && (
-        <ChatOverlay
-          conversationId={chatState.conversationId}
-          currentUserId={stats._id}
-          otherUserName={chatState.otherUserName}
-          challenge={chatState.challenge}
-          onClose={() => setChatState(null)}
-        />
+      {/* Docked Chat Windows */}
+      {stats && visibleActiveConversations.map((convo, index) => {
+        if (!convo) return null;
+        const desktopIndex = isMobile ? 0 : index;
+
+        return (
+          <ChatOverlay
+            key={convo._id}
+            conversationId={convo._id}
+            currentUserId={stats._id}
+            otherUserName={convo.otherUser?.name ?? "User"}
+            challenge={convo.item?.challenge}
+            nonMaximizedClassName="bottom-20 left-2 right-2 sm:left-auto sm:bottom-6"
+            nonMaximizedStyle={
+              isMobile
+                ? { right: "0.5rem", left: "0.5rem" }
+                : { right: `${16 + desktopIndex * 356}px` }
+            }
+            onMinimize={() => minimizeChat(convo._id)}
+            onClose={() => closeChat(convo._id)}
+          />
+        );
+      })}
+
+      {/* Chat Heads */}
+      {stats && minimizedConversations.length > 0 && (
+        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-[110] flex items-center gap-2 max-w-[calc(100vw-1.5rem)] overflow-x-auto pb-1">
+          {minimizedConversations.map((convo) => {
+            if (!convo) return null;
+            return (
+              <button
+                key={convo._id}
+                onClick={() => restoreChat(convo._id)}
+                className="relative w-12 h-12 rounded-full border-2 border-white shadow-lg overflow-hidden bg-white shrink-0"
+                aria-label={`Restore chat with ${convo.otherUser?.name ?? "User"}`}
+                type="button"
+              >
+                <UserAvatar
+                  name={convo.otherUser?.name}
+                  avatarType={convo.otherUser?.avatarType}
+                  avatarUrl={convo.otherUser?.avatarUrl}
+                  size={48}
+                  className="w-full h-full"
+                />
+                {convo.hasUnread && (
+                  <span className="absolute top-0.5 right-0.5 w-3 h-3 rounded-full bg-lost-red border border-white" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       )}
     </div>
   );

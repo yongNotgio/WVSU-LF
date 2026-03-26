@@ -89,4 +89,21 @@ export default defineSchema({
     userId: v.id("users"),
     lastSeenAt: v.number(),
   }).index("by_conversationId_userId", ["conversationId", "userId"]),
+
+  notifications: defineTable({
+    userId: v.id("users"),
+    type: v.union(
+      v.literal("message"),
+      v.literal("verification"),
+      v.literal("karma")
+    ),
+    title: v.string(),
+    body: v.string(),
+    link: v.optional(v.string()),
+    conversationId: v.optional(v.id("conversations")),
+    itemId: v.optional(v.id("items")),
+    isRead: v.boolean(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_isRead", ["userId", "isRead"]),
 });

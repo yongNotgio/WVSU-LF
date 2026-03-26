@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "convex/react";
+import Image from "next/image";
 import { api } from "../../convex/_generated/api";
 import { UserAvatar } from "./UserAvatar";
 
@@ -53,16 +54,21 @@ export function Sidebar({ selectedZone: _selectedZone, onZoneChange: _onZoneChan
 
       {/* Project Card */}
       <div className="donate-card">
-        <div className="flex items-center justify-between">
-          <div className="donate-title">Fuel the Devs!</div>
-          <div className="flex gap-1.5">
-            <div className="w-7 h-7 rounded-full bg-[#FAF9F6] flex items-center justify-center text-sm">👨‍💻</div>
-            <div className="w-7 h-7 rounded-full bg-[#FAF9F6] flex items-center justify-center text-sm">👨‍💻</div>
-          </div>
+        <div className="donate-ill-wrap">
+          <Image
+            src="/devcoffee.png"
+            alt="Developers sharing coffee"
+            width={460}
+            height={460}
+            className="donate-ill"
+            priority={false}
+          />
         </div>
-        <div className="donate-sub">For the students, by the students. Help us keep the servers running with coffee!</div>  
+        <div className="donate-title">Keep the devs caffeinated.</div>
+        <div className="donate-sub">Buy us a coffee if this helps your day.</div>
+        <div className="donate-quote">&quot;1 coffee = 100 lines of bug-free code (hopefully).&quot;</div>
         <button className="donate-btn" onClick={() => window.location.reload()}>
-          Donate Now
+          Donate
         </button>
       </div>
     </aside>

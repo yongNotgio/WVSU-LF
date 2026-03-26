@@ -16,6 +16,7 @@ import type * as http from "../http.js";
 import type * as items from "../items.js";
 import type * as karma from "../karma.js";
 import type * as matching from "../matching.js";
+import type * as notifications from "../notifications.js";
 import type * as roles from "../roles.js";
 import type * as safety from "../safety.js";
 import type * as seed from "../seed.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   items: typeof items;
   karma: typeof karma;
   matching: typeof matching;
+  notifications: typeof notifications;
   roles: typeof roles;
   safety: typeof safety;
   seed: typeof seed;
