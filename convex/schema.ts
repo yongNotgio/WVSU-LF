@@ -9,6 +9,10 @@ export default defineSchema({
     email: v.optional(v.string()),
     name: v.optional(v.string()),
     college: v.optional(v.string()),
+    emailNotificationsEnabled: v.optional(v.boolean()),
+    emailOnMessage: v.optional(v.boolean()),
+    emailOnVerification: v.optional(v.boolean()),
+    emailOnKarma: v.optional(v.boolean()),
     karma: v.optional(v.number()),
     strikes: v.optional(v.number()),
     shadowBannedUntil: v.optional(v.number()),
@@ -103,7 +107,21 @@ export default defineSchema({
     conversationId: v.optional(v.id("conversations")),
     itemId: v.optional(v.id("items")),
     isRead: v.boolean(),
+    emailDeliveryStatus: v.union(
+      v.literal("pending"),
+      v.literal("sent"),
+      v.literal("failed"),
+      v.literal("disabled")
+    ),
+    emailAttemptCount: v.number(),
+    nextEmailAttemptAt: v.optional(v.number()),
+    lastEmailAttemptAt: v.optional(v.number()),
+    emailDeliveredAt: v.optional(v.number()),
+    emailLastError: v.optional(v.string()),
   })
     .index("by_userId", ["userId"])
-    .index("by_userId_isRead", ["userId", "isRead"]),
+    .index("by_userId_isRead", ["userId", "isRead"])
+    .index("by_userId_type_conversationId", ["userId", "type", "conversationId"])
+    .index("by_emailDeliveryStatus", ["emailDeliveryStatus"])
+    .index("by_emailDeliveryStatus_nextEmailAttemptAt", ["emailDeliveryStatus", "nextEmailAttemptAt"]),
 });

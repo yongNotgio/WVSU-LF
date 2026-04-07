@@ -15,6 +15,7 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Settings,
   Trophy,
   Upload,
   X,
@@ -254,6 +255,20 @@ export function Navbar() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    router.push("/settings/notifications");
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-[8px] text-[.82rem] font-semibold text-[#1A2E3B] hover:bg-[#E8F2FA]"
+                  role="menuitem"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Settings size={14} />
+                    Notification settings
+                  </span>
+                </button>
+                <button
+                  type="button"
                   disabled={uploading}
                   onClick={() => avatarInputRef.current?.click()}
                   className="w-full text-left px-3 py-2 rounded-[8px] text-[.82rem] font-semibold text-[#1A2E3B] hover:bg-[#E8F2FA] disabled:opacity-60"
@@ -400,6 +415,17 @@ export function Navbar() {
               className="w-full text-left px-3 py-2.5 rounded-[10px] text-[.87rem] font-semibold text-[#1A2E3B] hover:bg-[#F0F6FB] transition-colors"
             >
               Customize profile
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                router.push("/settings/notifications");
+              }}
+              className="w-full text-left px-3 py-2.5 rounded-[10px] text-[.87rem] font-semibold text-[#1A2E3B] hover:bg-[#F0F6FB] transition-colors inline-flex items-center gap-2"
+            >
+              <Settings size={14} />
+              Notification settings
             </button>
             <button
               type="button"

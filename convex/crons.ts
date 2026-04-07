@@ -9,4 +9,11 @@ crons.daily(
   internal.safety.autoArchiveOldPosts
 );
 
+crons.hourly(
+  "retry pending notification emails",
+  { minuteUTC: 5 },
+  internal.notifications.retryPendingNotificationEmailsInternal,
+  { batchSize: 50 }
+);
+
 export default crons;

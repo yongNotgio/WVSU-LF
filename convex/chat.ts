@@ -36,11 +36,6 @@ export const getOrCreateConversation = mutation({
       .withIndex("by_itemId", (q) => q.eq("itemId", args.itemId))
       .collect();
 
-      const rejected = conversations.find(
-      (c) => c.participantIds.includes(userId) && c.challengeStatus === "rejected"
-    );
-    if (rejected) throw new Error("Your claim for this item was already rejected.");
-
     // Return existing pending/accepted conversation
     const existing = conversations.find(
       (c) => c.participantIds.includes(userId) && c.challengeStatus !== "rejected"
