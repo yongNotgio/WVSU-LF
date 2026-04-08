@@ -71,7 +71,6 @@ function keywordScore(text1: string, text2: string): number {
   return total / words1.length;
 }
 
-/** Location proximity score: 1 = same zone, 0.5 = adjacent, 0 = far */
 function locationScore(zone1: string, zone2: string): number {
   if (zone1 === zone2) return 1;
   const adjacent = ZONE_ADJACENCY[zone1] ?? [];
