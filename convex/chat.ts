@@ -36,7 +36,6 @@ export const getOrCreateConversation = mutation({
       .withIndex("by_itemId", (q) => q.eq("itemId", args.itemId))
       .collect();
 
-    // Return existing pending/accepted conversation
     const existing = conversations.find(
       (c) => c.participantIds.includes(userId) && c.challengeStatus !== "rejected"
     );
