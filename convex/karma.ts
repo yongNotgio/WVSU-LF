@@ -60,7 +60,6 @@ export const awardKarmaPoints = mutation({
       }
     }
 
-    // Resolve the item
     await ctx.db.patch(args.itemId, { status: "resolved" });
   },
 });
