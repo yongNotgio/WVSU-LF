@@ -1,36 +1,115 @@
 
 
+# WVSULF
+
+WVSULF is a peer-to-peer lost-and-found platform for West Visayas State University. It replaces informal Freedom Wall posts with a structured system that includes item matching, verification-aware chat, and a college-based Karma leaderboard.
+
+## Core Features
+
+- Lost and found item posting with category/location metadata
+- Matching engine for potential item-owner pairs
+- Anonymous P2P chat with challenge-question verification flow
+- Karma points for successful returns and a college leaderboard
+- Safety reporting and auto-archival for stale posts
+
+## Tech Stack
+
+- Frontend: Next.js 14 (App Router), React 18, Tailwind CSS
+- Backend: Convex (database + queries/mutations/actions + cron)
+- Auth: Convex Auth (`@convex-dev/auth`) with email/password
+- Language: TypeScript (strict mode)
+
+## Project Structure
+
+```text
+WVSU-LF/
+├── convex/          # Convex backend functions and schema
+├── docs/            # Project documentation
+├── public/          # Static assets
+├── scripts/         # Utility scripts (including e2e matrix runner)
+└── src/
+	├── app/         # Next.js App Router pages/layouts
+	├── components/  # Shared UI components
+	└── lib/         # Frontend utilities
+```
+
+## Prerequisites
+
+- Node.js 18+
+- npm 9+
+- Git
+- A Convex account
+
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start Convex in one terminal:
+
+```bash
+npx convex dev
+```
+
+On first run, Convex will prompt you to log in and link/create a project. It will also create `.env.local` with:
+
+```bash
+CONVEX_DEPLOYMENT=dev:<your-deployment>
+NEXT_PUBLIC_CONVEX_URL=https://<your-deployment>.convex.cloud
+```
+
+3. Start the Next.js app in a second terminal:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Convex local setup writes the required frontend variables to `.env.local`.
 
-## Learn More
+For backend email notifications, configure these Convex environment variables:
 
-To learn more about Next.js, take a look at the following resources:
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- `APP_BASE_URL`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Set them with:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npx convex env set RESEND_API_KEY <your-resend-api-key>
+npx convex env set RESEND_FROM_EMAIL "WVSU LF <your-verified-sender@yourdomain.com>"
+npx convex env set APP_BASE_URL https://your-app-domain.com
+```
 
-## Deploy on Vercel
+## Available Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `npm run dev` - Start Next.js development server
+- `npm run build` - Build production bundle
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run test:matrix` - Run the E2E matrix script
+- `npm run test:matrix:keep` - Run E2E matrix without cleanup
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Key Documentation
+
+- `docs/SETUP.md` - Full setup and troubleshooting guide
+- `docs/ARCHITECTURE.md` - System architecture and data flow
+- `docs/SCHEMA.md` - Database schema reference
+- `docs/API.md` - Backend API/function reference
+- `docs/E2E_TEST_MATRIX.md` - E2E matrix testing notes
+
+## Security Notes
+
+- Never commit secrets or API keys.
+- Use Convex environment variables for backend secrets.
+- Rotate keys immediately if they are exposed.
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE` for details.
