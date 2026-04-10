@@ -108,7 +108,6 @@ npx convex env set APP_BASE_URL https://your-app-domain.com
 
 - Never commit secrets or API keys.
 - Use Convex environment variables for backend secrets.
-- Rotate keys immediately if they are exposed.
 
 ## License
 
